@@ -31,8 +31,7 @@ public class ModelBuilder {
     public IfcModelInterface build() throws ServerException, UserException {
         if (this.project == null) {
             SProject project = client.getServiceInterface().getProjectsByName(modelName).get(0);
-            IfcModelInterface modelInterface = client.getModel(project, project.getLastRevisionId(), true, false, false);
-            return modelInterface;
+            return client.getModel(project, project.getLastRevisionId(), true, false, false);
         } else {
             return client.getModel(this.project, this.project.getLastRevisionId(), true, false, false);
         }
