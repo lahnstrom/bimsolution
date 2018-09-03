@@ -7,7 +7,6 @@ import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.models.ifc2x3tc1.*;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EStructuralFeature;
 
 import java.util.List;
 
@@ -24,7 +23,6 @@ public class Main {
                 //Ladda Modellen, hela på en gångtr
                 IfcModelInterface modelInterface = client.getModel(project, project.getLastRevisionId(), true, false, false);
                 System.out.println("Im here: " + modelInterface);
-
 //              //Hitta alla dörrar!
                 List<IfcDoor> alldoors = modelInterface.getAllWithSubTypes(IfcDoor.class);
                 //Ta den första dörren
