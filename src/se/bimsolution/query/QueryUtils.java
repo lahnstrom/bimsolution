@@ -5,5 +5,7 @@ package se.bimsolution.query;
  */
 public final class QueryUtils {
 
-    private QueryUtils() { };
+    private QueryUtils() {}
+
+
 }
