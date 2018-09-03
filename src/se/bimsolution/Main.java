@@ -3,15 +3,13 @@ package se.bimsolution;
 import org.bimserver.client.BimServerClient;
 import org.bimserver.client.json.JsonBimServerClientFactory;
 import org.bimserver.emf.IfcModelInterface;
-import org.bimserver.interfaces.objects.SDataObject;
 import org.bimserver.interfaces.objects.SProject;
-import org.bimserver.models.ifc4.IfcDoor;
-import org.bimserver.models.ifc4.IfcDoorStandardCase;
-import org.bimserver.models.ifc4.IfcRelDefinesByProperties;
+import org.bimserver.models.ifc2x3tc1.*;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
-import org.bimserver.shared.exceptions.BimServerClientException;
-import org.bimserver.shared.meta.SClass;
-import org.bimserver.shared.meta.SField;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EStructuralFeature;
+
+import java.util.List;
 
 /**
  * Handles the queries to the BIMServer
@@ -26,9 +24,16 @@ public class Main {
                 IfcModelInterface modelInterface = client.getModel(project, project.getLastRevisionId(), true, false, false);
                 System.out.println("Im here: " + modelInterface);
 
-                System.out.println(modelInterface);
 //
-                modelInterface.getAllWithSubTypes(IfcDoor.class);
+//                List<IfcDoor> alldoors = modelInterface.getAllWithSubTypes(IfcDoor.class);
+//                (IfcPropertySet) ((IfcRelDefinesByProperties)alldoors.get(0).getIsDefinedBy().get(1)).getRelatingPropertyDefinition();
+
+
+                IfcPropertySet ps = (IfcPropertySet) modelInterface.getByGuid("0ZqyEYcjD1Q980drTUCHyH");
+                System.out.println(ps);
+                IfcPropertySingleValue ifcSingle =  (IfcPropertySingleValue) ps.getHasProperties().get(7);
+                IfcValue value =  ifcSingle.getNominalValue();
+
 //                HashSet<>
 //               client.getServiceInterface().download()
 //                SDataObject sDataObject = client.getLowLevelInterface().getDataObjectByOid(project.getLastRevisionId(), 393834L);
