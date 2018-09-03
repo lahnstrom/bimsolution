@@ -19,34 +19,60 @@ public class Main {
         try (JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://104.248.40.190:8080/bimserver")) {
             // Creating a client in a try statement, this makes sure the client will be closed after use
             try (BimServerClient client = factory.create(new UsernamePasswordAuthenticationInfo(args[0], args[1]))) {
+                //Hämta projektet med namnet A2-400
                 SProject project = client.getServiceInterface().getProjectsByName("A2-400").get(0);
-                System.out.println(project.getOid());
+                //Ladda Modellen, hela på en gångtr
                 IfcModelInterface modelInterface = client.getModel(project, project.getLastRevisionId(), true, false, false);
                 System.out.println("Im here: " + modelInterface);
 
-////
-//                List<IfcDoor> alldoors = modelInterface.getAllWithSubTypes(IfcDoor.class);
-//                IfcPropertySetDefinition ifcps = (((IfcRelDefinesByProperties)alldoors.get(0).getIsDefinedBy().get(1)).getRelatingPropertyDefinition());
-//                IfcPropertySet ps = (IfcPropertySet) ifcps.getDefinesType().get(0);
-//                if (ps != null) {
-//                    System.out.println("YES");
-//                    ps.getHasProperties().forEach(x-> System.out.println(x.getName()));
-//                }
+//              //Hitta alla dörrar!
+                List<IfcDoor> alldoors = modelInterface.getAllWithSubTypes(IfcDoor.class);
+                //Ta den första dörren
+                IfcDoor ifcDoor = alldoors.get(0);
+                //Kolla vad dörren är definierat av
+                EList<IfcRelDefines> ifcRelDefinesEList = ifcDoor.getIsDefinedBy();
 
-
-
-                IfcPropertySet ps = (IfcPropertySet) modelInterface.getByGuid("0ZqyEYcjD1Q980drTUCHyH");
-                System.out.println(ps);
-                IfcPropertySingleValue ifcSingle =  (IfcPropertySingleValue) ps.getHasProperties().get(7);
-                IfcValue value =  ifcSingle.getNominalValue();
-                String stringv = "";
-
-                System.out.println(ifcSingle.getName());
-                if (value instanceof IfcText) {
-                    stringv = ((IfcText)value).getWrappedValue();
+                IfcPropertySet ps = null;
+                //Hitta den första definitionen som är ett propertySet
+                for (IfcRelDefines def:
+                     ifcRelDefinesEList) {
+                    //Är relationen en defines by property?
+                    if (def instanceof IfcRelDefinesByProperties ) {
+                        //Går den att casta till ett propertyset?
+                        try {
+                            ps = (IfcPropertySet) ((IfcRelDefinesByProperties) def).getRelatingPropertyDefinition();
+                            break;
+                        } catch (Exception ignored) { }
+                    }
                 }
+//                IfcPropertySetDefinition ifcps = (((IfcRelDefinesByProperties)ifcDoor.getIsDefinedBy().get(0)).getRelatingPropertyDefinition());
+                //Gå igenom alla properties i propertysetet
+                for (Object obj:
+                     ps.getHasProperties()) {
+                    //Det är sannolikt single values...
+                    IfcPropertySingleValue ifcSingle =  (IfcPropertySingleValue) obj;
+                    //Plocka ut nominal value
+                    IfcValue value =  ifcSingle.getNominalValue();
 
-                System.out.println(stringv);
+                    String stringv = "";
+
+                    //Ta ut textvärdet om det finns
+                    if (value instanceof IfcText) {
+                        stringv = ((IfcText)value).getWrappedValue();
+                    }
+
+                    System.out.println(ifcSingle.getName() + " " + stringv);
+                }
+//                IfcPropertySingleValue ifcSingle =  (IfcPropertySingleValue) ps.getHasProperties().get(7);
+//                IfcValue value =  ifcSingle.getNominalValue();
+//                String stringv = "";
+//
+//                System.out.println(ifcSingle.getName());
+//                if (value instanceof IfcText) {
+//                    stringv = ((IfcText)value).getWrappedValue();
+//                }
+//
+//                System.out.println(stringv);
 //                HashSet<
 //               client.getServiceInterface().download()
 //                SDataObject sDataObject = client.getLowLevelInterface().getDataObjectByOid(project.getLastRevisionId(), 393834L);
