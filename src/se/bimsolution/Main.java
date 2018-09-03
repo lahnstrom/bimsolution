@@ -24,17 +24,30 @@ public class Main {
                 IfcModelInterface modelInterface = client.getModel(project, project.getLastRevisionId(), true, false, false);
                 System.out.println("Im here: " + modelInterface);
 
-//
+////
 //                List<IfcDoor> alldoors = modelInterface.getAllWithSubTypes(IfcDoor.class);
-//                (IfcPropertySet) ((IfcRelDefinesByProperties)alldoors.get(0).getIsDefinedBy().get(1)).getRelatingPropertyDefinition();
+//                IfcPropertySetDefinition ifcps = (((IfcRelDefinesByProperties)alldoors.get(0).getIsDefinedBy().get(1)).getRelatingPropertyDefinition());
+//                IfcPropertySet ps = (IfcPropertySet) ifcps.getDefinesType().get(0);
+//                if (ps != null) {
+//                    System.out.println("YES");
+//                    ps.getHasProperties().forEach(x-> System.out.println(x.getName()));
+//                }
+
 
 
                 IfcPropertySet ps = (IfcPropertySet) modelInterface.getByGuid("0ZqyEYcjD1Q980drTUCHyH");
                 System.out.println(ps);
                 IfcPropertySingleValue ifcSingle =  (IfcPropertySingleValue) ps.getHasProperties().get(7);
                 IfcValue value =  ifcSingle.getNominalValue();
+                String stringv = "";
 
-//                HashSet<>
+                System.out.println(ifcSingle.getName());
+                if (value instanceof IfcText) {
+                    stringv = ((IfcText)value).getWrappedValue();
+                }
+
+                System.out.println(stringv);
+//                HashSet<
 //               client.getServiceInterface().download()
 //                SDataObject sDataObject = client.getLowLevelInterface().getDataObjectByOid(project.getLastRevisionId(), 393834L);
 //                sDataObject.getValues().forEach(x-> System.out.println(x));
