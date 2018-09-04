@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -16,25 +17,24 @@ public final class QueryUtils {
     private QueryUtils() { };
 
 
-    public HashMap<String, List<String>> idToIfcCSVParser (String CSVfilepath, String delimiter) throws IOException {
+    public HashMap<String, HashSet<String>> idToIfcCSVParser (String CSVfilepath, String delimiter) throws IOException {
         String line;
-        HashMap<String, List<String>> parsedData = new HashMap<>();
+        HashMap<String, HashSet<String>> parsedData = new HashMap<>();
         BufferedReader br = new BufferedReader(new FileReader(CSVfilepath));
         while((line=br.readLine())!=null){
             String str[] = line.split(delimiter);
             String key = str[1];
             String value = str[0];
-            List<String> valueList;
+            HashSet<String> valueList;
 
             if (parsedData.containsKey(key)) {
                 valueList = parsedData.get(key);
             } else {
-                valueList = new ArrayList<>();
+                valueList = new HashSet<>();
                 parsedData.put(key, valueList);
             }
             valueList.add(value);
         }
         return parsedData;
     }
-
 }
