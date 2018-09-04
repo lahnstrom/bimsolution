@@ -3,6 +3,7 @@ package se.bimsolution.query;
 import org.bimserver.client.BimServerClient;
 import org.bimserver.emf.IfcModelInterface;
 import se.bimsolution.db.*;
+import se.bimsolution.query.machine.QueryMachine;
 
 import java.util.ArrayList;
 import java.util.List;

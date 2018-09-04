@@ -1,4 +1,4 @@
-package se.bimsolution.query;
+package se.bimsolution.query.machine;
 
 import se.bimsolution.db.Fail;
 

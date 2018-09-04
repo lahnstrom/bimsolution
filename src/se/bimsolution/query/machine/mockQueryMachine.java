@@ -1,7 +1,7 @@
-package se.bimsolution.query.mock;
+package se.bimsolution.query.machine;
 
 import se.bimsolution.db.Fail;
-import se.bimsolution.query.QueryMachine;
+import se.bimsolution.query.machine.QueryMachine;
 
 import java.util.ArrayList;
 import java.util.List;
