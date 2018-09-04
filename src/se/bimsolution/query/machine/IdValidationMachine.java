@@ -21,7 +21,7 @@ public class IdValidationMachine implements QueryMachine {
     private int failCount;
     private String error;
     private boolean hasRun;
-    private List<Class<IfcDoor>> classList;
+    private List<Class> classList;
     private HashMap<String, HashSet<String>> correctIDs;
 
     private final String PROPERTY_SET_NAME = "AH-Bygg";
@@ -110,21 +110,25 @@ public class IdValidationMachine implements QueryMachine {
         EList<IfcRelDefines> ifcRelDefinesEList = ((IfcObject) obj).getIsDefinedBy();
         //Gå igenom alla defines by relationer
         for (IfcRelDefines ird : ifcRelDefinesEList) {
-            checkIfcRelDefines(clazz, localFails, obj, ird);
+            boolean hasCorrectPropertySet = checkIfcRelDefines(clazz, localFails, obj, ird);
+            if (!hasCorrectPropertySet) {
+                localFails.add(new Fail(obj.getOid(), this.queryID, this.runID));
+            }
         }
     }
 
     /**
      * Checks all the IfcRelDefines relations of an IfcObject.
      * Returns false if an object does not contain a property.
-     * @param clazz
-     * @param localFails
-     * @param obj
-     * @param ird
-     * @return
+     * @param clazz The class representing an ifc 2x3 object.
+     * @param localFails the list of fails for this specific object class
+     * @param obj the BIM Object that is being checked.
+     * @param ird an IfcRelDefinesBy object
+     * @return Is there a propertySet with the asked for name? && Is it correctly filled in?
      */
     private boolean checkIfcRelDefines(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcRelDefines ird) {
         IfcPropertySet ps;
+        boolean psetCorrect = false;
         //Kolla om det är en definesbypropertyrelation
         if (ird instanceof IfcRelDefinesByProperties) {
             //Går den att casta till ett propertyset?
@@ -132,35 +136,87 @@ public class IdValidationMachine implements QueryMachine {
                 ps = (IfcPropertySet) ((IfcRelDefinesByProperties) ird).getRelatingPropertyDefinition();
                 //Är det rätt propertyset?
                 if (ps.getName().equals(PROPERTY_SET_NAME)) {
-                    //Gå igenom alla properties i setet
-                    for (IfcProperty ip : ps.getHasProperties()) {
-                        checkPropertyAndAddToFailList(clazz, localFails, obj, ip);
-
-                    }
+                    //Gå igenom alla properties i setet, om någon är fel
+                    psetCorrect = loopThroughProperties(clazz, localFails, obj, ps);
                 }
             }
         }
+        return psetCorrect;
     }
 
-    private void checkPropertyAndAddToFailList(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcProperty ip) {
+    /**This method loops through a propertySet and checks every value.
+     * If the propertySet is not correct, return false;
+     *
+     * @param clazz The class representing an ifc 2x3 object.
+     * @param localFails the list of fails for this specific object class
+     * @param obj the BIM Object that is being checked.
+     * @param ps The propertySet to loop through
+     * @return Does the property we're looking for exist?
+     */
+    private boolean loopThroughProperties(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcPropertySet ps) {
+        boolean existsProperty = false;
+        for (IfcProperty ip : ps.getHasProperties()) {
+            if (checkPropertyAndAddToFailList(clazz, localFails, obj, ip)) {
+                existsProperty = true;
+            }
+        }
+        return existsProperty;
+    }
+
+    /**
+     *This method executes the final check of an IfcObject:
+     * Is there a property? Does it have the type single value?
+     * If so, is the name of the property what we're looking for?
+     * If so, is it correctly filled in?
+     * If not. Add it to our list of fails.
+     * @param clazz The class representing an ifc 2x3 object.
+     * @param localFails the list of fails for this specific object class
+     * @param obj the BIM Object that is being checked.
+     * @param ip an IfcProperty to be checked.
+     * @return Does the correct PSet have a field for ID?
+     */
+    private boolean checkPropertyAndAddToFailList(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcProperty ip) {
+        boolean hasProp = false;
         if (ip instanceof IfcPropertySingleValue) {
             if (ip.getName().equals(PROPERTY_NAME)) {
+                hasProp = true;
                 IfcValue value = ((IfcPropertySingleValue) ip).getNominalValue();
                 String id = "";
                 //Ta ut textvärdet om det finns
                 if (value instanceof IfcText) {
                     id = ((IfcText)value).getWrappedValue();
                 }
-                //Bryt ut namnet på ifcKlassen:
-                String name = extractNameFromClass(clazz);
-                if (!correctIDs.get(name).contains(id)) {
-                    localFails.add(new Fail(obj.getOid(), this.queryID, this.runID));
-                    this.failCount++;
-                }
+                checkIfValuePasses(clazz, localFails, obj, id);
             }
+        }
+        return hasProp;
+    }
+
+    /**
+     *Check the value that we've extracted against the hashMap.
+     * If it fails: add it to the list of fails.
+     * @param clazz The class representing an ifc 2x3 object.
+     * @param localFails the list of fails for this specific object class
+     * @param obj the BIM Object that is being checked.
+     * @param id the value that we extracted, and that proved to be wrong.
+     */
+    private void checkIfValuePasses(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, String id) {
+        String name = extractNameFromClass(clazz);
+        if (!correctIDs.get(name).contains(id)) {
+            localFails.add(new Fail(obj.getOid(), this.queryID, this.runID));
+            this.failCount++;
         }
     }
 
+
+    /**
+     * Takes a name of an IfcClass and extracts the name e.g.
+     * class org.bimserver.models.ifc2x3tc1.IfcDoor turns into string
+     * IfcDoor
+     * This is then used to look up the correct ID in a HashMap.
+     * @param clazz a java class
+     * @return a string, the name of the Ifc class.
+     */
     private String extractNameFromClass(Class<IdEObject> clazz) {
         String[] parts = clazz.toString().split("\\.");
         return parts[parts.length-1];
