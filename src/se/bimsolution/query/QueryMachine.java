@@ -5,7 +5,9 @@ import se.bimsolution.db.Fail;
 import java.util.List;
 
 public interface QueryMachine extends Runnable{
-    List<Fail> getResult();
+    List<Fail> getFails();
     int getCount();
+    int getFailCount();
+    String getError();
     void run();
 }

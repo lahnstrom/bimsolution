@@ -13,6 +13,9 @@ public class ModelBuilder {
     private BimServerClient client;
     private String modelName;
 
+    private boolean INCLUDE_GEOMETRY = false;
+    private boolean RECORD_CHANGES = false;
+
     public ModelBuilder(BimServerClient client, String modelName) {
         this.client = client;
         this.modelName = modelName;
@@ -31,9 +34,9 @@ public class ModelBuilder {
     public IfcModelInterface build() throws ServerException, UserException {
         if (this.project == null) {
             SProject project = client.getServiceInterface().getProjectsByName(modelName).get(0);
-            return client.getModel(project, project.getLastRevisionId(), true, false, false);
+            return client.getModel(project, project.getLastRevisionId(), true, false, INCLUDE_GEOMETRY);
         } else {
-            return client.getModel(this.project, this.project.getLastRevisionId(), true, false, false);
+            return client.getModel(this.project, this.project.getLastRevisionId(), true, false, RECORD_CHANGES);
         }
     }
 }

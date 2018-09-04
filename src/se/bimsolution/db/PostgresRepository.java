@@ -9,7 +9,24 @@ public class PostgresRepository implements Repository{
     }
 
     @Override
-    public void writeRun(Run run) {
+    public Run newRun() {
+        return null;
+    }
+
+    @Override
+    public void writeCount(Count count) {
 
     }
+
+    @Override
+    public void writeLog(Log log) {
+
+    }
+
+    @Override
+    public void updateRun(Run run) {
+
+    }
+
+
 }
