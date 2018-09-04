@@ -18,7 +18,7 @@ public class PostgresRepository implements Repository {
     }
 
     @Override
-    public Run newRun(){
+    public Run newRun() {
         Run run = new Run();
 
         run.setSuccess(true);
@@ -31,11 +31,11 @@ public class PostgresRepository implements Repository {
 
         try {
             //Insert Run to DB
-            String orderSql = "INSERT INTO Run " +
+            String runSQL = "INSERT INTO Run " +
                     "       (Success) " +
-                    "         VALUES (?, ?)";
+                    "         VALUES (?)";
 
-            PreparedStatement statement = connection.prepareStatement(orderSql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement statement = connection.prepareStatement(runSQL, Statement.RETURN_GENERATED_KEYS);
             statement.setBoolean(1, run.getSuccess());
             statement.executeUpdate();
 
@@ -52,22 +52,46 @@ public class PostgresRepository implements Repository {
         }
     }
 
+    @Override
+    public void writeCount(Count count) {
+        int runID = 0;
+
+        try {
+            //Insert Run to DB
+            String runSQL = "INSERT INTO Count " +
+                    "       (objectCount, failCount, runID,qID) " +
+                    "         VALUES (?,?,?,?)";
+
+            PreparedStatement statement = connection.prepareStatement(runSQL, Statement.RETURN_GENERATED_KEYS);
+            statement.setInt(1, count.getObjectCount());
+            statement.setInt(2, count.getFailCount());
+            statement.setInt(3, count.getRunID());
+            statement.setInt(4, count.getQID());
+            statement.executeUpdate();
+
+            //Get the ID of the inserted Run
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                runID = rs.getInt(1);
+            }
+            count.setID(runID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
 
     @Override
     public void writeAllFails(List<Fail> fails) {
 
     }
 
-    @Override
-    public void writeCount(Count count) {
-
-    }
 
     @Override
     public void writeLog(Log log) {
 
     }
-
 
 
 }
