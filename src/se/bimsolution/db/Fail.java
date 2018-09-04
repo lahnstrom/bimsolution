@@ -1,7 +1,16 @@
 package se.bimsolution.db;
 
 public class Fail {
-    long oId;
-    int qId;
-    int runId;
+    private long objectId;
+    private int queryId;
+    private int runId;
+
+
+    public Fail(long objectId, int queryId, int runId) {
+        this.objectId = objectId;
+        this.queryId = queryId;
+        this.runId = runId;
+    }
+
+
 }
