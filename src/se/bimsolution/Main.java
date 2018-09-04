@@ -34,8 +34,8 @@ public class Main {
                 IfcDoor ifcDoor = alldoors.get(0);
                 //Kolla vad dörren är definierat av
                 EList<IfcRelDefines> ifcRelDefinesEList = ifcDoor.getIsDefinedBy();
-
                 IfcPropertySet ps = null;
+
                 //Hitta den första definitionen som är ett propertySet
                 for (IfcRelDefines def:
                      ifcRelDefinesEList) {

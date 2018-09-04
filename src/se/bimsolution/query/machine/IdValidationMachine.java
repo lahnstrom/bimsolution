@@ -1,7 +1,9 @@
 package se.bimsolution.query.machine;
 
+import org.bimserver.emf.IdEObject;
 import org.bimserver.emf.IfcModelInterface;
-import org.bimserver.models.ifc2x3tc1.IfcDoor;
+import org.bimserver.models.ifc2x3tc1.*;
+import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
 
 import java.util.List;
@@ -14,9 +16,12 @@ public class IdValidationMachine implements QueryMachine {
     private int failCount;
     private String error;
     private boolean hasRun;
-    private List<Class> classList;
+    private List<Class<IfcDoor>> classList;
 
 
+    public IdValidationMachine(IfcModelInterface model) {
+        this.model = model;
+    }
 
     @Override
     public List<Fail> getFails() {
@@ -64,9 +69,29 @@ public class IdValidationMachine implements QueryMachine {
         classList.add(IfcDoor.class);
     }
 
+    private void runCheckForOneClass(Class<org.bimserver.emf.IdEObject> clazz) {
+        List<IdEObject> objList = model.getAllWithSubTypes(clazz);
+        for (IdEObject obj :
+                objList) {
+            if (!(obj instanceof IfcObject)) { throw new IllegalStateException(clazz.getName() + " is not an instance of     IfcObject.")}
+            EList<IfcRelDefines> ifcRelDefinesEList = ((IfcObject) obj).getIsDefinedBy();
+            IfcPropertySet ps = null;
+
+            for (IfcRelDefines ird : ifcRelDefinesEList) {
+                if (ird instanceof IfcRelDefinesByProperties) {
+                    //Går den att casta till ett propertyset?
+                    if (((IfcRelDefinesByProperties) ird).getRelatingPropertyDefinition() instanceof IfcPropertySet)  {
+                        ps = (IfcPropertySet) ((IfcRelDefinesByProperties) ird).getRelatingPropertyDefinition();
+                    }
+                    if (ps.get)
+
+                }
+            }
+        }
+    }
+
     @Override
     public void run() {
-
         hasRun = true;
     }
 }
