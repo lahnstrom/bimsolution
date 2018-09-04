@@ -31,7 +31,7 @@ public class QueryCoordinator implements Runnable{
                 repo.writeCount(new Count(qm.getCount(), qm.getFailCount()));
             } else {
                 hasError = true;
-                repo.writeLog(new Log(qm.getError()));
+                repo.writeLog(new Log(1,qm.getError(),1,1));
             }
         }
         run.setSuccess(!hasError);
