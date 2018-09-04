@@ -6,10 +6,7 @@ import org.bimserver.models.ifc2x3tc1.*;
 import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class IdValidationMachine implements QueryMachine {
 
@@ -31,6 +28,9 @@ public class IdValidationMachine implements QueryMachine {
         this.model = model;
         this.queryID = queryID;
         this.runID = runID;
+        this.fails = new ArrayList<>();
+        this.correctIDs = new HashMap<>();
+        correctIDs.put("IfcDoor", new HashSet<>(Arrays.asList("43.CCE")));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class IdValidationMachine implements QueryMachine {
             throw new IllegalStateException("The machine's run method resulted in an error being thrown. " +
                     "Therefore this method can't be called");
         }
-        return null;
+        return this.fails;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class IdValidationMachine implements QueryMachine {
             throw new IllegalStateException("The machine's run method resulted in an error being thrown. " +
                     "Therefore this method can't be called");
         }
-        return 0;
+        return this.count;
     }
 
     @Override
@@ -76,6 +76,7 @@ public class IdValidationMachine implements QueryMachine {
 
     private void populateClassList() {
         //TODO This method should populate the list of classes
+        classList = new ArrayList<>();
         classList.add(IfcDoor.class);
     }
 
@@ -93,6 +94,7 @@ public class IdValidationMachine implements QueryMachine {
         for (IdEObject obj :
                 objList) {
             checkIdEObject(clazz, localFails, obj);
+            this.count++;
         }
         return localFails;
     }
@@ -112,7 +114,7 @@ public class IdValidationMachine implements QueryMachine {
         for (IfcRelDefines ird : ifcRelDefinesEList) {
             boolean hasCorrectPropertySet = checkIfcRelDefines(clazz, localFails, obj, ird);
             if (!hasCorrectPropertySet) {
-                localFails.add(new Fail(obj.getOid(), this.queryID, this.runID));
+                addNewFail(localFails, obj);
             }
         }
     }
@@ -203,9 +205,13 @@ public class IdValidationMachine implements QueryMachine {
     private void checkIfValuePasses(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, String id) {
         String name = extractNameFromClass(clazz);
         if (!correctIDs.get(name).contains(id)) {
-            localFails.add(new Fail(obj.getOid(), this.queryID, this.runID));
-            this.failCount++;
+            addNewFail(localFails, obj);
         }
+    }
+
+    private void addNewFail(List<Fail> localFails, IdEObject obj) {
+        localFails.add(new Fail(obj.getOid(), this.queryID, this.runID));
+        this.failCount++;
     }
 
 
@@ -224,6 +230,7 @@ public class IdValidationMachine implements QueryMachine {
 
     @Override
     public void run() {
+        populateClassList();
         hasRun = true;
         for (Class clazz :
                 classList) {

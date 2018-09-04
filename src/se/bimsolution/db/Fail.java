@@ -12,5 +12,15 @@ public class Fail {
         this.runId = runId;
     }
 
+    public long getObjectId() {
+        return objectId;
+    }
 
+    public int getQueryId() {
+        return queryId;
+    }
+
+    public int getRunId() {
+        return runId;
+    }
 }
