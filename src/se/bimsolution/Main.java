@@ -9,6 +9,7 @@ import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
 import org.eclipse.emf.common.util.EList;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -66,6 +67,9 @@ public class Main {
 
                     System.out.println(ifcSingle.getName() + " " + stringv);
                 }
+
+
+
 //                IfcPropertySingleValue ifcSingle =  (IfcPropertySingleValue) ps.getHasProperties().get(7);
 //                IfcValue value =  ifcSingle.getNominalValue();
 //                String stringv = "";
