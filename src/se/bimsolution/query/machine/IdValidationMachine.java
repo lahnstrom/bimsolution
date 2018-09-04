@@ -30,7 +30,7 @@ public class IdValidationMachine implements QueryMachine {
         this.runID = runID;
         this.fails = new ArrayList<>();
         this.correctIDs = new HashMap<>();
-        correctIDs.put("IfcDoor", new HashSet<>(Arrays.asList("43.CCE")));
+        correctIDs.put("IfcDoor", new HashSet<>(Arrays.asList("43.CCE", "42.DE")));
     }
 
     @Override
@@ -112,10 +112,7 @@ public class IdValidationMachine implements QueryMachine {
         EList<IfcRelDefines> ifcRelDefinesEList = ((IfcObject) obj).getIsDefinedBy();
         //Gå igenom alla defines by relationer
         for (IfcRelDefines ird : ifcRelDefinesEList) {
-            boolean hasCorrectPropertySet = checkIfcRelDefines(clazz, localFails, obj, ird);
-            if (!hasCorrectPropertySet) {
-                addNewFail(localFails, obj);
-            }
+            checkIfcRelDefines(clazz, localFails, obj, ird);
         }
     }
 
@@ -128,9 +125,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param ird an IfcRelDefinesBy object
      * @return Is there a propertySet with the asked for name? && Is it correctly filled in?
      */
-    private boolean checkIfcRelDefines(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcRelDefines ird) {
+    private void checkIfcRelDefines(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcRelDefines ird) {
         IfcPropertySet ps;
-        boolean psetCorrect = false;
         //Kolla om det är en definesbypropertyrelation
         if (ird instanceof IfcRelDefinesByProperties) {
             //Går den att casta till ett propertyset?
@@ -139,11 +135,10 @@ public class IdValidationMachine implements QueryMachine {
                 //Är det rätt propertyset?
                 if (ps.getName().equals(PROPERTY_SET_NAME)) {
                     //Gå igenom alla properties i setet, om någon är fel
-                    psetCorrect = loopThroughProperties(clazz, localFails, obj, ps);
+                    loopThroughProperties(clazz, localFails, obj, ps);
                 }
             }
         }
-        return psetCorrect;
     }
 
     /**This method loops through a propertySet and checks every value.
@@ -155,14 +150,10 @@ public class IdValidationMachine implements QueryMachine {
      * @param ps The propertySet to loop through
      * @return Does the property we're looking for exist?
      */
-    private boolean loopThroughProperties(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcPropertySet ps) {
-        boolean existsProperty = false;
+    private void loopThroughProperties(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcPropertySet ps) {
         for (IfcProperty ip : ps.getHasProperties()) {
-            if (checkPropertyAndAddToFailList(clazz, localFails, obj, ip)) {
-                existsProperty = true;
-            }
+             checkPropertyAndAddToFailList(clazz, localFails, obj, ip);
         }
-        return existsProperty;
     }
 
     /**
@@ -177,21 +168,18 @@ public class IdValidationMachine implements QueryMachine {
      * @param ip an IfcProperty to be checked.
      * @return Does the correct PSet have a field for ID?
      */
-    private boolean checkPropertyAndAddToFailList(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcProperty ip) {
-        boolean hasProp = false;
+    private void checkPropertyAndAddToFailList(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcProperty ip) {
         if (ip instanceof IfcPropertySingleValue) {
             if (ip.getName().equals(PROPERTY_NAME)) {
-                hasProp = true;
                 IfcValue value = ((IfcPropertySingleValue) ip).getNominalValue();
-                String id = "";
+                String textValue = "";
                 //Ta ut textvärdet om det finns
                 if (value instanceof IfcText) {
-                    id = ((IfcText)value).getWrappedValue();
+                    textValue = ((IfcText)value).getWrappedValue();
+                    checkIfValuePasses(clazz, localFails, obj, textValue);
                 }
-                checkIfValuePasses(clazz, localFails, obj, id);
             }
         }
-        return hasProp;
     }
 
     /**
@@ -200,12 +188,14 @@ public class IdValidationMachine implements QueryMachine {
      * @param clazz The class representing an ifc 2x3 object.
      * @param localFails the list of fails for this specific object class
      * @param obj the BIM Object that is being checked.
-     * @param id the value that we extracted, and that proved to be wrong.
+     * @param textValue the value that we extracted, and that proved to be wrong.
      */
-    private void checkIfValuePasses(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, String id) {
+    private void checkIfValuePasses(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, String textValue) {
         String name = extractNameFromClass(clazz);
-        if (!correctIDs.get(name).contains(id)) {
+        System.out.println("I'm being checked: " + textValue + " My object id is: " + obj.getOid());
+        if (!correctIDs.get(name).contains(textValue)) {
             addNewFail(localFails, obj);
+            System.out.println("I failed: " +  textValue);
         }
     }
 

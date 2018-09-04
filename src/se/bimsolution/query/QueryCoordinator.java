@@ -10,18 +10,12 @@ import java.util.List;
 
 public class QueryCoordinator implements Runnable{
 
-    private final List<Fail> fails;
-    private final IfcModelInterface model;
-    private final BimServerClient client;
     private final Repository repo;
     private final List<QueryMachine> machineList;
 
     QueryCoordinator(IfcModelInterface model, BimServerClient client, Repository repo, List<QueryMachine> machineList) {
-        this.model = model;
-        this.client = client;
         this.repo = repo;
         this.machineList = machineList;
-        fails = new ArrayList<>();
     }
 
     @Override
