@@ -25,7 +25,6 @@ public class QueryCoordinator implements Runnable{
 
     @Override
     public void run() {
-
         Run run = repo.newRun();
         boolean hasError = false;
         for (QueryMachine qm:
