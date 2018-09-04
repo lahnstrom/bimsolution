@@ -12,6 +12,7 @@ import java.util.List;
  */
 public final class QueryUtils {
 
+
     private QueryUtils() { };
 
 
@@ -35,4 +36,5 @@ public final class QueryUtils {
         }
         return parsedData;
     }
+
 }
