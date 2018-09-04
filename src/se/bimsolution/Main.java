@@ -8,13 +8,18 @@ import org.bimserver.models.ifc2x3tc1.*;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
 import org.eclipse.emf.common.util.EList;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Handles the queries to the BIMServer
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        String[] strings = IfcDoor.class.toGenericString().split("\\.");
+        Arrays.asList(strings).forEach(System.out::println);
+        String last = strings[strings.length-1];
+        System.out.println(last);
         try (JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://104.248.40.190:8080/bimserver")) {
             // Creating a client in a try statement, this makes sure the client will be closed after use
             try (BimServerClient client = factory.create(new UsernamePasswordAuthenticationInfo(args[0], args[1]))) {
