@@ -15,18 +15,24 @@ public final class QueryUtils {
     private QueryUtils() { };
 
 
-    public HashMap<String, String> idToIfc (String CSVfilepath, String delimiter) throws IOException {
-        String line = "";
-        HashMap<String, String> idToIfc = new HashMap<>();
-        List<String> data = new ArrayList<>();
-
+    public HashMap<String, List<String>> idToIfcCSVParser (String CSVfilepath, String delimiter) throws IOException {
+        String line;
+        HashMap<String, List<String>> parsedData = new HashMap<>();
         BufferedReader br = new BufferedReader(new FileReader(CSVfilepath));
         while((line=br.readLine())!=null){
             String str[] = line.split(delimiter);
-            for(int i=0;i<str.length;i++){
-                idToIfc.put(str[0], str[1]);
+            String key = str[1];
+            String value = str[0];
+            List<String> valueList;
+
+            if (parsedData.containsKey(key)) {
+                valueList = parsedData.get(key);
+            } else {
+                valueList = new ArrayList<>();
+                parsedData.put(key, valueList);
             }
+            valueList.add(value);
         }
-        return idToIfc;
+        return parsedData;
     }
 }
