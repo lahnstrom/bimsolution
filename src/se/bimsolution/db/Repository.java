@@ -15,4 +15,5 @@ public interface Repository {
     void writeLog(Log log);
     void updateRun(Run run);
 
-}
+
+    }
