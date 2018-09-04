@@ -7,14 +7,38 @@ import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.models.ifc2x3tc1.*;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
 import org.eclipse.emf.common.util.EList;
+import se.bimsolution.db.Fail;
+import se.bimsolution.db.PostgresRepository;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
  * Handles the queries to the BIMServer
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
+
+        Connection dbconn = null;
+        try {
+            PostgresRepository postgresRepository = new PostgresRepository(args[2],
+                    args[3], args[4]);
+
+            postgresRepository.writeFail(new Fail(3542,1,1));
+            System.out.println("det funkar");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(dbconn!=null)
+                dbconn.close();
+        }
+        System.out.println("Done");
+
+
+/*
         try (JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://104.248.40.190:8080/bimserver")) {
             // Creating a client in a try statement, this makes sure the client will be closed after use
             try (BimServerClient client = factory.create(new UsernamePasswordAuthenticationInfo(args[0], args[1]))) {
@@ -81,6 +105,7 @@ public class Main {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
+*/
 
     }
 }
