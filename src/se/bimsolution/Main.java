@@ -8,13 +8,19 @@ import org.bimserver.models.ifc2x3tc1.*;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
 import org.eclipse.emf.common.util.EList;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Handles the queries to the BIMServer
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        String[] strings = IfcDoor.class.toGenericString().split("\\.");
+        Arrays.asList(strings).forEach(System.out::println);
+        String last = strings[strings.length-1];
+        System.out.println(last);
         try (JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://104.248.40.190:8080/bimserver")) {
             // Creating a client in a try statement, this makes sure the client will be closed after use
             try (BimServerClient client = factory.create(new UsernamePasswordAuthenticationInfo(args[0], args[1]))) {
@@ -29,8 +35,8 @@ public class Main {
                 IfcDoor ifcDoor = alldoors.get(0);
                 //Kolla vad dörren är definierat av
                 EList<IfcRelDefines> ifcRelDefinesEList = ifcDoor.getIsDefinedBy();
-
                 IfcPropertySet ps = null;
+
                 //Hitta den första definitionen som är ett propertySet
                 for (IfcRelDefines def:
                      ifcRelDefinesEList) {
@@ -61,6 +67,9 @@ public class Main {
 
                     System.out.println(ifcSingle.getName() + " " + stringv);
                 }
+
+
+
 //                IfcPropertySingleValue ifcSingle =  (IfcPropertySingleValue) ps.getHasProperties().get(7);
 //                IfcValue value =  ifcSingle.getNominalValue();
 //                String stringv = "";

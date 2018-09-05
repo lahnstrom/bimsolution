@@ -14,10 +14,10 @@ import java.util.List;
 public final class QueryUtils {
 
 
-    private QueryUtils() { };
+    private QueryUtils() {}
 
 
-    public HashMap<String, HashSet<String>> idToIfcCSVParser (String CSVfilepath, String delimiter) throws IOException {
+    public static HashMap<String, HashSet<String>> idToIfcCSVParser (String CSVfilepath, String delimiter) throws IOException {
         String line;
         HashMap<String, HashSet<String>> parsedData = new HashMap<>();
         BufferedReader br = new BufferedReader(new FileReader(CSVfilepath));
@@ -31,9 +31,9 @@ public final class QueryUtils {
                 valueList = parsedData.get(key);
             } else {
                 valueList = new HashSet<>();
-                parsedData.put(key, valueList);
+                parsedData.put(key.trim(), valueList);
             }
-            valueList.add(value);
+            valueList.add(value.trim());
         }
         return parsedData;
     }

@@ -3,20 +3,20 @@ package se.bimsolution.query;
 import org.bimserver.client.BimServerClient;
 import org.bimserver.emf.IfcModelInterface;
 import se.bimsolution.db.*;
+import se.bimsolution.query.machine.QueryMachine;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class QueryCoordinator implements Runnable{
 
-    private final List<Fail> fails;
     private final Repository repo;
     private final List<QueryMachine> machineList;
+
 
     QueryCoordinator(Repository repo, List<QueryMachine> machineList) {
         this.repo = repo;
         this.machineList = machineList;
-        fails = new ArrayList<>();
     }
 
     @Override

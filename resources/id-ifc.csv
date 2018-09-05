@@ -1,9 +1,9 @@
-52-PN,ifc FlowSegment
-53-PN,ifc FlowSegment
-54-PN,ifc FlowSegment
-55-PN,ifc FlowSegment
-56-PN,ifc FlowSegment
-6-SBD,ifc FlowSegment
+52-PN,IfcFlowSegment
+53-PN,IfcFlowSegment
+54-PN,IfcFlowSegment
+55-PN,IfcFlowSegment
+56-PN,IfcFlowSegment
+6-SBD,IfcFlowSegment
 57-QM,IfcAirTerminal
 57-QF,IfcAirToAirHeatRecovery
 15.SJ,IfcBeam
