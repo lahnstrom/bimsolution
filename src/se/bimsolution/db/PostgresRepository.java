@@ -106,7 +106,7 @@ public class PostgresRepository implements Repository {
             PreparedStatement statement = connection.prepareStatement(runSQL);
 
             for (Fail fail : fails) {
-                statement.setInt(1, fail.getObjectID());
+                statement.setLong(1, fail.getObjectID());
                 statement.setInt(2, fail.getRunID());
                 statement.setInt(3, fail.getQID());
                 statement.addBatch();

@@ -25,10 +25,9 @@ public class ClientBuilder {
      * @throws Exception when unable to connect, perhaps check credentials
      */
     public BimServerClient build() throws Exception {
-        try (JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://104.248.40.190:8080/bimserver")) {
-            try (BimServerClient client = factory.create(auth)) {
-                return client;
-            }
+        JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://104.248.40.190:8080/bimserver");
+        try (BimServerClient client = factory.create(auth)) {
+            return client;
         }
     }
 }

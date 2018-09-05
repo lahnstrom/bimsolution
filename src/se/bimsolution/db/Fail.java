@@ -3,11 +3,11 @@ package se.bimsolution.db;
 public class Fail {
     private int ID;
     private int runID;
-    private int objectID;
+    private long objectID;
     private int qID;
 
 
-    public Fail(int objectID, int qID, int runID) {
+    public Fail(long objectID, int qID, int runID) {
         this.objectID = objectID;
         this.qID = qID;
         this.runID = runID;
@@ -29,7 +29,7 @@ public class Fail {
         this.runID = runID;
     }
 
-    public int getObjectID() {
+    public long getObjectID() {
         return objectID;
     }
 
@@ -43,5 +43,6 @@ public class Fail {
 
     public void setQID(int qID) {
         this.qID = qID;
+
     }
 }

@@ -4,6 +4,7 @@ import org.bimserver.client.BimServerClient;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.interfaces.objects.SProject;
 import se.bimsolution.db.Repository;
+import se.bimsolution.query.machine.QueryMachine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
