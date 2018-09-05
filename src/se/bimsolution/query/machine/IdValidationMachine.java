@@ -5,7 +5,9 @@ import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.*;
 import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
+import se.bimsolution.query.QueryUtils;
 
+import java.io.IOException;
 import java.util.*;
 
 public class IdValidationMachine implements QueryMachine {
@@ -20,8 +22,9 @@ public class IdValidationMachine implements QueryMachine {
     private boolean hasRun;
     private List<Class> classList;
     private HashMap<String, HashSet<String>> correctIDs;
+    private int debugCount;
 
-    private final String PROPERTY_SET_NAME = "AH-Bygg";
+    private final String PROPERTY_SET_NAME = "AH";
     private final String PROPERTY_NAME = "BSAB96BD";
 
     public IdValidationMachine(IfcModelInterface model, int queryID, int runID) {
@@ -29,8 +32,11 @@ public class IdValidationMachine implements QueryMachine {
         this.queryID = queryID;
         this.runID = runID;
         this.fails = new ArrayList<>();
-        this.correctIDs = new HashMap<>();
-        correctIDs.put("IfcDoor", new HashSet<>(Arrays.asList("43.CCE", "42.DE")));
+        try {
+            this.correctIDs = QueryUtils.idToIfcCSVParser("resources\\spec.csv", ",");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -75,9 +81,57 @@ public class IdValidationMachine implements QueryMachine {
     }
 
     private void populateClassList() {
-        //TODO This method should populate the list of classes
         classList = new ArrayList<>();
         classList.add(IfcDoor.class);
+        classList.add(IfcFlowSegment.class);
+        classList.add(IfcFurnitureType.class);
+        classList.add(IfcAirTerminalType.class);
+        classList.add(IfcAirToAirHeatRecoveryType.class);
+        classList.add(IfcBeam.class);
+        classList.add(IfcBuilding.class);
+        classList.add(IfcBuildingElementProxy.class);
+        classList.add(IfcCompressorType.class);
+        classList.add(IfcBuildingStorey.class);
+        classList.add(IfcColumn.class);
+        classList.add(IfcCovering.class);
+        classList.add(IfcCurtainWall.class);
+        classList.add(IfcAirTerminalType.class);
+        classList.add(IfcAirTerminalBoxType.class);
+        classList.add(IfcDuctSegmentType.class);
+        classList.add(IfcDuctFittingType.class);
+        classList.add(IfcDuctSilencerType.class);
+        classList.add(IfcEquipmentElement.class);
+        classList.add(IfcFireSuppressionTerminalType.class);
+        classList.add(IfcFanType.class);
+        classList.add(IfcFilterType.class);
+        classList.add(IfcTankType.class);
+        classList.add(IfcFlowTerminal.class);
+        classList.add(IfcFooting.class);
+        classList.add(IfcHumidifierType.class);
+        classList.add(IfcUnitaryEquipmentType.class);
+        classList.add(IfcPile.class);
+        classList.add(IfcPumpType.class);
+        classList.add(IfcPipeFittingType.class);
+        classList.add(IfcSwitchingDeviceType.class);
+        classList.add(IfcPipeSegmentType.class);
+        classList.add(IfcRamp.class);
+        classList.add(IfcRampFlight.class);
+        classList.add(IfcStairFlight.class);
+        classList.add(IfcStair.class);
+        classList.add(IfcSlab.class);
+        classList.add(IfcDamperType.class);
+        classList.add(IfcRoof.class);
+        classList.add(IfcSite.class);
+        classList.add(IfcJunctionBoxType.class);
+        classList.add(IfcSpace.class);
+        classList.add(IfcOutletType.class);
+        classList.add(IfcSystem.class);
+        classList.add(IfcValveType.class);
+        classList.add(IfcWall.class);
+        classList.add(IfcFlowController.class);
+        classList.add(IfcLightFixtureType.class);
+        classList.add(IfcWindow.class);
+        classList.add(IfcOpeningElement.class);
     }
 
 
@@ -133,7 +187,8 @@ public class IdValidationMachine implements QueryMachine {
             if (((IfcRelDefinesByProperties) ird).getRelatingPropertyDefinition() instanceof IfcPropertySet)  {
                 ps = (IfcPropertySet) ((IfcRelDefinesByProperties) ird).getRelatingPropertyDefinition();
                 //Är det rätt propertyset?
-                if (ps.getName().equals(PROPERTY_SET_NAME)) {
+                if (ps.getName().startsWith(PROPERTY_SET_NAME)) {
+                    System.out.println(ps.getName());
                     //Gå igenom alla properties i setet, om någon är fel
                     loopThroughProperties(clazz, localFails, obj, ps);
                 }
@@ -192,10 +247,13 @@ public class IdValidationMachine implements QueryMachine {
      */
     private void checkIfValuePasses(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, String textValue) {
         String name = extractNameFromClass(clazz);
-        System.out.println("I'm being checked: " + textValue + " My object id is: " + obj.getOid());
+        this.debugCount++;
         if (!correctIDs.get(name).contains(textValue)) {
             addNewFail(localFails, obj);
-            System.out.println("I failed: " +  textValue);
+//            System.out.println("I failed: " + textValue + " My object id is: " + obj.getOid() + "  I am an " + extractNameFromClass(clazz));
+//            System.out.print("The correct IDs are: ");
+//            correctIDs.get(name).forEach(x-> System.out.print(x + " |  "));
+//            System.out.println();
         }
     }
 
@@ -215,7 +273,11 @@ public class IdValidationMachine implements QueryMachine {
      */
     private String extractNameFromClass(Class<IdEObject> clazz) {
         String[] parts = clazz.toString().split("\\.");
-        return parts[parts.length-1];
+        String ret =  parts[parts.length-1];
+        if (ret.endsWith("Type")) {
+            ret = ret.substring(0, ret.length()-4);
+        }
+        return ret;
     }
 
     @Override
@@ -230,5 +292,6 @@ public class IdValidationMachine implements QueryMachine {
                 this.error = e.getMessage();
             }
         }
+        System.out.println("Debug count, This many objects made it to the last method: " + debugCount);
     }
 }
