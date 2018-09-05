@@ -13,7 +13,7 @@ public class QueryCoordinator implements Runnable{
     private final Repository repo;
     private final List<QueryMachine> machineList;
 
-    QueryCoordinator(Repository repo, List<QueryMachine> machineList) {
+    public QueryCoordinator(Repository repo, List<QueryMachine> machineList) {
         this.repo = repo;
         this.machineList = machineList;
         fails = new ArrayList<>();
@@ -22,16 +22,19 @@ public class QueryCoordinator implements Runnable{
     @Override
     public void run() {
         Run run = repo.newRun();
+        run.setSuccess(true);
         boolean hasError = false;
+
         for (QueryMachine qm:
              machineList) {
             qm.run();
             if (qm.getError()==null) {
                 repo.writeAllFails(qm.getFails());
-                repo.writeCount(new Count(qm.getCount(), qm.getFailCount()));
+                repo.writeCount(new Count(qm.getCount(), qm.getFailCount(), run.getId(), qm.getID()));
+
             } else {
                 hasError = true;
-                repo.writeLog(new Log(qm.getError()));
+                repo.writeLog(new Log(1,qm.getError(),1,1));
             }
         }
         run.setSuccess(!hasError);
