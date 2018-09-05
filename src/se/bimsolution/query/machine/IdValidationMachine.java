@@ -22,11 +22,15 @@ public class IdValidationMachine implements QueryMachine {
     private boolean hasRun;
     private List<Class> classList;
     private HashMap<String, HashSet<String>> correctIDs;
-    private int debugCount;
 
     private final String VARIES_STRING = "Varierar";
     private final String PROPERTY_SET_NAME = "AH";
     private final String PROPERTY_NAME = "BSAB96BD";
+
+
+    private int debugCount;
+    private int debugCount2;
+    private int debugCount3;
 
     public IdValidationMachine(IfcModelInterface model, int queryID, int runID) {
         this.model = model;
@@ -92,7 +96,7 @@ public class IdValidationMachine implements QueryMachine {
         classList.add(IfcBeam.class);
         classList.add(IfcBuilding.class);
         classList.add(IfcCompressorType.class);
-        classList.add(IfcBuildingStorey.class);
+//        classList.add(IfcBuildingStorey.class);
         classList.add(IfcColumn.class);
         classList.add(IfcCovering.class);
         classList.add(IfcCurtainWall.class);
@@ -124,7 +128,7 @@ public class IdValidationMachine implements QueryMachine {
         classList.add(IfcRoof.class);
         classList.add(IfcSite.class);
         classList.add(IfcJunctionBoxType.class);
-        classList.add(IfcSpace.class);
+//        classList.add(IfcSpace.class);
         classList.add(IfcOutletType.class);
         classList.add(IfcSystem.class);
         classList.add(IfcValveType.class);
@@ -132,7 +136,7 @@ public class IdValidationMachine implements QueryMachine {
         classList.add(IfcFlowController.class);
         classList.add(IfcLightFixtureType.class);
         classList.add(IfcWindow.class);
-        classList.add(IfcOpeningElement.class);
+//        classList.add(IfcOpeningElement.class);
     }
 
 
@@ -177,8 +181,7 @@ public class IdValidationMachine implements QueryMachine {
         }
         if (!hasPset) {
             addNewFail(localFails, obj);
-            System.out.println("I don't seem to have an AH pset:  ");
-            System.out.println("Id: " + obj.getOid() + " | Type: " + extractNameFromClass(clazz));
+            debugCount2++;
         }
     }
 
@@ -226,8 +229,7 @@ public class IdValidationMachine implements QueryMachine {
         }
         if (!rightPSetExistsOnObject) {
             addNewFail(localFails, obj);
-            System.out.println("I don't seem to have a BSAB96BD property in my pset: :  ");
-            System.out.println("Id: " + obj.getOid() + " | Type: " + extractNameFromClass(clazz));
+            debugCount3++;
         }
     }
 
@@ -326,5 +328,7 @@ public class IdValidationMachine implements QueryMachine {
             }
         }
         System.out.println("Debug count, This many objects made it to the last method: " + debugCount);
+        System.out.println("Debug count, This many objects are missing AH psets: " + debugCount2);
+        System.out.println("Debug count, This many objects have AH psets but are missing BSAB96BD values: " + debugCount3);
     }
 }
