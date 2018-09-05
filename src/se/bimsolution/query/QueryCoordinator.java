@@ -13,7 +13,8 @@ public class QueryCoordinator implements Runnable{
     private final Repository repo;
     private final List<QueryMachine> machineList;
 
-    QueryCoordinator(IfcModelInterface model, BimServerClient client, Repository repo, List<QueryMachine> machineList) {
+
+    QueryCoordinator(Repository repo, List<QueryMachine> machineList) {
         this.repo = repo;
         this.machineList = machineList;
     }
