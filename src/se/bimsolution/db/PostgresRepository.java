@@ -12,7 +12,6 @@ public class PostgresRepository implements Repository {
             connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -39,7 +38,6 @@ public class PostgresRepository implements Repository {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
         return run;
     }
@@ -51,12 +49,11 @@ public class PostgresRepository implements Repository {
         try {
             //Update Run to DB
             String runSQL = "UPDATE runs " +
-            "                SET Success = ?" +
-            "                WHERE ID = ?";
+                    "                SET Success = ?" +
+                    "                WHERE ID = ?";
             PreparedStatement statement = connection.prepareStatement(runSQL, Statement.RETURN_GENERATED_KEYS);
             statement.setBoolean(1, run.getSuccess());
             statement.setInt(2, run.getId());
-
             statement.executeUpdate();
 
             //Get the ID of the inserted Run
@@ -68,7 +65,6 @@ public class PostgresRepository implements Repository {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -97,41 +93,29 @@ public class PostgresRepository implements Repository {
             count.setID(countID);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    public void writeFail(Fail fail) {
-        int failID = 0;
-
-        try {
-            //Insert Run to DB
-            String runSQL = "INSERT INTO Fails " +
-                    "       (o_id, run_id, q_id) " +
-                    "         VALUES (?,?,?)";
-
-            PreparedStatement statement = connection.prepareStatement(runSQL, Statement.RETURN_GENERATED_KEYS);
-            statement.setInt(1, fail.getObjectID());
-            statement.setInt(2, fail.getRunID());
-            statement.setInt(3, fail.getQID());
-            statement.executeUpdate();
-
-            //Get the ID of the inserted Run
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next()) {
-                failID = rs.getInt(1);
-            }
-            fail.setID(failID);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
     }
 
     @Override
     public void writeAllFails(List<Fail> fails) {
-        fails.forEach(fail -> writeFail(fail));
 
+        try {
+            String runSQL = "INSERT INTO Fails " +
+                    "       (o_id, run_id, q_id) " +
+                    "         VALUES (?,?,?)";
+            PreparedStatement statement = connection.prepareStatement(runSQL);
+
+            for (Fail fail : fails) {
+                statement.setInt(1, fail.getObjectID());
+                statement.setInt(2, fail.getRunID());
+                statement.setInt(3, fail.getQID());
+                statement.addBatch();
+            }
+            statement.executeBatch();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -148,7 +132,7 @@ public class PostgresRepository implements Repository {
             statement.setString(1, log.getLogMessage());
             statement.setInt(2, log.getRunID());
             statement.setInt(3, log.qID);
-            statement.executeBatch();
+            statement.executeUpdate();
 
             //Get the ID of the inserted Run
             ResultSet rs = statement.getGeneratedKeys();
@@ -158,7 +142,6 @@ public class PostgresRepository implements Repository {
             log.setID(logID);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -176,7 +159,6 @@ public class PostgresRepository implements Repository {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
         return queries;
     }
