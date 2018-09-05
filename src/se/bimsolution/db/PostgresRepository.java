@@ -6,10 +6,8 @@ import java.util.List;
 
 public class PostgresRepository implements Repository {
     private Connection connection;
-    private Boolean inTransaction = false;
-    private Run run = new Run();
 
-    public PostgresRepository(String url, String username, String password ) throws RuntimeException {
+    public PostgresRepository(String url, String username, String password) throws RuntimeException {
         try {
             connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
@@ -21,8 +19,28 @@ public class PostgresRepository implements Repository {
     @Override
     public Run newRun() {
         Run run = new Run();
+        int runID = 0;
+        try {
+            //Insert Run to DB
+            String runSQL = "INSERT INTO runs " +
+                    "       (Success) " +
+                    "         VALUES (?)";
 
-        run.setSuccess(true);
+            PreparedStatement statement = connection.prepareStatement(runSQL, Statement.RETURN_GENERATED_KEYS);
+            statement.setBoolean(1, false);
+            statement.executeUpdate();
+
+            //Get the ID of the inserted Run
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                runID = rs.getInt(1);
+            }
+            run.setId(runID);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
         return run;
     }
 
@@ -31,13 +49,14 @@ public class PostgresRepository implements Repository {
         int runID = 0;
 
         try {
-            //Insert Run to DB
-            String runSQL = "INSERT INTO Run " +
-                    "       (Success) " +
-                    "         VALUES (?)";
-
+            //Update Run to DB
+            String runSQL = "UPDATE runs " +
+            "                SET Success = ?" +
+            "                WHERE ID = ?";
             PreparedStatement statement = connection.prepareStatement(runSQL, Statement.RETURN_GENERATED_KEYS);
             statement.setBoolean(1, run.getSuccess());
+            statement.setInt(2, run.getId());
+
             statement.executeUpdate();
 
             //Get the ID of the inserted Run
@@ -59,7 +78,7 @@ public class PostgresRepository implements Repository {
 
         try {
             //Insert Run to DB
-            String countSQL = "INSERT INTO Count " +
+            String countSQL = "INSERT INTO Counts " +
                     "       (objectcount, failcount, run_id,q_id) " +
                     "         VALUES (?,?,?,?)";
 
@@ -68,7 +87,7 @@ public class PostgresRepository implements Repository {
             statement.setInt(2, count.getFailCount());
             statement.setInt(3, count.getRunID());
             statement.setInt(4, count.getQID());
-            statement.executeBatch();
+            statement.executeUpdate();
 
             //Get the ID of the inserted Run
             ResultSet rs = statement.getGeneratedKeys();

@@ -7,7 +7,7 @@ public class Count {
     private int runID;
     private int qID;
 
-    public Count(int objectCount, int failCount) {
+    public Count(int objectCount, int failCount, int runID, int qID) {
         this.objectCount = objectCount;
         this.failCount = failCount;
         this.runID = runID;

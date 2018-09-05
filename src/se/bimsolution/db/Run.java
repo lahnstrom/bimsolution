@@ -4,6 +4,7 @@ public class Run {
     int id;
     boolean success;
 
+
     public int getId() {
         return id;
     }
@@ -15,6 +16,5 @@ public class Run {
         this.success = success;
     }
     public boolean getSuccess() {return this.success;}
-
 
 }
