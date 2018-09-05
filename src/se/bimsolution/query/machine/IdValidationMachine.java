@@ -38,6 +38,7 @@ public class IdValidationMachine implements QueryMachine {
         this.queryID = queryID;
         this.runID = runID;
         this.fails = new ArrayList<>();
+        this.classList = QueryUtils.standardClassList();
         try {
             this.correctIDs = QueryUtils.idToIfcCSVParser("resources\\spec.csv", ",");
         } catch (IOException e) {
@@ -89,60 +90,6 @@ public class IdValidationMachine implements QueryMachine {
             throw new IllegalStateException("The machine must run before calling the getError method.");
         }
         return this.error;
-    }
-
-    //TODO Refactor the machine to take a classlist.
-    private void populateClassList() {
-        classList = new ArrayList<>();
-        classList.add(IfcDoor.class);
-        classList.add(IfcFlowSegment.class);
-//        classList.add(IfcFurnitureType.class);
-        classList.add(IfcAirTerminalType.class);
-        classList.add(IfcAirToAirHeatRecoveryType.class);
-        classList.add(IfcBeam.class);
-        classList.add(IfcBuilding.class);
-        classList.add(IfcCompressorType.class);
-//        classList.add(IfcBuildingStorey.class);
-        classList.add(IfcColumn.class);
-        classList.add(IfcCovering.class);
-        classList.add(IfcCurtainWall.class);
-        classList.add(IfcAirTerminalType.class);
-        classList.add(IfcAirTerminalBoxType.class);
-        classList.add(IfcDuctSegmentType.class);
-        classList.add(IfcDuctFittingType.class);
-        classList.add(IfcDuctSilencerType.class);
-        classList.add(IfcEquipmentElement.class);
-        classList.add(IfcFireSuppressionTerminalType.class);
-        classList.add(IfcFanType.class);
-        classList.add(IfcFilterType.class);
-        classList.add(IfcTankType.class);
-        classList.add(IfcFlowTerminal.class);
-        classList.add(IfcFooting.class);
-        classList.add(IfcHumidifierType.class);
-        classList.add(IfcUnitaryEquipmentType.class);
-        classList.add(IfcPile.class);
-        classList.add(IfcPumpType.class);
-        classList.add(IfcPipeFittingType.class);
-        classList.add(IfcSwitchingDeviceType.class);
-        classList.add(IfcPipeSegmentType.class);
-        classList.add(IfcRamp.class);
-        classList.add(IfcRampFlight.class);
-        classList.add(IfcStairFlight.class);
-        classList.add(IfcStair.class);
-//        classList.add(IfcSlab.class);
-        classList.add(IfcDamperType.class);
-        classList.add(IfcRoof.class);
-        classList.add(IfcSite.class);
-        classList.add(IfcJunctionBoxType.class);
-//        classList.add(IfcSpace.class);
-        classList.add(IfcOutletType.class);
-        classList.add(IfcSystem.class);
-        classList.add(IfcValveType.class);
-        classList.add(IfcWall.class);
-        classList.add(IfcFlowController.class);
-        classList.add(IfcLightFixtureType.class);
-//        classList.add(IfcWindow.class);
-//        classList.add(IfcOpeningElement.class);
     }
 
 
@@ -323,8 +270,6 @@ public class IdValidationMachine implements QueryMachine {
 
     @Override
     public void run() {
-        populateClassList();
-        hasRun = true;
         for (Class clazz :
                 classList) {
             try {
@@ -333,6 +278,7 @@ public class IdValidationMachine implements QueryMachine {
                 this.error = e.getMessage();
             }
         }
+        hasRun = true;
         debugPrint();
     }
 
