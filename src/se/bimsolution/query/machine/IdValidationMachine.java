@@ -85,7 +85,7 @@ public class IdValidationMachine implements QueryMachine {
         return this.error;
     }
 
-
+    //TODO Refactor the machine to take a classlist.
     private void populateClassList() {
         classList = new ArrayList<>();
         classList.add(IfcDoor.class);
@@ -123,7 +123,7 @@ public class IdValidationMachine implements QueryMachine {
         classList.add(IfcRampFlight.class);
         classList.add(IfcStairFlight.class);
         classList.add(IfcStair.class);
-        classList.add(IfcSlab.class);
+//        classList.add(IfcSlab.class);
         classList.add(IfcDamperType.class);
         classList.add(IfcRoof.class);
         classList.add(IfcSite.class);
@@ -135,7 +135,7 @@ public class IdValidationMachine implements QueryMachine {
         classList.add(IfcWall.class);
         classList.add(IfcFlowController.class);
         classList.add(IfcLightFixtureType.class);
-        classList.add(IfcWindow.class);
+//        classList.add(IfcWindow.class);
 //        classList.add(IfcOpeningElement.class);
     }
 
@@ -327,8 +327,21 @@ public class IdValidationMachine implements QueryMachine {
                 this.error = e.getMessage();
             }
         }
-        System.out.println("Debug count, This many objects made it to the last method: " + debugCount);
-        System.out.println("Debug count, This many objects are missing AH psets: " + debugCount2);
-        System.out.println("Debug count, This many objects have AH psets but are missing BSAB96BD values: " + debugCount3);
+        debugPrint();
+    }
+
+
+
+    private void debugPrint() {
+        System.out.println("I checked the following IfcObjects in the model");
+        for (Class clazz:
+             classList) {
+            System.out.println(extractNameFromClass(clazz));
+        }
+        System.out.println("I handled this many object: " + count);
+        System.out.println("I got this many  fails: " + failCount);
+        System.out.println("This many objects made it to the last method: " + debugCount);
+        System.out.println("This many objects are missing AH psets: " + debugCount2);
+        System.out.println("This many objects have AH psets but are missing BSAB96BD values: " + debugCount3);
     }
 }
