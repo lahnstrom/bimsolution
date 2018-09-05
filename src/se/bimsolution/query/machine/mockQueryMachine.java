@@ -7,16 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class mockQueryMachine implements QueryMachine {
+    final int ID = 0;
+
     @Override
     public List<Fail> getFails() {
         List<Fail> retList = new ArrayList<>();
-        retList.add(new Fail(123, 2, 100));
-        retList.add(new Fail(123, 7, 100));
-        retList.add(new Fail(125, 3, 100));
-        retList.add(new Fail(123, 2, 101));
-        retList.add(new Fail(123, 2, 101));
-        retList.add(new Fail(123, 1, 101));
+        retList.add(new Fail(123, 1, 1));
+        retList.add(new Fail(123, 1, 1));
+        retList.add(new Fail(125, 1, 1));
+        retList.add(new Fail(123, 1, 1));
+        retList.add(new Fail(123, 1, 1));
+        retList.add(new Fail(123, 1, 1));
         return retList;
+    }
+    @Override
+    public int getID(){
+        return ID;
     }
 
     @Override
@@ -36,6 +42,5 @@ public class mockQueryMachine implements QueryMachine {
 
     @Override
     public void run() {
-
     }
 }

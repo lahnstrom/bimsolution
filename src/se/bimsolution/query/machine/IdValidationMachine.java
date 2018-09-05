@@ -12,6 +12,7 @@ import java.util.*;
 
 public class IdValidationMachine implements QueryMachine {
 
+    private final int QUERY_ID = 1;
     private int runID;
     private int queryID;
     private IfcModelInterface model;
@@ -42,6 +43,11 @@ public class IdValidationMachine implements QueryMachine {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int getID() {
+        return QUERY_ID;
     }
 
     @Override
