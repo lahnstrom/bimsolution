@@ -67,9 +67,9 @@ public class Listener implements Runnable {
         try {
             List<SProject> list = bsc.getServiceInterface().getAllProjects(false, false);
             list.forEach(x-> tryMap.put(x.getName(),x.getLastRevisionId()));
-            map.entrySet().forEach(x -> {
-                if (tryMap.get(x.getKey()) != x.getValue()) {
-                    runProjects.add(x.getKey());
+            map.forEach((key, value) -> {
+                if (tryMap.get(key).equals(value)) {
+                    runProjects.add(key);
                 }
             });
 
