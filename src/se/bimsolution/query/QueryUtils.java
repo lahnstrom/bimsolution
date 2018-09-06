@@ -101,8 +101,11 @@ public final class QueryUtils {
     }
 
 
-
-    //TODO IfcBuilding from IfcElement
+    /**
+     * Given an IfcElement, this method returns the IfcBuildingStorey within which the element is contained.
+     * @param element An IfcElement.
+     * @return An IfcBuldingStorey within which the Element is contained.
+     */
     public IfcBuildingStorey ifcBuildingStoreyFromElement(IfcElement element) {
         EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
         for (IfcRelContainedInSpatialStructure rel:
@@ -114,7 +117,12 @@ public final class QueryUtils {
         throw new IllegalArgumentException("The element has no IfcBuildingStorey associated with it");
     }
 
-    //TODO IfcStorey from IfcOBject
+
+    /**
+     * Given an IfcElement, this method returns the IfcBuilding within which the element is contained.
+     * @param element An IfcElement.
+     * @return An IfcBuilding within which the Element is contained.
+     */
     public IfcBuilding ifcBuildingFromElement(IfcElement element) {
         IfcBuildingStorey storey = ifcBuildingStoreyFromElement(element);
         EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
@@ -127,8 +135,13 @@ public final class QueryUtils {
 
     }
 
-    //TODO IfcPsets from IfcObject
-    public EList<IfcPropertySet> ifcPropertySetFromElement(IfcObject element) {
+
+    /**
+     * Given an IfcObject, this method returns a list of the IfcPropertySets the element is defined by.
+     * @param element An IfcElement.
+     * @return A list of IfcPropertySets which the element is defined by.
+     */
+    public List<IfcPropertySet> ifcPropertySetFromElement(IfcObject element) {
         EList<IfcRelDefines> definesList = element.getIsDefinedBy();
         EList<IfcPropertySet> psets = new BasicEList<>();
         for (IfcRelDefines rel:
@@ -146,9 +159,15 @@ public final class QueryUtils {
         return psets;
     }
 
-    public IfcPropertySet getPropertySetByName(List<IfcPropertySet> psets, String name) {
+    /**
+     * Given a list of IfcPropertySets and a string, this method returns the first PropertySet matching that string.
+     * @param propertySets A list of IfcPropertySets
+     * @param name A name of an IfcPropertySet
+     * @return An IfcPropertySet
+     */
+    public IfcPropertySet getPropertySetByName(List<IfcPropertySet> propertySets, String name) {
         for (IfcPropertySet pset:
-             psets) {
+             propertySets) {
             if (pset.getName().equals(name)) {
                 return pset;
             }
@@ -156,6 +175,13 @@ public final class QueryUtils {
         throw new IllegalArgumentException("The property set with name " + name + " does not exist");
     }
 
+    /**
+     * Given a list of IfcPropertySets and a String,
+     * this method returns the first PropertySet that starts with the string.
+     * @param propertySets A list of IfcPropertySets
+     * @param startsWith The first part of an IfcPropertySet name
+     * @return An IfcPropertySet
+     */
     public IfcPropertySet getPropertySetByStartsWith(List<IfcPropertySet> propertySets ,String startsWith) {
         for (IfcPropertySet pset:
                 propertySets) {
@@ -177,8 +203,13 @@ public final class QueryUtils {
         }
         throw new IllegalArgumentException("No IfcProperty found in the IfcPropertySet with the name: " + name);
     }
-    //TODO Property with name NAME from pset:
 
+    /**
+     * Given an IfcPropertySingleValue that has an IfcText nominal value,
+     * this method returns the wrapped value as a string.
+     * @param singleValue an IfcPropertySingleValue.
+     * @return the wrapped IfcTextValue as a String
+     */
     public String getNominalTextValueFromSingleValue(IfcPropertySingleValue singleValue) {
         IfcValue value = singleValue.getNominalValue();
         //Ta ut textvärdet om det finns
@@ -187,12 +218,6 @@ public final class QueryUtils {
         }
         throw new IllegalArgumentException("The IfcPropertySingleValue does not have a nominal value with type text");
     }
-
-    //TODO BSAB96BD from pset
-
-    //TODO TYPID from pset
-
-    //TODO Benämning from pset
 
 
 }
