@@ -372,13 +372,22 @@ public final class QueryUtils {
         return false;
     }
 
+    /**
+     * Given an IfcProduct, steps through the object tree and sums the Z-vals in each step.
+     * Returns the absolute z-value as it relates to the IfcSite
+     * @param product
+     * @return
+     */
     public static double getAbsoluteZValue(IfcProduct product) {
         double absoluteZValue = 0;
         IfcLocalPlacement localPlacement = getLocalPlacement(product);
-        getLocalPlacement(localPlacement);
+        IfcAxis2Placement3D placement3D = relatingIfcAxis3DFromLocalPlacement(localPlacement);
+        absoluteZValue += getZValueOfPlacement(placement3D);
         while (!placementPlacesIfcSite(localPlacement)) {
-
+            localPlacement = getLocalPlacement(localPlacement);
+            placement3D = relatingIfcAxis3DFromLocalPlacement(localPlacement);
+            absoluteZValue += getZValueOfPlacement(placement3D);
         }
-        return 0;
+        return absoluteZValue;
     }
 }
