@@ -179,6 +179,15 @@ public final class QueryUtils {
     }
     //TODO Property with name NAME from pset:
 
+    public String getNominalTextValueFromSingleValue(IfcPropertySingleValue singleValue) {
+        IfcValue value = singleValue.getNominalValue();
+        //Ta ut textvärdet om det finns
+        if (value instanceof IfcText) {
+            return ((IfcText) value).getWrappedValue();
+        }
+        throw new IllegalArgumentException("The IfcPropertySingleValue does not have a nominal value with type text");
+    }
+
     //TODO BSAB96BD from pset
 
     //TODO TYPID from pset
