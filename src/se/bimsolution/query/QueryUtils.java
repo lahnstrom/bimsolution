@@ -271,5 +271,47 @@ public final class QueryUtils {
         return false;
     }
 
+    /**
+     * Given an IfcProduct, return the relating IfcAxis2Placement
+     * @param product An IfcObject which indirectly relates to a IfcAxis2Placement
+     * @return The IfcAxis2Placement
+     */
+    public static IfcAxis2Placement relatingIfcAxis2Placement(IfcProduct product) {
+        IfcObjectPlacement ifcObjectPlacement = product.getObjectPlacement();
+        if (ifcObjectPlacement instanceof IfcLocalPlacement) {
+            return ((IfcLocalPlacement) ifcObjectPlacement).getRelativePlacement();
+        }
+        throw new IllegalArgumentException("No relating IfcAxis2Placement exists on object");
+    }
+
+    /**
+     * Given an IfcPlacement, returns the list of coordinates for the cartesian point relating to the placement.
+     * @param placement An IfcPlacement
+     * @return The relative coordinates of the placement
+     */
+    public static List<Double> getRelatingCoordinatesOfPlacement(IfcPlacement placement) {
+        IfcCartesianPoint location = placement.getLocation();
+        return location.getCoordinates();
+    }
+
+    /**
+     * Takes a list of coordinates and returns the Z-value, assuming order x, y, z;
+     * @param coordinates A list of coordinates
+     * @return The third element in the list;
+     */
+    public static double getZValueOfCoordinates(List<Double> coordinates) {
+        return coordinates.get(2);
+    }
+
+    /**
+     * Given a placement, returns the z-value of the relating cartesian point.
+     * @param placement an IfcPlacement
+     * @return the z-value as a double.
+     */
+    public static double getZValueOfPlacement(IfcPlacement placement) {
+        return getZValueOfCoordinates(getRelatingCoordinatesOfPlacement(placement));
+    }
+
+
 
 }
