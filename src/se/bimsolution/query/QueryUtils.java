@@ -117,7 +117,7 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return An IfcBuldingStorey within which the Element is contained.
      */
-    public IfcBuildingStorey ifcBuildingStoreyFromElement(IfcElement element) {
+    public static IfcBuildingStorey ifcBuildingStoreyFromElement(IfcElement element) {
         EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
         for (IfcRelContainedInSpatialStructure rel:
                 relList) {
@@ -134,7 +134,7 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return An IfcBuilding within which the Element is contained.
      */
-    public IfcBuilding ifcBuildingFromElement(IfcElement element) {
+    public static IfcBuilding ifcBuildingFromElement(IfcElement element) {
         IfcBuildingStorey storey = ifcBuildingStoreyFromElement(element);
         EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
         for (IfcRelDecomposes de : decomposes) {
@@ -152,7 +152,7 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return An IfcSite within which the Element is contained.
      */
-    public IfcSite ifcSiteFromElement(IfcElement element) {
+    public static IfcSite ifcSiteFromElement(IfcElement element) {
         IfcBuilding building = ifcBuildingFromElement(element);
         EList<IfcRelDecomposes> decomposes = building.getDecomposes();
         for (IfcRelDecomposes de: decomposes) {
@@ -169,7 +169,7 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return A list of IfcPropertySets which the element is defined by.
      */
-    public List<IfcPropertySet> ifcPropertySetFromElement(IfcObject element) {
+    public static List<IfcPropertySet> ifcPropertySetFromElement(IfcObject element) {
         EList<IfcRelDefines> definesList = element.getIsDefinedBy();
         EList<IfcPropertySet> psets = new BasicEList<>();
         for (IfcRelDefines rel:
@@ -193,7 +193,7 @@ public final class QueryUtils {
      * @param name A name of an IfcPropertySet
      * @return An IfcPropertySet
      */
-    public IfcPropertySet getPropertySetByName(List<IfcPropertySet> propertySets, String name) {
+    public static IfcPropertySet getPropertySetByName(List<IfcPropertySet> propertySets, String name) {
         for (IfcPropertySet pset:
              propertySets) {
             if (pset.getName().equals(name)) {
@@ -210,7 +210,7 @@ public final class QueryUtils {
      * @param startsWith The first part of an IfcPropertySet name
      * @return An IfcPropertySet
      */
-    public IfcPropertySet getPropertySetByStartsWith(List<IfcPropertySet> propertySets ,String startsWith) {
+    public static IfcPropertySet getPropertySetByStartsWith(List<IfcPropertySet> propertySets ,String startsWith) {
         for (IfcPropertySet pset:
                 propertySets) {
             if (pset.getName().startsWith(startsWith)) {
@@ -227,7 +227,7 @@ public final class QueryUtils {
      * @param name The name of the property.
      * @return An IfcPropertySingleValue which has the name specified.
      */
-    public IfcPropertySingleValue getSingleValueByName(IfcPropertySet ifcPropertySet, String name) {
+    public static IfcPropertySingleValue getSingleValueByName(IfcPropertySet ifcPropertySet, String name) {
         EList<IfcProperty> properties = ifcPropertySet.getHasProperties();
         for (IfcProperty prop:
              properties) {
@@ -244,7 +244,7 @@ public final class QueryUtils {
      * @param singleValue an IfcPropertySingleValue.
      * @return the wrapped IfcTextValue as a String
      */
-    public String getNominalTextValueFromSingleValue(IfcPropertySingleValue singleValue) {
+    public static String getNominalTextValueFromSingleValue(IfcPropertySingleValue singleValue) {
         IfcValue value = singleValue.getNominalValue();
         //Ta ut textvärdet om det finns
         if (value instanceof IfcText) {
@@ -260,7 +260,7 @@ public final class QueryUtils {
      * @param propertyName The name of the desired property
      * @return Does the property with the desired name exist?
      */
-    public boolean propertyExistsInPropertySet(IfcPropertySet propertySet, String propertyName) {
+    public static boolean propertyExistsInPropertySet(IfcPropertySet propertySet, String propertyName) {
         EList<IfcProperty> properties = propertySet.getHasProperties();
         for (IfcProperty prop:
              properties) {
