@@ -284,7 +284,6 @@ public final class QueryUtils {
     }
 
 
-
     /**
      * Given an IfcLocalPlacement which holds an IfcAxis2Placement3D as relative placement, return it.
      *
@@ -345,9 +344,7 @@ public final class QueryUtils {
 
     /**
      * Given an IfcLocalPlacement, returns its PlacementRelToLocalPlacement {
-     *
-     *
-      */
+     */
     public static IfcLocalPlacement getLocalPlacement(IfcLocalPlacement placement) {
         if (placement.getPlacementRelTo() instanceof IfcLocalPlacement) {
             return (IfcLocalPlacement) placement.getPlacementRelTo();
@@ -375,8 +372,9 @@ public final class QueryUtils {
     /**
      * Given an IfcProduct, steps through the object tree and sums the Z-vals in each step.
      * Returns the absolute z-value as it relates to the IfcSite
-     * @param product
-     * @return
+     *
+     * @param product An IfcProduct
+     * @return The absolute z-value of the product as a double
      */
     public static double getAbsoluteZValue(IfcProduct product) {
         double absoluteZValue = 0;
@@ -389,5 +387,21 @@ public final class QueryUtils {
             absoluteZValue += getZValueOfPlacement(placement3D);
         }
         return absoluteZValue;
+    }
+
+    public static boolean elementIsBelowFloorLevel(IfcElement element) {
+        double storeyZ = getAbsoluteZValue(ifcBuildingStoreyFromElement(element));
+        double elementZ = getAbsoluteZValue(element);
+        return storeyZ > elementZ;
+    }
+
+    public static boolean elementIsBelowFloorLevel(IfcElement element, double threshold) {
+        double storeyZ = getAbsoluteZValue(ifcBuildingStoreyFromElement(element));
+        double elementZ = getAbsoluteZValue(element);
+        return storeyZ > elementZ && storeyZ-elementZ > threshold;
+    }
+
+    public static double getHeightDifferenceBetweenElementAndStorey(IfcElement element) {
+        return getAbsoluteZValue(ifcBuildingStoreyFromElement(element)) - getAbsoluteZValue(element);
     }
 }
