@@ -1,5 +1,6 @@
 package se.bimsolution.query;
 
+import com.oracle.webservices.internal.api.message.PropertySet;
 import org.bimserver.emf.IdEObject;
 import org.bimserver.models.ifc2x3tc1.*;
 import org.eclipse.emf.common.util.BasicEList;
@@ -220,6 +221,12 @@ public final class QueryUtils {
     }
 
 
+    /**
+     * Given an IfcPropertySet and a name, returns the singleValueWith that name.
+     * @param ifcPropertySet An IfcProperty that contains an IfcPropertySingleValue
+     * @param name The name of the property.
+     * @return An IfcPropertySingleValue which has the name specified.
+     */
     public IfcPropertySingleValue getSingleValueByName(IfcPropertySet ifcPropertySet, String name) {
         EList<IfcProperty> properties = ifcPropertySet.getHasProperties();
         for (IfcProperty prop:
@@ -244,6 +251,10 @@ public final class QueryUtils {
             return ((IfcText) value).getWrappedValue();
         }
         throw new IllegalArgumentException("The IfcPropertySingleValue does not have a nominal value with type text");
+    }
+
+    public boolean parameterExistsInPropertySet(IfcPropertySet propertySet) {
+
     }
 
 
