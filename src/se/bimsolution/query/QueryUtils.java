@@ -79,6 +79,16 @@ public final class QueryUtils {
 //        classList.add(IfcOpeningElement.class);
         return classList;
     }
+
+    /**
+     * Given a .csv-file with two columns,
+     * this method builds a HashMap where each key is a String representing an IfcObject
+     * and where each value is a HashSet containing the correct IDs for the IfcObject, as strings.
+     * @param CSVfilepath A filepath to a csv file.
+     * @param delimiter The delimiter used in writing the CSVFile
+     * @return A HashMap with IfcObject names mapped to their correctIDs
+     * @throws IOException if file can not be found or read.
+     */
     public static HashMap<String, HashSet<String>> idToIfcCSVParser (String CSVfilepath, String delimiter) throws IOException {
         String line;
         HashMap<String, HashSet<String>> parsedData = new HashMap<>();
