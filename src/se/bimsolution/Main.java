@@ -10,9 +10,12 @@ import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
 import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
 import se.bimsolution.db.PostgresRepository;
+import se.bimsolution.query.ClientBuilder;
+import se.bimsolution.query.ModelBuilder;
 import se.bimsolution.query.QueryCoordinator;
 import se.bimsolution.query.machine.QueryMachine;
 import se.bimsolution.query.machine.mockQueryMachine;
+//import se.bimsolution.query.machine.mockQueryMachine;
 
 
 import java.sql.Connection;
@@ -27,32 +30,19 @@ import java.util.List;
  * Handles the queries to the BIMServer
  */
 public class Main {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args)  {
 
-
-        Connection dbconn = null;
         try {
+            BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]), "http://104.248.40.190:8080/bimserver").build();
+            IfcModelInterface model = new ModelBuilder(bsc, "A2-400").build();
+
             PostgresRepository postgresRepository = new PostgresRepository(args[2],
                     args[3], args[4]);
-            QueryMachine mockQueryMachine = new mockQueryMachine();
+            new QueryCoordinator(postgresRepository, new mockQueryMachine()).run();
 
-            List<QueryMachine> queryMachines = new ArrayList<>();
-            queryMachines.add(mockQueryMachine);
-            QueryCoordinator queryCoordinator = new QueryCoordinator(postgresRepository, queryMachines);
-
-            queryCoordinator.run();
-
-
-            //postgresRepository.writeFail(new Fail(3542,1,1));
-            System.out.println("det funkar");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        finally {
-            if(dbconn!=null)
-                dbconn.close();
-        }
-        System.out.println("Done");
 
 
 /*

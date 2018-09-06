@@ -12,12 +12,10 @@ public class mockQueryMachine implements QueryMachine {
     @Override
     public List<Fail> getFails() {
         List<Fail> retList = new ArrayList<>();
-        retList.add(new Fail(123, 1, 1));
-        retList.add(new Fail(123, 1, 1));
-        retList.add(new Fail(125, 1, 1));
-        retList.add(new Fail(123, 1, 1));
-        retList.add(new Fail(123, 1, 1));
-        retList.add(new Fail(123, 1, 1));
+        retList.add(new Fail(123, 1, 1, 1,"a","a","a","a",
+        "a","a","a","a","a","a"));
+        retList.add(new Fail(123, 1, 1, 1,"a","a","a","a",
+                "a","a","a","a","a","a"));
         return retList;
     }
     @Override
@@ -43,4 +41,10 @@ public class mockQueryMachine implements QueryMachine {
     @Override
     public void run() {
     }
+
+    @Override
+    public int getErrorId() {
+        return 0;
+    }
 }
+

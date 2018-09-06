@@ -6,26 +6,30 @@ public class Log {
     int revisionId;
     int errorId;
 
-    public Log(int id, String logMessage, int revisionId, int errorId) {
-        this.id = id;
+    public Log() {
+    }
+
+    public Log(String logMessage) {
         this.logMessage = logMessage;
-        this.revisionId = revisionId;
-        this.errorId = errorId;
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getLogMessage() {
         return logMessage;
     }
 
-    public int getRevisionId() {
-        return revisionId;
+    public void setRevisionId(int revisionId) {
+        this.revisionId = revisionId;
     }
 
-    public int getErrorId() {
-        return errorId;
+    public void setErrorId(int errorId) {
+        this.errorId = errorId;
     }
 }

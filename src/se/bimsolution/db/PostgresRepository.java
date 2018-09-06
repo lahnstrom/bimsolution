@@ -17,160 +17,205 @@ public class PostgresRepository implements Repository {
      * @return a new revision with Id corresponding to database Id.
      * @throws SQLException
      */
+
     @Override
-    public Revision newRevision() throws SQLException {
+    public Revision writeRevision(int projectId, String model) throws SQLException {
 
         //Insert revision to database.
-        Revision revision = new Revision();
-
-        //Initialize id.
-        int id = 0;
+        Revision revision = new Revision(projectId, model);
         String sqlString = "INSERT INTO revision " +
-                "       (Success) " +
-                "         VALUES (?)";
+                "       (model, project_id) " +
+                "         VALUES (?,?)";
 
         PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
-        statement.setBoolean(1, false);
+        statement.setString(1, model);
+        statement.setInt(2, projectId);
+
         statement.executeUpdate();
 
         //Get the ID of the inserted Run.
         ResultSet rs = statement.getGeneratedKeys();
         if (rs.next()) {
-            id = rs.getInt(1);
+            int id = rs.getInt(1);
+            Timestamp timestamp = rs.getTimestamp(2);
+            revision.setId(id);
+            revision.setDate(timestamp);
+
         }
-        revision.setId(id);
+
         return revision;
     }
 
     /**
-     * This method creates a new revision instance and inserts it into the database.
+     * This method creates a new stats instance and inserts it into the database.
      *
-     * @param revisionId    The revision Id that corresponds to the log.
+     * @param stats
      * @throws SQLException
      */
 
     @Override
-    public Log createLog(int revisionId, String logMessage, int errorId) throws SQLException {
-        //Initialize id.
-        int id = 0;
+    public Stats writeStats(Stats stats) throws SQLException {
+
+        //Insert Run to DB.
+        String countSQL = "INSERT INTO stats " +
+                "       (object_count, fail_count, revision_id, error_id) " +
+                "         VALUES (?,?,?,?)";
+
+        PreparedStatement statement = connection.prepareStatement(countSQL, Statement.RETURN_GENERATED_KEYS);
+        statement.setInt(1, stats.getObjectCount());
+        statement.setInt(2, stats.getFailCount());
+        statement.setInt(3, stats.getRevisionId());
+        statement.setInt(4, stats.getErrorId());
+        statement.executeUpdate();
+
+        //Get the ID of the inserted Run.
+        ResultSet rs = statement.getGeneratedKeys();
+        if (rs.next()) {
+            stats.setId(rs.getInt(1));
+        }
+        return stats;
+    }
+
+    /**
+     * This method writes all fails from a list of fails to the database.
+     *
+     * @param fails List of fails.
+     * @throws SQLException
+     */
+
+    @Override
+    public void writeAllFails(List<Fail> fails) throws SQLException {
+        String sqlString = "INSERT INTO Fail " +
+                "       (object_id, revision_id, error_id, ifc_type, ifc_site, ifc_building, ifc_storey, " +
+                "p_set_benamning, p_set_beteckning, p_set_typeid, p_set_ifyllt_bsab, p_set_giltiga_bsab," +
+                "p_set_parameter_som_saknas) " +
+                "         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+
+        for (Fail fail : fails) {
+            statement.setLong(1, fail.getObjectId());
+            statement.setInt(2, fail.getRevisionId());
+            statement.setInt(3, fail.getErrorId());
+            statement.setString(4, fail.getIfcType());
+            statement.setString(5, fail.getIfcSite());
+            statement.setString(6, fail.getIfcBuilding());
+            statement.setString(7, fail.getIfcStorey());
+            statement.setString(8, fail.getpSetBenamning());
+            statement.setString(9, fail.getpSetBetackning());
+            statement.setString(10, fail.getpSetTypeId());
+            statement.setString(11, fail.getpSetIfylltBsab());
+            statement.setString(12, fail.getpSetGiltigBsab());
+            statement.setString(13, fail.getpSetParameterSomSaknas());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+    }
+
+    /**
+     * This method insert revision Id  to corresponding log row into the database.
+     *
+     * @param log           Log instance to be updated in the database.
+     * @param revisionId    Revision Id of corresponding revision.
+     * @throws SQLException
+     */
+
+    @Override
+    public void writeRevisionIdToLog(Log log, int revisionId) throws SQLException {
+
+        //Update revision in DB.
+        String sqlString = "UPDATE  log " +
+                "       SET revision_id=? " +
+                "         WHERE id=?";
+
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+        statement.setInt(1, revisionId);
+        statement.setInt(2,log.getId());
+        statement.executeUpdate();
+    }
+
+    /**
+     * This method insert error Id to corresponding log row into the database.
+     *
+     * @param log           Log instance to be updated in the database.
+     * @param errorId       Error Id of corresponding revision.
+     * @throws SQLException
+     */
+
+    @Override
+    public void writeErrorIdToLog(Log log, int errorId) throws SQLException {
+
+        //Update revision in DB.
+        String sqlString = "UPDATE  log " +
+                "       SET error_id=? " +
+                "         WHERE id=?";
+
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+        statement.setInt(1, errorId);
+        statement.setInt(2,log.getId());
+        statement.executeUpdate();
+    }
+
+    /**
+     * This method insert log message to corresponding log row into the database.
+     *
+     * @param log           Log instance to be updated in the database.
+     * @param logMessage    Log message of corresponding revision.
+     * @throws SQLException
+     */
+
+    @Override
+    public void writeLogMessageIdToLog(Log log, String logMessage) throws SQLException {
+
+        //Update revision in DB.
+        String sqlString = "UPDATE  log " +
+                "       SET log_message=? " +
+                "         WHERE id=?";
+
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+        statement.setString(1, logMessage);
+        statement.setInt(2,log.getId());
+        statement.executeUpdate();
+    }
+
+    public Log writeLog() throws SQLException {
+
+        Log log = new Log();
 
         //Update revision in DB.
         String sqlString = "INSERT INTO log " +
-                "       (revision_id, error_id, log_message) " +
-                "         VALUES (?, ?, ?)";
+                "       (log_message) " +
+                "         VALUES (?)";
 
         PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
-        statement.setInt(1, revisionId);
-        statement.setInt(2, errorId);
-        statement.setString(3, logMessage);
+        statement.setString(1, "");
         statement.executeUpdate();
 
         //Get the ID of the inserted Run
         ResultSet rs = statement.getGeneratedKeys();
         if (rs.next()) {
-            id = rs.getInt(1);
+            log.setId(rs.getInt(1));
         }
-        return new Log(id, logMessage, errorId, revisionId);
+
+        return log;
     }
 
-    @Override
-    public void createStats(Count count) {
-        int countID = 0;
+    /**
+     * This method return all error types from the database.
+     *
+     * @return list of all error types.
+     * @throws SQLException
+     */
 
-        try {
-            //Insert Run to DB
-            String countSQL = "INSERT INTO Counts " +
-                    "       (objectcount, failcount, run_id,q_id) " +
-                    "         VALUES (?,?,?,?)";
+    public List<Error> getAllErrors() throws SQLException {
+        List<Error> errors = new ArrayList<>();
+        String sqlString = "SELECT * FROM error";
 
-            PreparedStatement statement = connection.prepareStatement(countSQL, Statement.RETURN_GENERATED_KEYS);
-            statement.setInt(1, count.getObjectCount());
-            statement.setInt(2, count.getFailCount());
-            statement.setInt(3, count.getRunID());
-            statement.setInt(4, count.getQID());
-            statement.executeUpdate();
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+        ResultSet resultSet = statement.executeQuery();
 
-            //Get the ID of the inserted Run
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next()) {
-                countID = rs.getInt(1);
-            }
-            count.setID(countID);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        while (resultSet.next()) {
+            errors.add(new Error(resultSet.getInt(1), resultSet.getString(2)));
         }
+        return errors;
     }
-
-    @Override
-    public void writeAllFails(List<Fail> fails) {
-
-        try {
-            String runSQL = "INSERT INTO Fails " +
-                    "       (o_id, run_id, q_id) " +
-                    "         VALUES (?,?,?)";
-            PreparedStatement statement = connection.prepareStatement(runSQL);
-
-            for (Fail fail : fails) {
-                statement.setLong(1, fail.getObjectID());
-                statement.setInt(2, fail.getRunID());
-                statement.setInt(3, fail.getQID());
-                statement.addBatch();
-            }
-            statement.executeBatch();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void writeLog(Log log) {
-
-        int logID = 0;
-
-        try {
-            String countSQL = "INSERT INTO Log " +
-                    "       (logmessage, run_id, q_id) " +
-                    "         VALUES (?,?,?)";
-
-            PreparedStatement statement = connection.prepareStatement(countSQL, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, log.getLogMessage());
-            statement.setInt(2, log.getRunID());
-            statement.setInt(3, log.qID);
-            statement.executeUpdate();
-
-            //Get the ID of the inserted Run
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next()) {
-                logID = rs.getInt(1);
-            }
-            log.setID(logID);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Query> getAllQueries() {
-        List<Query> queries = new ArrayList<>();
-        String statement = "SELECT * FROM queries";
-
-        try (PreparedStatement sth = connection.prepareStatement(statement)) {
-
-            ResultSet resultSet = sth.executeQuery();
-
-            while (resultSet.next()) {
-                queries.add(createQuery(resultSet));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return queries;
-    }
-
-    public Query createQuery(ResultSet resultSet) throws SQLException {
-        Query query = new Query(resultSet.getInt(1), resultSet.getString(2));
-        return query;
-    }
-
 }

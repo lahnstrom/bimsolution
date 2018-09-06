@@ -4,16 +4,19 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface Repository {
-    void writeAllFails(List<Fail> fails);
+    Revision writeRevision(int projectId, String model) throws SQLException;
 
-    /**
-     * Creates a new Run in the DB and sends the generated key back
-     *
-     * @param
-     * @return
-     */
-    Revision newRevision() throws SQLException;
-    void createLog(Log log);
-    void updateRevision(Revision revision);
-    Log createLog(int revisionId, int errorId, String logMessage) throws SQLException;
+    void writeAllFails(List<Fail> fails) throws SQLException;
+
+    Stats writeStats(Stats stats) throws SQLException;
+
+    Log writeLog() throws SQLException;
+
+    void writeRevisionIdToLog(Log log, int revisionId) throws SQLException;
+
+    void writeErrorIdToLog(Log log, int errorId) throws SQLException;
+
+    void writeLogMessageIdToLog(Log log, String logMessage) throws SQLException;
+
+    List<Error> getAllErrors() throws SQLException;
 }

@@ -1,5 +1,5 @@
+/*
 package se.bimsolution.query.machine;
-
 import org.bimserver.emf.IdEObject;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.*;
@@ -12,9 +12,7 @@ import java.util.*;
 
 public class IdValidationMachine implements QueryMachine {
 
-    private final int QUERY_ID = 1;
     private int runID;
-    private int queryID;
     private IfcModelInterface model;
     private List<Fail> fails;
     private int count;
@@ -24,6 +22,7 @@ public class IdValidationMachine implements QueryMachine {
     private List<Class> classList;
     private HashMap<String, HashSet<String>> correctIDs;
 
+    private final int QUERY_ID = 1;
     private final String VARIES_STRING = "Varierar";
     private final String PROPERTY_SET_NAME = "AH";
     private final String PROPERTY_NAME = "BSAB96BD";
@@ -33,9 +32,8 @@ public class IdValidationMachine implements QueryMachine {
     private int debugCount2;
     private int debugCount3;
 
-    public IdValidationMachine(IfcModelInterface model, int queryID, int runID) {
+    public IdValidationMachine(IfcModelInterface model, int runID) {
         this.model = model;
-        this.queryID = queryID;
         this.runID = runID;
         this.fails = new ArrayList<>();
         this.classList = QueryUtils.standardClassList();
@@ -93,13 +91,15 @@ public class IdValidationMachine implements QueryMachine {
     }
 
 
-    /**
+    */
+/**
      * This method checks all objects of a certain Ifc 2x3 class
      * It returns all the fails in the object group, ready to be written to DB.
      *
      * @param clazz the class to check, i.e. IfcDoor
      * @return The fails for the objects that do not pass the check.
-     */
+     *//*
+
     private List<Fail> runCheckForOneClass(Class<org.bimserver.emf.IdEObject> clazz) {
         List<Fail> localFails = new ArrayList<>();
         List<IdEObject> objList = model.getAll(clazz);
@@ -111,7 +111,8 @@ public class IdValidationMachine implements QueryMachine {
         return localFails;
     }
 
-    /**
+    */
+/**
      * This method serves as an intermediate step in the process of checking a BIM Object
      * It checks that the object is actually an IfcObject, otherwise it can't relate to a IfcRelDefinesBy object.
      * It then loops through  all the IfcRelDefines in the object and examines them further.
@@ -119,7 +120,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param clazz      The class representing an ifc 2x3 object.
      * @param localFails the list of fails for this specific object class
      * @param obj        the BIM Object that is being checked.
-     */
+     *//*
+
     private void checkIdEObject(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj) {
         if (!(obj instanceof IfcObject)) {
             throw new IllegalStateException(clazz.getName() + " is not an instance of IfcObject.");
@@ -133,12 +135,14 @@ public class IdValidationMachine implements QueryMachine {
             }
         }
         if (!hasPset) {
-            addNewFail(localFails, obj);
+            addNewFail(localFails, obj, clazz);
+            System.out.println("I don't have pset: " + extractNameFromClass(clazz));
             debugCount2++;
         }
     }
 
-    /**
+    */
+/**
      * Checks all the IfcRelDefines relations of an IfcObject.
      * Returns false if an object does not contain a property.
      *
@@ -147,7 +151,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param obj        the BIM Object that is being checked.
      * @param ird        an IfcRelDefinesBy object
      * @return Is there a propertySet with the asked for name? && Is it correctly filled in?
-     */
+     *//*
+
     private boolean checkIfcRelDefines(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcRelDefines ird) {
         IfcPropertySet ps;
         boolean hasPset = false;
@@ -163,7 +168,8 @@ public class IdValidationMachine implements QueryMachine {
         return hasPset;
     }
 
-    /**
+    */
+/**
      * This method loops through a propertySet and checks every value.
      * If the propertySet is not correct, return false;
      *
@@ -171,7 +177,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param localFails the list of fails for this specific object class
      * @param obj        the BIM Object that is being checked.
      * @param ps         The propertySet to loop through
-     */
+     *//*
+
     private void loopThroughProperties(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcPropertySet ps) {
         boolean rightPSetExistsOnObject = false;
         for (IfcProperty ip : ps.getHasProperties()) {
@@ -181,12 +188,15 @@ public class IdValidationMachine implements QueryMachine {
             }
         }
         if (!rightPSetExistsOnObject) {
-            addNewFail(localFails, obj);
+            addNewFail(localFails, obj, clazz);
+            System.out.println("I don't have a BSAB96BD value: " + extractNameFromClass(clazz) + " OID: " + obj.getOid());
+
             debugCount3++;
         }
     }
 
-    /**
+    */
+/**
      * This method executes the final check of an IfcObject:
      * Is there a property? Does it have the type single value?
      * If so, is the name of the property what we're looking for?
@@ -198,7 +208,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param obj        the BIM Object that is being checked.
      * @param ip         an IfcProperty to be checked.
      * @return Is this the pset we're looking for
-     */
+     *//*
+
     private boolean checkPropertyAndAddToFailList(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcProperty ip) {
         boolean isRightPSet = false;
         if (ip instanceof IfcPropertySingleValue) {
@@ -216,7 +227,8 @@ public class IdValidationMachine implements QueryMachine {
         return isRightPSet;
     }
 
-    /**
+    */
+/**
      * Check the value that we've extracted against the hashMap.
      * If it fails: add it to the list of fails.
      *
@@ -224,30 +236,39 @@ public class IdValidationMachine implements QueryMachine {
      * @param localFails the list of fails for this specific object class
      * @param obj        the BIM Object that is being checked.
      * @param textValue  the value that we extracted, and that proved to be wrong.
-     */
+     *//*
+
     private void checkIfValuePasses(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, String textValue) {
         String name = extractNameFromClass(clazz);
         this.debugCount++;
 
         if (!correctIDs.get(name).contains(textValue)) {
             if (!correctIDs.get(VARIES_STRING).contains(textValue)) {
-                addNewFail(localFails, obj);
-//                System.out.println("I failed: " + textValue + " My object id is: " + obj.getOid() + "  I am an " + extractNameFromClass(clazz));
-//                System.out.print("The correct IDs are: ");
-//                correctIDs.get(name).forEach(x-> System.out.print(x + " |  "));
-//                System.out.println();
+                addNewFail(localFails, obj, clazz);
+                failDebugPrint(clazz, obj, textValue, name);
             }
         }
 
     }
 
-    private void addNewFail(List<Fail> localFails, IdEObject obj) {
-        localFails.add(new Fail(obj.getOid(), this.queryID, this.runID));
+    private void failDebugPrint(Class<IdEObject> clazz, IdEObject obj, String textValue, String name) {
+        System.out.println("Failure for oid: " + obj.getOid() + ", an " + extractNameFromClass(clazz)
+                + ", The object has BSAB96BD id " + textValue );
+        System.out.print("The correct IDs for "+ extractNameFromClass(clazz) + " are: ");
+        correctIDs.get(name).forEach(x-> System.out.print(x + " |  "));
+        System.out.println();
+    }
+
+
+
+    private void addNewFail(List<Fail> localFails, IdEObject obj, Class clazz) {
+        localFails.add(new Fail(obj.getOid(), QUERY_ID, this.runID, extractNameFromClass(clazz)));
         this.failCount++;
     }
 
 
-    /**
+    */
+/**
      * Takes a name of an IfcClass and extracts the name e.g.
      * class org.bimserver.models.ifc2x3tc1.IfcDoor turns into string
      * IfcDoor
@@ -255,7 +276,8 @@ public class IdValidationMachine implements QueryMachine {
      *
      * @param clazz a java class
      * @return a string, the name of the Ifc class.
-     */
+     *//*
+
     private String extractNameFromClass(Class<IdEObject> clazz) {
         String[] parts = clazz.toString().split("\\.");
         String ret = parts[parts.length - 1];
@@ -282,7 +304,17 @@ public class IdValidationMachine implements QueryMachine {
         debugPrint();
     }
 
+    //TODO
+    @Override
+    public int getErrorId() {
+        return 0;
+    }
 
+
+    */
+/**
+     * Writes some debug information to console
+     *//*
 
     private void debugPrint() {
         System.out.println("I checked the following IfcObjects in the model");
@@ -291,9 +323,10 @@ public class IdValidationMachine implements QueryMachine {
             System.out.println(extractNameFromClass(clazz));
         }
         System.out.println("I handled this many object: " + count);
-        System.out.println("I got this many  fails: " + failCount);
-        System.out.println("This many objects made it to the last method: " + debugCount);
         System.out.println("This many objects are missing AH psets: " + debugCount2);
         System.out.println("This many objects have AH psets but are missing BSAB96BD values: " + debugCount3);
+        System.out.println("This many objects have psets that have BSAB96BD values: " + debugCount);
+        System.out.println("I got this many incorrect IDs: " + failCount);
     }
 }
+*/

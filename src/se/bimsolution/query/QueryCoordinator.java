@@ -5,13 +5,21 @@ import org.bimserver.emf.IfcModelInterface;
 import se.bimsolution.db.*;
 import se.bimsolution.query.machine.QueryMachine;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class QueryCoordinator implements Runnable{
+public class QueryCoordinator implements Runnable {
 
     private final Repository repo;
     private final List<QueryMachine> machineList;
+    private Log log;
+
+    public QueryCoordinator(Repository repo, QueryMachine... machineList) {
+        this.repo = repo;
+        this.machineList = Arrays.asList(machineList);
+    }
 
     public QueryCoordinator(Repository repo, List<QueryMachine> machineList) {
         this.repo = repo;
@@ -20,26 +28,29 @@ public class QueryCoordinator implements Runnable{
 
     @Override
     public void run() {
-        Revision run = repo.newRevision();
-        run.setSuccess(true);
-        boolean hasError = false;
+        try {
+            log = repo.writeLog();
+            Revision revision = repo.writeRevision(123, "mTest");
+                repo.writeRevisionIdToLog(log,revision.getId());
 
-        for (QueryMachine qm:
-             machineList) {
-            qm.run();
-            if (qm.getError()==null) {
+            for (QueryMachine qm :
+                    machineList) {
+                qm.run();
+                Stats stats = new Stats(qm.getCount(), qm.getFailCount(), revision.getId(), qm.getErrorId());
                 repo.writeAllFails(qm.getFails());
-                repo.writeCount(new Count(qm.getCount(), qm.getFailCount(), run.getId(), qm.getID()));
-                repo.writeLog(new Log("Successful run", run.getId(), qm.getID()));
+                repo.writeStats(stats);
+                repo.writeErrorIdToLog(log,qm.getErrorId());
+                repo.writeLogMessageIdToLog(log,"Sucessful execution");
+            }
+        } catch (Exception e) {
 
-            } else {
-                hasError = true;
-                repo.writeLog(new Log("Unsuccessful run", run.getId(), qm.getID()));
+            try {
+                e.printStackTrace();
+                repo.writeLogMessageIdToLog(log, e.getMessage());
+            } catch (SQLException logE) {
+                logE.printStackTrace();
+                System.out.println(logE.getStackTrace());
             }
         }
-        run.setSuccess(!hasError);
-        repo.updateRun(run);
-
-
     }
 }
