@@ -147,6 +147,23 @@ public final class QueryUtils {
 
 
     /**
+     * Given an IfcElement, this method returns the IfcSite within which the element is contained.
+     * @param element An IfcElement.
+     * @return An IfcSite within which the Element is contained.
+     */
+    public IfcSite ifcSiteFromElement(IfcElement element) {
+        IfcBuilding building = ifcBuildingFromElement(element);
+        EList<IfcRelDecomposes> decomposes = building.getDecomposes();
+        for (IfcRelDecomposes de: decomposes) {
+            if (de.getRelatingObject() instanceof  IfcSite) {
+                return (IfcSite) de.getRelatingObject();
+            }
+        }
+        throw new IllegalArgumentException("The element has no IfcSite associated with it");
+    }
+
+
+    /**
      * Given an IfcObject, this method returns a list of the IfcPropertySets the element is defined by.
      * @param element An IfcElement.
      * @return A list of IfcPropertySets which the element is defined by.
