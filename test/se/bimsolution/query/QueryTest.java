@@ -3,18 +3,11 @@ package se.bimsolution.query;
 import org.bimserver.client.BimServerClient;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.IfcDoor;
-import org.bimserver.models.ifc2x3tc1.IfcElement;
 import org.bimserver.models.ifc2x3tc1.IfcPropertySet;
 import org.bimserver.models.ifc2x3tc1.IfcPropertySingleValue;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,14 +16,7 @@ import java.util.Scanner;
 
 import static org.junit.Assert.*;
 
-@RunWith(Arquillian.class)
-public class QueryUtilsTest {
-    @Deployment
-    public static JavaArchive createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-                .addClass(QueryUtils.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
+public class QueryTest {
 
     private IfcModelInterface model;
     private IfcDoor door;
