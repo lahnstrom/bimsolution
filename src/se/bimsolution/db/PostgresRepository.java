@@ -177,6 +177,13 @@ public class PostgresRepository implements Repository {
         statement.executeUpdate();
     }
 
+    /**
+     * Add new log row to database and return a log instance with corresponding Id.
+     *
+     * @return              Log instance of inserted row.
+     * @throws SQLException
+     */
+
     public Log writeLog() throws SQLException {
 
         Log log = new Log();
