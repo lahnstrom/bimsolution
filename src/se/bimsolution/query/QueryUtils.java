@@ -169,7 +169,7 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return A list of IfcPropertySets which the element is defined by.
      */
-    public static List<IfcPropertySet> ifcPropertySetFromElement(IfcObject element) {
+    public static List<IfcPropertySet> ifcPropertySetsFromElement(IfcObject element) {
         EList<IfcRelDefines> definesList = element.getIsDefinedBy();
         EList<IfcPropertySet> psets = new BasicEList<>();
         for (IfcRelDefines rel:
