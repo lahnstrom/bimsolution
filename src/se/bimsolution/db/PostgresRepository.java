@@ -12,12 +12,11 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method creates a new revision instance and inserts it into the database.
+     * This method creates a new revision instance and inserts it into the revision table.
      *
-     * @return a new revision with Id corresponding to database Id.
+     * @return              A new Revision instance corresponding to inserted row in the revision table.
      * @throws SQLException
      */
-
     @Override
     public Revision writeRevision(int projectId, String model) throws SQLException {
 
@@ -47,12 +46,11 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method creates a new stats instance and inserts it into the database.
+     * This method creates a new stats instance and inserts it into the stats table.
      *
-     * @param stats
+     * @param stats         Stats instance to be inserted into stats table.
      * @throws SQLException
      */
-
     @Override
     public Stats writeStats(Stats stats) throws SQLException {
 
@@ -77,12 +75,11 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method writes all fails from a list of fails to the database.
+     * This method writes all fails from a list of fails to the fail table.
      *
-     * @param fails List of fails.
+     * @param fails         List of fails.
      * @throws SQLException
      */
-
     @Override
     public void writeAllFails(List<Fail> fails) throws SQLException {
         String sqlString = "INSERT INTO Fail " +
@@ -112,13 +109,12 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method insert revision Id  to corresponding log row into the database.
+     * This method insert the provided revision Id to corresponding row in the log table.
      *
-     * @param log           Log instance to be updated in the database.
+     * @param log           Log instance to be used to update the corresponding row in the log table.
      * @param revisionId    Revision Id of corresponding revision.
      * @throws SQLException
      */
-
     @Override
     public void writeRevisionIdToLog(Log log, int revisionId) throws SQLException {
 
@@ -134,13 +130,12 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method insert error Id to corresponding log row into the database.
+     * This method insert error Id to corresponding row into the log table.
      *
-     * @param log           Log instance to be updated in the database.
+     * @param log           Log instance to be used to update the corresponding row in the log table.
      * @param errorId       Error Id of corresponding revision.
      * @throws SQLException
      */
-
     @Override
     public void writeErrorIdToLog(Log log, int errorId) throws SQLException {
 
@@ -156,13 +151,13 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method insert log message to corresponding log row into the database.
+     * This method inserts a log message into the row in the log table corresponding to the provided
+     * Log instance.
      *
-     * @param log           Log instance to be updated in the database.
+     * @param log           Log instance to be used to update the corresponding row in the log table.
      * @param logMessage    Log message of corresponding revision.
      * @throws SQLException
      */
-
     @Override
     public void writeLogMessageIdToLog(Log log, String logMessage) throws SQLException {
 
@@ -183,7 +178,6 @@ public class PostgresRepository implements Repository {
      * @return              Log instance of inserted row.
      * @throws SQLException
      */
-
     public Log writeLog() throws SQLException {
 
         Log log = new Log();
@@ -207,12 +201,11 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method return all error types from the database.
+     * This method returns all error types from the database.
      *
-     * @return list of all error types.
+     * @return              list of all error types.
      * @throws SQLException
      */
-
     public List<Error> getAllErrors() throws SQLException {
         List<Error> errors = new ArrayList<>();
         String sqlString = "SELECT * FROM error";

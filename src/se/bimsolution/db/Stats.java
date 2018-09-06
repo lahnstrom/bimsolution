@@ -26,31 +26,16 @@ public class Stats {
         return objectCount;
     }
 
-    public void setObjectCount(int objectCount) {
-        this.objectCount = objectCount;
-    }
-
     public int getFailCount() {
         return failCount;
-    }
-
-    public void setFailCount(int failCount) {
-        this.failCount = failCount;
     }
 
     public int getRevisionId() {
         return revisionId;
     }
 
-    public void setRevisionId(int revisionId) {
-        this.revisionId = revisionId;
-    }
-
     public int getErrorId() {
         return errorId;
     }
 
-    public void setErrorId(int errorId) {
-        this.errorId = errorId;
-    }
 }

@@ -32,4 +32,5 @@ public class Log {
     public void setErrorId(int errorId) {
         this.errorId = errorId;
     }
+
 }
