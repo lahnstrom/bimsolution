@@ -253,8 +253,22 @@ public final class QueryUtils {
         throw new IllegalArgumentException("The IfcPropertySingleValue does not have a nominal value with type text");
     }
 
-    public boolean parameterExistsInPropertySet(IfcPropertySet propertySet) {
-
+    /**
+     * Given an IfcPropertySet and the name of a property,
+     * Returns true if the property with the given name exists in the propertySet.
+     * @param propertySet An IfcPropertySet
+     * @param propertyName The name of the desired property
+     * @return Does the property with the desired name exist?
+     */
+    public boolean propertyExistsInPropertySet(IfcPropertySet propertySet, String propertyName) {
+        EList<IfcProperty> properties = propertySet.getHasProperties();
+        for (IfcProperty prop:
+             properties) {
+            if (prop.getName().equals(propertyName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
