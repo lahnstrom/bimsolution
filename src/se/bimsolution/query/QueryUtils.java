@@ -1,6 +1,10 @@
 package se.bimsolution.query;
 
+import org.bimserver.emf.IdEObject;
 import org.bimserver.models.ifc2x3tc1.*;
+import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.util.EContentsEList;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -59,10 +63,10 @@ public final class QueryUtils {
         classList.add(IfcRampFlight.class);
         classList.add(IfcStairFlight.class);
         classList.add(IfcStair.class);
-//        classList.add(IfcSlab.class);
+        classList.add(IfcSlab.class);
         classList.add(IfcDamperType.class);
         classList.add(IfcRoof.class);
-        classList.add(IfcSite.class);
+//        classList.add(IfcSite.class);
         classList.add(IfcJunctionBoxType.class);
 //        classList.add(IfcSpace.class);
         classList.add(IfcOutletType.class);
@@ -71,10 +75,20 @@ public final class QueryUtils {
         classList.add(IfcWall.class);
         classList.add(IfcFlowController.class);
         classList.add(IfcLightFixtureType.class);
-//        classList.add(IfcWindow.class);
+        classList.add(IfcWindow.class);
 //        classList.add(IfcOpeningElement.class);
         return classList;
     }
+
+    /**
+     * Given a .csv-file with two columns,
+     * this method builds a HashMap where each key is a String representing an IfcObject
+     * and where each value is a HashSet containing the correct IDs for the IfcObject, as strings.
+     * @param CSVfilepath A filepath to a csv file.
+     * @param delimiter The delimiter used in writing the CSVFile
+     * @return A HashMap with IfcObject names mapped to their correctIDs
+     * @throws IOException if file can not be found or read.
+     */
     public static HashMap<String, HashSet<String>> idToIfcCSVParser (String CSVfilepath, String delimiter) throws IOException {
         String line;
         HashMap<String, HashSet<String>> parsedData = new HashMap<>();
@@ -95,4 +109,142 @@ public final class QueryUtils {
         }
         return parsedData;
     }
+
+
+    /**
+     * Given an IfcElement, this method returns the IfcBuildingStorey within which the element is contained.
+     * @param element An IfcElement.
+     * @return An IfcBuldingStorey within which the Element is contained.
+     */
+    public IfcBuildingStorey ifcBuildingStoreyFromElement(IfcElement element) {
+        EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
+        for (IfcRelContainedInSpatialStructure rel:
+                relList) {
+            if (rel.getRelatingStructure() instanceof IfcBuildingStorey) {
+                return (IfcBuildingStorey) rel.getRelatingStructure();
+            }
+        }
+        throw new IllegalArgumentException("The element has no IfcBuildingStorey associated with it");
+    }
+
+
+    /**
+     * Given an IfcElement, this method returns the IfcBuilding within which the element is contained.
+     * @param element An IfcElement.
+     * @return An IfcBuilding within which the Element is contained.
+     */
+    public IfcBuilding ifcBuildingFromElement(IfcElement element) {
+        IfcBuildingStorey storey = ifcBuildingStoreyFromElement(element);
+        EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
+        for (IfcRelDecomposes de : decomposes) {
+            if (de.getRelatingObject() instanceof IfcBuilding) {
+                return (IfcBuilding) de.getRelatingObject();
+            }
+        }
+        throw new IllegalArgumentException("The element has no IfcBuilding associated with it");
+
+    }
+
+
+    /**
+     * Given an IfcElement, this method returns the IfcSite within which the element is contained.
+     * @param element An IfcElement.
+     * @return An IfcSite within which the Element is contained.
+     */
+    public IfcSite ifcSiteFromElement(IfcElement element) {
+        IfcBuilding building = ifcBuildingFromElement(element);
+        EList<IfcRelDecomposes> decomposes = building.getDecomposes();
+        for (IfcRelDecomposes de: decomposes) {
+            if (de.getRelatingObject() instanceof  IfcSite) {
+                return (IfcSite) de.getRelatingObject();
+            }
+        }
+        throw new IllegalArgumentException("The element has no IfcSite associated with it");
+    }
+
+
+    /**
+     * Given an IfcObject, this method returns a list of the IfcPropertySets the element is defined by.
+     * @param element An IfcElement.
+     * @return A list of IfcPropertySets which the element is defined by.
+     */
+    public List<IfcPropertySet> ifcPropertySetFromElement(IfcObject element) {
+        EList<IfcRelDefines> definesList = element.getIsDefinedBy();
+        EList<IfcPropertySet> psets = new BasicEList<>();
+        for (IfcRelDefines rel:
+             definesList) {
+            if (rel instanceof IfcRelDefinesByProperties) {
+                IfcPropertySetDefinition pset = ((IfcRelDefinesByProperties) rel).getRelatingPropertyDefinition();
+                if (pset instanceof IfcPropertySet) {
+                    psets.add((IfcPropertySet) pset);
+                }
+            }
+        }
+        if (psets.size()==0) {
+            throw new IllegalArgumentException("The element has no relating IfcPropertySet");
+        }
+        return psets;
+    }
+
+    /**
+     * Given a list of IfcPropertySets and a string, this method returns the first PropertySet matching that string.
+     * @param propertySets A list of IfcPropertySets
+     * @param name A name of an IfcPropertySet
+     * @return An IfcPropertySet
+     */
+    public IfcPropertySet getPropertySetByName(List<IfcPropertySet> propertySets, String name) {
+        for (IfcPropertySet pset:
+             propertySets) {
+            if (pset.getName().equals(name)) {
+                return pset;
+            }
+        }
+        throw new IllegalArgumentException("The property set with name " + name + " does not exist");
+    }
+
+    /**
+     * Given a list of IfcPropertySets and a String,
+     * this method returns the first PropertySet that starts with the string.
+     * @param propertySets A list of IfcPropertySets
+     * @param startsWith The first part of an IfcPropertySet name
+     * @return An IfcPropertySet
+     */
+    public IfcPropertySet getPropertySetByStartsWith(List<IfcPropertySet> propertySets ,String startsWith) {
+        for (IfcPropertySet pset:
+                propertySets) {
+            if (pset.getName().startsWith(startsWith)) {
+                return pset;
+            }
+        }
+        throw new IllegalArgumentException("No property starting with " + startsWith + " exist");
+    }
+
+
+    public IfcPropertySingleValue getSingleValueByName(IfcPropertySet ifcPropertySet, String name) {
+        EList<IfcProperty> properties = ifcPropertySet.getHasProperties();
+        for (IfcProperty prop:
+             properties) {
+            if (prop instanceof IfcPropertySingleValue && prop.getName().equals(name)) {
+                return (IfcPropertySingleValue) prop;
+            }
+        }
+        throw new IllegalArgumentException("No IfcProperty found in the IfcPropertySet with the name: " + name);
+    }
+
+    /**
+     * Given an IfcPropertySingleValue that has an IfcText nominal value,
+     * this method returns the wrapped value as a string.
+     * @param singleValue an IfcPropertySingleValue.
+     * @return the wrapped IfcTextValue as a String
+     */
+    public String getNominalTextValueFromSingleValue(IfcPropertySingleValue singleValue) {
+        IfcValue value = singleValue.getNominalValue();
+        //Ta ut textvärdet om det finns
+        if (value instanceof IfcText) {
+            return ((IfcText) value).getWrappedValue();
+        }
+        throw new IllegalArgumentException("The IfcPropertySingleValue does not have a nominal value with type text");
+    }
+
+
 }

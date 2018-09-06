@@ -12,9 +12,7 @@ import java.util.*;
 
 public class IdValidationMachine implements QueryMachine {
 
-    private final int QUERY_ID = 1;
     private int runID;
-    private int queryID;
     private IfcModelInterface model;
     private List<Fail> fails;
     private int count;
@@ -24,6 +22,7 @@ public class IdValidationMachine implements QueryMachine {
     private List<Class> classList;
     private HashMap<String, HashSet<String>> correctIDs;
 
+    private final int QUERY_ID = 1;
     private final String VARIES_STRING = "Varierar";
     private final String PROPERTY_SET_NAME = "AH";
     private final String PROPERTY_NAME = "BSAB96BD";
@@ -33,9 +32,8 @@ public class IdValidationMachine implements QueryMachine {
     private int debugCount2;
     private int debugCount3;
 
-    public IdValidationMachine(IfcModelInterface model, int queryID, int runID) {
+    public IdValidationMachine(IfcModelInterface model, int runID) {
         this.model = model;
-        this.queryID = queryID;
         this.runID = runID;
         this.fails = new ArrayList<>();
         this.classList = QueryUtils.standardClassList();
@@ -133,7 +131,8 @@ public class IdValidationMachine implements QueryMachine {
             }
         }
         if (!hasPset) {
-            addNewFail(localFails, obj);
+            addNewFail(localFails, obj, clazz);
+            System.out.println("I don't have pset: " + extractNameFromClass(clazz));
             debugCount2++;
         }
     }
@@ -181,7 +180,9 @@ public class IdValidationMachine implements QueryMachine {
             }
         }
         if (!rightPSetExistsOnObject) {
-            addNewFail(localFails, obj);
+            addNewFail(localFails, obj, clazz);
+            System.out.println("I don't have a BSAB96BD value: " + extractNameFromClass(clazz) + " OID: " + obj.getOid());
+
             debugCount3++;
         }
     }
@@ -231,18 +232,25 @@ public class IdValidationMachine implements QueryMachine {
 
         if (!correctIDs.get(name).contains(textValue)) {
             if (!correctIDs.get(VARIES_STRING).contains(textValue)) {
-                addNewFail(localFails, obj);
-//                System.out.println("I failed: " + textValue + " My object id is: " + obj.getOid() + "  I am an " + extractNameFromClass(clazz));
-//                System.out.print("The correct IDs are: ");
-//                correctIDs.get(name).forEach(x-> System.out.print(x + " |  "));
-//                System.out.println();
+                addNewFail(localFails, obj, clazz);
+                failDebugPrint(clazz, obj, textValue, name);
             }
         }
 
     }
 
-    private void addNewFail(List<Fail> localFails, IdEObject obj) {
-        localFails.add(new Fail(obj.getOid(), this.queryID, this.runID));
+    private void failDebugPrint(Class<IdEObject> clazz, IdEObject obj, String textValue, String name) {
+        System.out.println("Failure for oid: " + obj.getOid() + ", an " + extractNameFromClass(clazz)
+                + ", The object has BSAB96BD id " + textValue );
+        System.out.print("The correct IDs for "+ extractNameFromClass(clazz) + " are: ");
+        correctIDs.get(name).forEach(x-> System.out.print(x + " |  "));
+        System.out.println();
+    }
+
+
+
+    private void addNewFail(List<Fail> localFails, IdEObject obj, Class clazz) {
+        localFails.add(new Fail(obj.getOid(), QUERY_ID, this.runID, extractNameFromClass(clazz)));
         this.failCount++;
     }
 
@@ -283,7 +291,9 @@ public class IdValidationMachine implements QueryMachine {
     }
 
 
-
+    /**
+     * Writes some debug information to console
+     */
     private void debugPrint() {
         System.out.println("I checked the following IfcObjects in the model");
         for (Class clazz:
@@ -291,9 +301,9 @@ public class IdValidationMachine implements QueryMachine {
             System.out.println(extractNameFromClass(clazz));
         }
         System.out.println("I handled this many object: " + count);
-        System.out.println("I got this many  fails: " + failCount);
-        System.out.println("This many objects made it to the last method: " + debugCount);
         System.out.println("This many objects are missing AH psets: " + debugCount2);
         System.out.println("This many objects have AH psets but are missing BSAB96BD values: " + debugCount3);
+        System.out.println("This many objects have psets that have BSAB96BD values: " + debugCount);
+        System.out.println("I got this many incorrect IDs: " + failCount);
     }
 }

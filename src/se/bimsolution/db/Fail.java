@@ -5,12 +5,25 @@ public class Fail {
     private int runID;
     private long objectID;
     private int qID;
+    private String ifcType;
 
 
-    public Fail(long objectID, int qID, int runID) {
+    public Fail(long objectID, int qID, int runID, String ifcType) {
         this.objectID = objectID;
         this.qID = qID;
         this.runID = runID;
+        this.ifcType = ifcType;
+    }
+
+
+
+
+    public int getqID() {
+        return qID;
+    }
+
+    public String getIfcType() {
+        return ifcType;
     }
 
     public int getID() {
