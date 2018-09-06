@@ -1,8 +1,10 @@
 package se.bimsolution.db;
 
-public class Run {
+public class Revision {
     int id;
+    int projectId;
     boolean success;
+    String date;
 
 
     public int getId() {
