@@ -1,6 +1,8 @@
 package se.bimsolution.query;
 
+import org.bimserver.emf.IdEObject;
 import org.bimserver.models.ifc2x3tc1.*;
+import org.eclipse.emf.common.util.EList;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -59,10 +61,10 @@ public final class QueryUtils {
         classList.add(IfcRampFlight.class);
         classList.add(IfcStairFlight.class);
         classList.add(IfcStair.class);
-//        classList.add(IfcSlab.class);
+        classList.add(IfcSlab.class);
         classList.add(IfcDamperType.class);
         classList.add(IfcRoof.class);
-        classList.add(IfcSite.class);
+//        classList.add(IfcSite.class);
         classList.add(IfcJunctionBoxType.class);
 //        classList.add(IfcSpace.class);
         classList.add(IfcOutletType.class);
@@ -71,7 +73,7 @@ public final class QueryUtils {
         classList.add(IfcWall.class);
         classList.add(IfcFlowController.class);
         classList.add(IfcLightFixtureType.class);
-//        classList.add(IfcWindow.class);
+        classList.add(IfcWindow.class);
 //        classList.add(IfcOpeningElement.class);
         return classList;
     }
@@ -95,4 +97,47 @@ public final class QueryUtils {
         }
         return parsedData;
     }
+
+
+
+    //TODO IfcBuilding from IfcElement
+    public IfcBuildingStorey ifcBuildingStoreyFromElement(IfcElement element) {
+        EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
+        for (IfcRelContainedInSpatialStructure rel:
+                relList) {
+            if (rel.getRelatingStructure() instanceof IfcBuildingStorey) {
+                return (IfcBuildingStorey) rel.getRelatingStructure();
+            }
+        }
+        throw new IllegalArgumentException("The element has no IfcBuildingStorey associated with it");
+    }
+
+    //TODO IfcStorey from IfcOBject
+    public IfcBuilding ifcBuildingFromElement(IfcElement element) {
+        IfcBuildingStorey storey = ifcBuildingStoreyFromElement(element);
+        EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
+        for (IfcRelDecomposes de : decomposes) {
+            if (de.getRelatingObject() instanceof IfcBuilding) {
+                return (IfcBuilding) de.getRelatingObject();
+            }
+        }
+        throw new IllegalArgumentException("The element has no IfcBuilding associated with it");
+
+    }
+
+    //TODO IfcPset from IfcObject
+    public IfcPropertySet ifcPropertySetFromElement(IfcElement element) {
+
+    }
+
+
+    //TODO Property with name NAME from pset:
+
+    //TODO BSAB96BD from pset
+
+    //TODO TYPID from pset
+
+    //TODO Benämning from pset
+
+
 }

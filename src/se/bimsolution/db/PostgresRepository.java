@@ -101,14 +101,15 @@ public class PostgresRepository implements Repository {
 
         try {
             String runSQL = "INSERT INTO Fails " +
-                    "       (o_id, run_id, q_id) " +
-                    "         VALUES (?,?,?)";
+                    "       (o_id, run_id, q_id, ifctype) " +
+                    "         VALUES (?,?,?, ?)";
             PreparedStatement statement = connection.prepareStatement(runSQL);
 
             for (Fail fail : fails) {
                 statement.setLong(1, fail.getObjectID());
                 statement.setInt(2, fail.getRunID());
                 statement.setInt(3, fail.getQID());
+                statement.setString(4, fail.getIfcType());
                 statement.addBatch();
             }
             statement.executeBatch();

@@ -6,6 +6,7 @@ import se.bimsolution.db.*;
 import se.bimsolution.query.machine.QueryMachine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class QueryCoordinator implements Runnable{
@@ -13,7 +14,12 @@ public class QueryCoordinator implements Runnable{
     private final Repository repo;
     private final List<QueryMachine> machineList;
 
-    public QueryCoordinator(Repository repo, List<QueryMachine> machineList) {
+    public QueryCoordinator(Repository repo,  QueryMachine... machineList) {
+        this.repo = repo;
+        this.machineList = Arrays.asList(machineList);
+    }
+
+    public QueryCoordinator(Repository repo,  List<QueryMachine> machineList) {
         this.repo = repo;
         this.machineList = machineList;
     }
@@ -30,7 +36,6 @@ public class QueryCoordinator implements Runnable{
             if (qm.getError()==null) {
                 repo.writeAllFails(qm.getFails());
                 repo.writeCount(new Count(qm.getCount(), qm.getFailCount(), run.getId(), qm.getID()));
-
             } else {
                 hasError = true;
                 repo.writeLog(new Log(1,qm.getError(),1,1));

@@ -12,7 +12,7 @@ public class test {
         BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]),
                 "http://104.248.40.190:8080/bimserver").build();
         IfcModelInterface model = new ModelBuilder(bsc, "A2-400").build();
-        QueryMachine qm = new IdValidationMachine(model, 1,1);
+        QueryMachine qm = new IdValidationMachine(model, 1);
         qm.run();
         System.out.println(qm.getCount() + " " + qm.getFailCount());
         bsc.close();
