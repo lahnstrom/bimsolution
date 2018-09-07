@@ -490,6 +490,15 @@ public final class QueryUtils {
         }
         return elementQuantities;
     }
-
-
+    /**
+     * Given an IfcBuildingStorey, this method returns a double of the height of the storey.
+     *
+     * @param IfcBuildingStorey
+     * @return double The height of the storey.
+     */
+    //TODO create getHeight of Storey method.
+    public static double getHeighthOfStorey(IfcBuildingStorey buildingStorey){
+        return 0;
+    }
 }
+

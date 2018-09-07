@@ -15,7 +15,7 @@ import se.bimsolution.query.ModelBuilder;
 import se.bimsolution.query.QueryCoordinator;
 
 import se.bimsolution.query.QueryUtils;
-import se.bimsolution.query.machine.IdValidationMachine;
+//import se.bimsolution.query.machine.IdValidationMachine;
 
 import se.bimsolution.query.machine.QueryMachine;
 import se.bimsolution.query.machine.mockQueryMachine;
