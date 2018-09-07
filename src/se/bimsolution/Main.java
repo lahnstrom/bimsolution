@@ -13,9 +13,12 @@ import se.bimsolution.db.PostgresRepository;
 import se.bimsolution.query.ClientBuilder;
 import se.bimsolution.query.ModelBuilder;
 import se.bimsolution.query.QueryCoordinator;
+
 import se.bimsolution.query.QueryUtils;
 import se.bimsolution.query.machine.IdValidationMachine;
+
 import se.bimsolution.query.machine.QueryMachine;
+import se.bimsolution.query.machine.mockQueryMachine;
 //import se.bimsolution.query.machine.mockQueryMachine;
 
 
@@ -31,14 +34,17 @@ import java.util.List;
  * Handles the queries to the BIMServer
  */
 public class Main {
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
         try {
-            BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]), "http://104.248.40.190:8080/bimserver").build();
+            BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]),
+                    "http://104.248.40.190:8080/bimserver").build();
             IfcModelInterface model = new ModelBuilder(bsc, "A2-400").build();
-
             PostgresRepository postgresRepository = new PostgresRepository(args[2],
                     args[3], args[4]);
+
+            new QueryCoordinator(postgresRepository, new mockQueryMachine()).run();
+
 
             IfcDoor door = model.getAll(IfcDoor.class).get(0);
             System.out.println(QueryUtils.getAbsoluteZValue(door));
@@ -58,19 +64,20 @@ public class Main {
                     }
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
 /*
-=======
+
     public static void main(String[] args) throws InterruptedException {
         String[] strings = IfcDoor.class.toGenericString().split("\\.");
         Arrays.asList(strings).forEach(System.out::println);
         String last = strings[strings.length-1];
         System.out.println(last);
->>>>>>> master
+
         try (JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://104.248.40.190:8080/bimserver")) {
             // Creating a client in a try statement, this makes sure the client will be closed after use
             try (BimServerClient client = factory.create(new UsernamePasswordAuthenticationInfo(args[0], args[1]))) {

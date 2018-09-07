@@ -1,5 +1,5 @@
+/*
 package se.bimsolution.query.machine;
-
 import org.bimserver.emf.IdEObject;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.*;
@@ -91,13 +91,15 @@ public class IdValidationMachine implements QueryMachine {
     }
 
 
-    /**
+    */
+/**
      * This method checks all objects of a certain Ifc 2x3 class
      * It returns all the fails in the object group, ready to be written to DB.
      *
      * @param clazz the class to check, i.e. IfcDoor
      * @return The fails for the objects that do not pass the check.
-     */
+     *//*
+
     private List<Fail> runCheckForOneClass(Class<org.bimserver.emf.IdEObject> clazz) {
         List<Fail> localFails = new ArrayList<>();
         List<IdEObject> objList = model.getAll(clazz);
@@ -109,7 +111,8 @@ public class IdValidationMachine implements QueryMachine {
         return localFails;
     }
 
-    /**
+    */
+/**
      * This method serves as an intermediate step in the process of checking a BIM Object
      * It checks that the object is actually an IfcObject, otherwise it can't relate to a IfcRelDefinesBy object.
      * It then loops through  all the IfcRelDefines in the object and examines them further.
@@ -117,7 +120,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param clazz      The class representing an ifc 2x3 object.
      * @param localFails the list of fails for this specific object class
      * @param obj        the BIM Object that is being checked.
-     */
+     *//*
+
     private void checkIdEObject(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj) {
         if (!(obj instanceof IfcObject)) {
             throw new IllegalStateException(clazz.getName() + " is not an instance of IfcObject.");
@@ -137,7 +141,8 @@ public class IdValidationMachine implements QueryMachine {
         }
     }
 
-    /**
+    */
+/**
      * Checks all the IfcRelDefines relations of an IfcObject.
      * Returns false if an object does not contain a property.
      *
@@ -146,7 +151,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param obj        the BIM Object that is being checked.
      * @param ird        an IfcRelDefinesBy object
      * @return Is there a propertySet with the asked for name? && Is it correctly filled in?
-     */
+     *//*
+
     private boolean checkIfcRelDefines(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcRelDefines ird) {
         IfcPropertySet ps;
         boolean hasPset = false;
@@ -162,7 +168,8 @@ public class IdValidationMachine implements QueryMachine {
         return hasPset;
     }
 
-    /**
+    */
+/**
      * This method loops through a propertySet and checks every value.
      * If the propertySet is not correct, return false;
      *
@@ -170,7 +177,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param localFails the list of fails for this specific object class
      * @param obj        the BIM Object that is being checked.
      * @param ps         The propertySet to loop through
-     */
+     *//*
+
     private void loopThroughProperties(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcPropertySet ps) {
         boolean rightPSetExistsOnObject = false;
         for (IfcProperty ip : ps.getHasProperties()) {
@@ -187,7 +195,8 @@ public class IdValidationMachine implements QueryMachine {
         }
     }
 
-    /**
+    */
+/**
      * This method executes the final check of an IfcObject:
      * Is there a property? Does it have the type single value?
      * If so, is the name of the property what we're looking for?
@@ -199,7 +208,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param obj        the BIM Object that is being checked.
      * @param ip         an IfcProperty to be checked.
      * @return Is this the pset we're looking for
-     */
+     *//*
+
     private boolean checkPropertyAndAddToFailList(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, IfcProperty ip) {
         boolean isRightPSet = false;
         if (ip instanceof IfcPropertySingleValue) {
@@ -217,7 +227,8 @@ public class IdValidationMachine implements QueryMachine {
         return isRightPSet;
     }
 
-    /**
+    */
+/**
      * Check the value that we've extracted against the hashMap.
      * If it fails: add it to the list of fails.
      *
@@ -225,7 +236,8 @@ public class IdValidationMachine implements QueryMachine {
      * @param localFails the list of fails for this specific object class
      * @param obj        the BIM Object that is being checked.
      * @param textValue  the value that we extracted, and that proved to be wrong.
-     */
+     *//*
+
     private void checkIfValuePasses(Class<IdEObject> clazz, List<Fail> localFails, IdEObject obj, String textValue) {
         String name = extractNameFromClass(clazz);
         this.debugCount++;
@@ -255,7 +267,8 @@ public class IdValidationMachine implements QueryMachine {
     }
 
 
-    /**
+    */
+/**
      * Takes a name of an IfcClass and extracts the name e.g.
      * class org.bimserver.models.ifc2x3tc1.IfcDoor turns into string
      * IfcDoor
@@ -263,7 +276,8 @@ public class IdValidationMachine implements QueryMachine {
      *
      * @param clazz a java class
      * @return a string, the name of the Ifc class.
-     */
+     *//*
+
     private String extractNameFromClass(Class<IdEObject> clazz) {
         String[] parts = clazz.toString().split("\\.");
         String ret = parts[parts.length - 1];
@@ -290,10 +304,18 @@ public class IdValidationMachine implements QueryMachine {
         debugPrint();
     }
 
+    //TODO
+    @Override
+    public int getErrorId() {
+        return 0;
+    }
 
-    /**
+
+    */
+/**
      * Writes some debug information to console
-     */
+     *//*
+
     private void debugPrint() {
         System.out.println("I checked the following IfcObjects in the model");
         for (Class clazz:
@@ -307,3 +329,4 @@ public class IdValidationMachine implements QueryMachine {
         System.out.println("I got this many incorrect IDs: " + failCount);
     }
 }
+*/

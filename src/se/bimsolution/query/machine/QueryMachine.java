@@ -11,4 +11,5 @@ public interface QueryMachine extends Runnable{
     int getFailCount();
     String getError();
     void run();
+    int getErrorId();
 }

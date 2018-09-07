@@ -1,3 +1,4 @@
+/*
 package se.bimsolution.query.machine;
 
 import org.bimserver.client.BimServerClient;
@@ -18,3 +19,5 @@ public class test {
         bsc.close();
     }
 }
+
+*/
