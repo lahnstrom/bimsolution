@@ -13,6 +13,10 @@ import se.bimsolution.db.PostgresRepository;
 import se.bimsolution.query.ClientBuilder;
 import se.bimsolution.query.ModelBuilder;
 import se.bimsolution.query.QueryCoordinator;
+
+import se.bimsolution.query.QueryUtils;
+import se.bimsolution.query.machine.IdValidationMachine;
+
 import se.bimsolution.query.machine.QueryMachine;
 import se.bimsolution.query.machine.mockQueryMachine;
 //import se.bimsolution.query.machine.mockQueryMachine;
@@ -38,20 +42,42 @@ public class Main {
             IfcModelInterface model = new ModelBuilder(bsc, "A2-400").build();
             PostgresRepository postgresRepository = new PostgresRepository(args[2],
                     args[3], args[4]);
+
             new QueryCoordinator(postgresRepository, new mockQueryMachine()).run();
+
+
+            IfcDoor door = model.getAll(IfcDoor.class).get(0);
+            System.out.println(QueryUtils.getAbsoluteZValue(door));
+            System.out.println(QueryUtils.getAbsoluteZValue(QueryUtils.ifcBuildingStoreyFromElement(door)));
+            for (Class clazz:
+                 QueryUtils.standardClassList()) {
+                for (Object obj:
+                     model.getAll(clazz)) {
+                    if (obj instanceof  IfcElement) {
+                        try {
+
+                            if (QueryUtils.elementIsBelowFloorLevel((IfcElement) obj, 0.001)) {
+                                System.out.println(((IfcElement) obj).getName() +"   OID: " + ((IfcObject) obj).getOid());
+                                System.out.println("Difference: " + QueryUtils.getHeightDifferenceBetweenElementAndStorey((IfcElement) obj));
+                            }
+                        } catch (Exception ignored) {}
+                    }
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
 /*
-=======
+
     public static void main(String[] args) throws InterruptedException {
         String[] strings = IfcDoor.class.toGenericString().split("\\.");
         Arrays.asList(strings).forEach(System.out::println);
         String last = strings[strings.length-1];
         System.out.println(last);
->>>>>>> master
+
         try (JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://104.248.40.190:8080/bimserver")) {
             // Creating a client in a try statement, this makes sure the client will be closed after use
             try (BimServerClient client = factory.create(new UsernamePasswordAuthenticationInfo(args[0], args[1]))) {
