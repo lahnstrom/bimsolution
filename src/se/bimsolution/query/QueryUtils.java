@@ -401,7 +401,10 @@ public final class QueryUtils {
     }
 
     /**
-     * Given an IfcElement, returns true if the absolute Z value is below the Z value of its corresponding floor.
+     * Given an IfcElement and a threshold,
+     * returns true if the absolute Z value is below the Z value of its corresponding floor
+     * and if the difference is larger than the threshold.
+     *
      * @param element An IfcElement to check
      * @return Is the Z value of the Element below that of its floor?
      */
