@@ -13,12 +13,9 @@ public class ElementCheckerUtils {
             return false;
         }
         if(getHeightDifferenceBetweenStoreyAndElement(element) -
-                getHeighthOfStorey(ifcBuildingStoreyFromElement(element)) > 0.1){
+                getHeightOfStorey(ifcBuildingStoreyFromElement(element)) > 0.1){
             return false;
         }
         return true;
     };
-
-
-
 }
