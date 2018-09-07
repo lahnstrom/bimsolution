@@ -4,6 +4,7 @@ import org.bimserver.emf.IdEObject;
 import org.bimserver.models.ifc2x3tc1.*;
 import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
+import se.bimsolution.db.IfcType;
 import se.bimsolution.db.PropertySet;
 
 import java.io.BufferedReader;
@@ -479,7 +480,9 @@ public final class QueryUtils {
         return new Fail(oid, roid, errorId, ifcTypeId, ifcSite, ifcBuilding, ifcStorey, psetId);
     }
 
-
+    public static IfcType matchIfcTypeToElement(IfcElement element, HashMap<String, IfcType> typeMap) {
+        return typeMap.get(extractNameFromClass(element.getClass()));
+    }
     /**
      * Given an IfcPropertySet, returns a new PropertySet object that corresponds to a database row.
      * @param pset An IfcPropertySet from which to get the values.
@@ -522,11 +525,14 @@ public final class QueryUtils {
     public static String extractNameFromClass(Class<?> clazz) {
         String[] parts = clazz.toString().split("\\.");
         String ret = parts[parts.length - 1];
+        if (ret.endsWith("Impl")) {
+            ret = ret.substring(0, ret.length() - "Impl".length());
+        }
         if (ret.endsWith("Type")) {
-            ret = ret.substring(0, ret.length() - 4);
+            ret = ret.substring(0, ret.length() - "Type".length());
         }
         if (ret.endsWith("Element")) {
-            ret = ret.substring(0, ret.length() - 7);
+            ret = ret.substring(0, ret.length() - "Element".length());
         }
         return ret;
     }
