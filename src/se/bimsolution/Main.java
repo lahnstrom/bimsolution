@@ -36,12 +36,22 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
+        System.out.println(IfcDoor.class.toString());
+        try {
+            PostgresRepository postgresRepository = new PostgresRepository(args[2],
+                    args[3], args[4]);
+            postgresRepository.writeIfcTypes(
+                    QueryUtils.createIfcTypesFromStandardClassList(
+                            "resources\\spec.csv", ",", " | "));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        System.out.println(new mockQueryMachine().getClass().toString());
         try {
             BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]),
                     "http://104.248.40.190:8080/bimserver").build();
             IfcModelInterface model = new ModelBuilder(bsc, "A2-400").build();
+            System.out.println(QueryUtils.extractNameFromClass(model.getAll(IfcDoor.class).get(0).getClass()));
             PostgresRepository postgresRepository = new PostgresRepository(args[2],
                     args[3], args[4]);
 

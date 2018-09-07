@@ -41,6 +41,26 @@ public class PostgresRepository implements Repository {
     }
 
     /**
+     * Given a list of ifcTypes, writes the content of that list to DB.
+     * @param ifcTypes A list of IfcType instances
+     * @throws SQLException
+     */
+    public void writeIfcTypes(List<IfcType> ifcTypes) throws SQLException {
+
+        String sqlString = "INSERT INTO ifc_type " +
+                "       (ifc_name, valid_bsab) " +
+                "         VALUES (?,?)";
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+
+        for (IfcType type : ifcTypes) {
+            statement.setString(1, type.getName());
+            statement.setString(2, type.getValidBSAB96BD());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+    }
+
+    /**
      * This method creates a new stats instance and inserts it into the stats table.
      *
      * @param stats Stats instance to be inserted into stats table.
@@ -87,16 +107,16 @@ public class PostgresRepository implements Repository {
             statement.setLong(1, fail.getObjectId());
             statement.setInt(2, fail.getRevisionId());
             statement.setInt(3, fail.getErrorId());
-            statement.setString(4, fail.getIfcType());
+//            statement.setString(4, fail.getIfcType());
             statement.setString(5, fail.getIfcSite());
             statement.setString(6, fail.getIfcBuilding());
             statement.setString(7, fail.getIfcStorey());
-            statement.setString(8, fail.getpSetBenamning());
-            statement.setString(9, fail.getpSetBetackning());
-            statement.setString(10, fail.getpSetTypeId());
-            statement.setString(11, fail.getpSetIfylltBsab());
-            statement.setString(12, fail.getpSetGiltigBsab());
-            statement.setString(13, fail.getpSetParameterSomSaknas());
+//            statement.setString(8, fail.getpSetBenamning());
+//            statement.setString(9, fail.getpSetBetackning());
+//            statement.setString(10, fail.getpSetTypeId());
+//            statement.setString(11, fail.getpSetIfylltBsab());
+//            statement.setString(12, fail.getpSetGiltigBsab());
+//            statement.setString(13, fail.getpSetParameterSomSaknas());
             statement.addBatch();
         }
         statement.executeBatch();

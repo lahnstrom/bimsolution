@@ -4,10 +4,10 @@ public class PropertySet {
     private int id;
     private String benamning;
     private String beteckning;
-    private int typId;
+    private String typId;
     private String BSAB96BD;
 
-    public PropertySet(String benamning, String beteckning, int typId, String BSAB96BD) {
+    public PropertySet(String benamning, String beteckning, String typId, String BSAB96BD) {
         this.benamning = benamning;
         this.beteckning = beteckning;
         this.typId = typId;
@@ -26,7 +26,7 @@ public class PropertySet {
         return beteckning;
     }
 
-    public int getTypId() {
+    public String getTypId() {
         return typId;
     }
 
