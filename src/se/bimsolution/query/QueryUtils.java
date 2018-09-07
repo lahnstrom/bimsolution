@@ -450,10 +450,10 @@ public final class QueryUtils {
      * This method returns a list of newly created failures ready to be written to DB.
      * The list contains all the failed checks after running all the ElementCheckers on all the Elements in the maps.
      *
-     * @param revisionId
-     * @param classNameToIdMap
-     * @param elementsPSetIdMap  A collection of IfcElements which to check.
-     * @param callbacksErrorIdMap The ElementCheckers to check with.
+     * @param revisionId  A DB revision id.
+     * @param classNameToIdMap HashMap of IfcElement - ID of PropertySet
+     * @param elementsPSetIdMap  HashMap of ClassName - ID of IfcType
+     * @param callbacksErrorIdMap ElementChecker - ID of Error
      * @return A list of all the failed checks for the elements
      */
     public static List<Fail> checkAllElementsInCollection(int revisionId,
