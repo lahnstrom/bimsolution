@@ -31,7 +31,7 @@ import java.util.List;
  * Handles the queries to the BIMServer
  */
 public class Main {
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
         try {
             BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]), "http://104.248.40.190:8080/bimserver").build();
@@ -43,18 +43,19 @@ public class Main {
             IfcDoor door = model.getAll(IfcDoor.class).get(0);
             System.out.println(QueryUtils.getAbsoluteZValue(door));
             System.out.println(QueryUtils.getAbsoluteZValue(QueryUtils.ifcBuildingStoreyFromElement(door)));
-            for (Class clazz:
-                 QueryUtils.standardClassList()) {
-                for (Object obj:
-                     model.getAll(clazz)) {
-                    if (obj instanceof  IfcElement) {
+            for (Class clazz :
+                    QueryUtils.standardClassList()) {
+                for (Object obj :
+                        model.getAll(clazz)) {
+                    if (obj instanceof IfcElement) {
                         try {
 
                             if (QueryUtils.elementIsBelowFloorLevel((IfcElement) obj, 0.001)) {
-                                System.out.println(((IfcElement) obj).getName() +"   OID: " + ((IfcObject) obj).getOid());
-                                System.out.println("Difference: " + QueryUtils.getHeightDifferenceBetweenElementAndStorey((IfcElement) obj));
+                                System.out.println(((IfcElement) obj).getName() + "   OID: " + ((IfcObject) obj).getOid());
+                                System.out.println("Difference: " + QueryUtils.getHeightDifferenceBetweenStoreyAndElement((IfcElement) obj));
                             }
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+                        }
                     }
                 }
             }

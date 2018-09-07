@@ -1,19 +1,13 @@
 package se.bimsolution.query;
 
-import com.oracle.webservices.internal.api.message.PropertySet;
-import org.bimserver.emf.IdEObject;
 import org.bimserver.models.ifc2x3tc1.*;
-import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.util.EContentsEList;
+import se.bimsolution.db.Fail;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Utility class for QueryMachines
@@ -440,6 +434,62 @@ public final class QueryUtils {
         return propertiesList;
     }
 
+    /**
+     * Given a collection of IfcElements and a list of ElementCheckers,
+     * returns a list of all the failed checks when running all the ElementCheckers checkElement function
+     * on all the elements in the collection.
+     * @param elements A collection of IfcElements which to check.
+     * @param callbacks The ElementCheckers to check with.
+     * @return A list of all the failed checks for the elements
+     */
+    public static List<Fail> checkAllElementsInCollection(Collection<IfcElement> elements, ElementChecker... callbacks) {
+        List<Fail> fails = new ArrayList<>();
+        for (IfcElement element:
+             elements) {
+            for (ElementChecker callback:
+                 callbacks) {
+                if (!callback.checkElement(element)) {
+                    //TODO Implement this.
+                }
+            }
+
+        }
+        return fails;
+    }
+
+
+//    static void test() {
+//        checkAllElementsInCollection(List<Elements>, ElementCheckerUtil.checker1, Elementc)
+//    }
+//
+//     ElementChecker wrongFloorChecker = (element) -> {
+//        if element.onWrongFloor return false;
+//        else return true;
+//    };
+
+
+
+    /**
+     * Given an IfcObject, this method returns a list of the IfcPropertySets the element is defined by.
+     *
+     * @param object An IfcObject.
+     * @return A list of IfcPropertySets which the element is defined by.
+     */
+    public static List<IfcElementQuantity> ifcElementQuantitiesFromObject(IfcObject object) {
+        List<IfcRelDefinesByProperties> definesList = getAllIfcRelDefinesByPropertiesFromObject(object);
+        List<IfcElementQuantity> elementQuantities = new ArrayList<>();
+        for (IfcRelDefinesByProperties rel :
+                definesList) {
+            IfcPropertySetDefinition pset = rel.getRelatingPropertyDefinition();
+            if (pset instanceof IfcElementQuantity) {
+                elementQuantities.add((IfcElementQuantity) pset);
+            }
+        }
+        if (elementQuantities.size() == 0) {
+            throw new IllegalArgumentException("The element has no relating IfcElementQuantity");
+        }
+        return elementQuantities;
+    }
 
 
 }
