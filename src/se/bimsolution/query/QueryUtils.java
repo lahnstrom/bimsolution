@@ -526,10 +526,11 @@ return "";
         }
         return elementQuantities;
     }
+
     /**
      * Given an IfcBuildingStorey, this method returns a double of the height of the storey.
      *
-     * @param IfcBuildingStorey
+     * @param buildingStorey
      * @return double The height of the storey.
      */
     //TODO create getHeight of Storey method.
