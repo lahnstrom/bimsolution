@@ -6,7 +6,6 @@ import se.bimsolution.db.Fail;
 import se.bimsolution.db.IfcType;
 import se.bimsolution.db.PropertySet;
 
-import javax.xml.bind.Element;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -441,6 +440,26 @@ public final class QueryUtils {
 
 
     /**
+     * Given a collection of elements, returns a HashMap of IfcElements and corresponding newly created PropertySet.
+     * If the element has no propertyset, the value will be null.
+     * @param elements A list of elements that can have AH property sets
+     * @return A hashmap: IfcElement - new PropertySet(element)
+     */
+    public static HashMap<IfcElement, PropertySet> newIfcElementToAHPropertySetMap(Collection<IfcElement> elements) {
+        HashMap<IfcElement, PropertySet> elementPropertySetHashMap = new HashMap<>();
+        for (IfcElement element:
+             elements) {
+            try {
+                IfcPropertySet pset = getPropertySetByStartsWith(ifcPropertySetsFromElement(element), "AH");
+                elementPropertySetHashMap.put(element, newPropertySetFromAHIfcPropertySet(pset));
+            } catch (Exception ignored) {
+                elementPropertySetHashMap.put(element, null);
+            }
+        }
+        return elementPropertySetHashMap;
+    }
+
+    /**
      * Given the following:
      * A revisionId, that is a DB revision id,
      * A HashMap with Elements relating IfcElements to the ID of their propertySet in the DB.
@@ -456,10 +475,10 @@ public final class QueryUtils {
      * @param callbacksErrorIdMap ElementChecker - ID of Error
      * @return A list of all the failed checks for the elements
      */
-    public static List<Fail> checkAllElementsInCollection(int revisionId,
-                                                          HashMap<IfcElement, Integer> elementsPSetIdMap,
-                                                          HashMap<String, Integer> classNameToIdMap,
-                                                          HashMap<ElementChecker, Integer> callbacksErrorIdMap) {
+    public static List<Fail> checkAllElementsInHashMap(int revisionId,
+                                                       HashMap<IfcElement, Integer> elementsPSetIdMap,
+                                                       HashMap<String, Integer> classNameToIdMap,
+                                                       HashMap<ElementChecker, Integer> callbacksErrorIdMap) {
         List<Fail> fails = new ArrayList<>();
         for (IfcElement element :
                 elementsPSetIdMap.keySet()) {
@@ -548,9 +567,7 @@ public final class QueryUtils {
 
 
 
-    public static IfcType matchIfcTypeToElement(IfcElement element, HashMap<String, IfcType> typeMap) {
-        return typeMap.get(extractNameFromClass(element.getClass()));
-    }
+
 
     /**
      * Given an IfcPropertySet, returns a new PropertySet object that corresponds to a database row.
@@ -558,7 +575,7 @@ public final class QueryUtils {
      * @param pset An IfcPropertySet from which to get the values.
      * @return A new PropertySet ready to be written to DB.
      */
-    public static PropertySet newPropertySetFromIfcPropertySet(IfcPropertySet pset) {
+    public static PropertySet newPropertySetFromAHIfcPropertySet(IfcPropertySet pset) {
         String benamning = extractTextValueByNameOfSingleValue(pset, "Benämning");
         String beteckning = extractTextValueByNameOfSingleValue(pset, "Beteckning");
         String typId = extractTextValueByNameOfSingleValue(pset, "TypID");
