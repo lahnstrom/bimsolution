@@ -268,27 +268,7 @@ public class IdValidationMachine implements QueryMachine {
 
 
     */
-/**
-     * Takes a name of an IfcClass and extracts the name e.g.
-     * class org.bimserver.models.ifc2x3tc1.IfcDoor turns into string
-     * IfcDoor
-     * This is then used to look up the correct ID in a HashMap.
-     *
-     * @param clazz a java class
-     * @return a string, the name of the Ifc class.
-     *//*
-
-    private String extractNameFromClass(Class<IdEObject> clazz) {
-        String[] parts = clazz.toString().split("\\.");
-        String ret = parts[parts.length - 1];
-        if (ret.endsWith("Type")) {
-            ret = ret.substring(0, ret.length() - 4);
-        }
-        if (ret.endsWith("Element")) {
-            ret = ret.substring(0, ret.length() - 7);
-        }
-        return ret;
-    }
+/*
 
     @Override
     public void run() {

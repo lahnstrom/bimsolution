@@ -15,7 +15,6 @@ import se.bimsolution.query.ModelBuilder;
 import se.bimsolution.query.QueryCoordinator;
 
 import se.bimsolution.query.QueryUtils;
-import se.bimsolution.query.machine.IdValidationMachine;
 
 import se.bimsolution.query.machine.QueryMachine;
 import se.bimsolution.query.machine.mockQueryMachine;
@@ -36,6 +35,8 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
+
+        System.out.println(new mockQueryMachine().getClass().toString());
         try {
             BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]),
                     "http://104.248.40.190:8080/bimserver").build();

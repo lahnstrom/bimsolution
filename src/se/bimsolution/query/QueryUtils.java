@@ -1,5 +1,6 @@
 package se.bimsolution.query;
 
+import org.bimserver.emf.IdEObject;
 import org.bimserver.models.ifc2x3tc1.*;
 import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
@@ -449,7 +450,7 @@ public final class QueryUtils {
             for (ElementChecker callback:
                  callbacks) {
                 if (!callback.checkElement(element)) {
-                    //TODO Implement this.
+//                    fails.add(new Fail())
                 }
             }
 
@@ -457,16 +458,51 @@ public final class QueryUtils {
         return fails;
     }
 
-
-//    static void test() {
-//        checkAllElementsInCollection(List<Elements>, ElementCheckerUtil.checker1, Elementc)
-//    }
+    /**
+     *
+     * @param element
+//     * @param revisionId
+     * @param errorId
+     * @return
+     */
+//    public static Fail newFailFromElement(IfcElement element, int errorId, int roid) {
+//        long oid = element.getOid();
+//        String ifcType = extractNameFromClass(element.getClass());
+//        String ifcSite = ifcSiteFromElement(element).getName();
+//        String ifcBuilding = ifcBuildingFromElement(element).getName();
+//        String ifcStorey = ifcBuildingStoreyFromElement(element).getName();
 //
-//     ElementChecker wrongFloorChecker = (element) -> {
-//        if element.onWrongFloor return false;
-//        else return true;
-//    };
+//        String psetBenamning =
+//        String parametersMissing = getAllMissingParamsFromElementAsString(element);
+//
+////        new Fail();
+//        return null;
+//    }
 
+    /**
+     * Takes a name of an IfcClass and extracts the name e.g.
+     * class org.bimserver.models.ifc2x3tc1.IfcDoor turns into string
+     * IfcDoor
+     *
+     * @param clazz a java class
+     * @return a string, the name of the Ifc class.
+     */
+
+    public static String extractNameFromClass(Class<?> clazz) {
+        String[] parts = clazz.toString().split("\\.");
+        String ret = parts[parts.length - 1];
+        if (ret.endsWith("Type")) {
+            ret = ret.substring(0, ret.length() - 4);
+        }
+        if (ret.endsWith("Element")) {
+            ret = ret.substring(0, ret.length() - 7);
+        }
+        return ret;
+    }
+
+    public static String getAllMissingParamsFromElementAsString(IfcElement element) {
+return "";
+    }
 
 
     /**
