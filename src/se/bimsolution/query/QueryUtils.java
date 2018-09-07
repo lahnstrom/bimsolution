@@ -497,7 +497,7 @@ public final class QueryUtils {
      * @return double The height of the storey.
      */
     //TODO create getHeight of Storey method.
-    public static double getHeighthOfStorey(IfcBuildingStorey buildingStorey){
+    public static double getHeightOfStorey(IfcBuildingStorey buildingStorey){
         return 0;
     }
 }
