@@ -47,8 +47,8 @@ public class PostgresRepository implements Repository {
      */
     public void writeIfcTypes(List<IfcType> ifcTypes) throws SQLException {
 
-        String sqlString = "INSERT INTO ifctype " +
-                "       (name, validBSAB96BD) " +
+        String sqlString = "INSERT INTO ifc_type " +
+                "       (ifc_name, valid_bsab) " +
                 "         VALUES (?,?)";
         PreparedStatement statement = connection.prepareStatement(sqlString);
 
