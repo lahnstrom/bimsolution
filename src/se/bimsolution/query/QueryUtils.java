@@ -389,19 +389,35 @@ public final class QueryUtils {
         return absoluteZValue;
     }
 
+    /**
+     * Given an IfcElement, returns true if the absolute Z value is below the Z value of its corresponding floor.
+     * @param element An IfcElement to check
+     * @return Is the Z value of the Element below that of its floor?
+     */
     public static boolean elementIsBelowFloorLevel(IfcElement element) {
         double storeyZ = getAbsoluteZValue(ifcBuildingStoreyFromElement(element));
         double elementZ = getAbsoluteZValue(element);
         return storeyZ > elementZ;
     }
 
+    /**
+     * Given an IfcElement, returns true if the absolute Z value is below the Z value of its corresponding floor.
+     * @param element An IfcElement to check
+     * @return Is the Z value of the Element below that of its floor?
+     */
     public static boolean elementIsBelowFloorLevel(IfcElement element, double threshold) {
         double storeyZ = getAbsoluteZValue(ifcBuildingStoreyFromElement(element));
         double elementZ = getAbsoluteZValue(element);
-        return storeyZ > elementZ && storeyZ-elementZ > threshold;
+        return storeyZ-elementZ > threshold;
     }
 
-    public static double getHeightDifferenceBetweenElementAndStorey(IfcElement element) {
+    /**
+     * Gets the height difference between storey and element.
+     *
+     * @param element An IfcElement to check against a storey
+     * @return The height difference, e.g. StoreyHeight - ElementHeight
+     */
+    public static double getHeightDifferenceBetweenStoreyAndElement(IfcElement element) {
         return getAbsoluteZValue(ifcBuildingStoreyFromElement(element)) - getAbsoluteZValue(element);
     }
 }
