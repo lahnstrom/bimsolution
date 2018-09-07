@@ -6,6 +6,7 @@ import se.bimsolution.db.Fail;
 import se.bimsolution.db.IfcType;
 import se.bimsolution.db.PropertySet;
 
+import javax.xml.bind.Element;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -437,33 +438,37 @@ public final class QueryUtils {
         return propertiesList;
     }
 
+
+
     /**
-     * Given a collection of IfcElements and a list of ElementCheckers,
-     * returns a list of all the failed checks when running all the ElementCheckers checkElement function
-     * on all the elements in the collection.
+     * Given the following:
+     * A revisionId, that is a DB revision id,
+     * A HashMap with Elements relating IfcElements to the ID of their propertySet in the DB.
+     * A HashMap with ClassNames relating to the ID of their corresponding IfcType in the DB
+     * A HashMap with ElementChecker lambdas and their corresponding Error code in the  DB
      *
-     * @param elements  A collection of IfcElements which to check.
-     * @param callbacks The ElementCheckers to check with.
+     * This method returns a list of newly created failures ready to be written to DB.
+     * The list contains all the failed checks after running all the ElementCheckers on all the Elements in the maps.
+     *
+     * @param revisionId
+     * @param classNameToIdMap
+     * @param elementsPSetIdMap  A collection of IfcElements which to check.
+     * @param callbacksErrorIdMap The ElementCheckers to check with.
      * @return A list of all the failed checks for the elements
      */
-    public static List<Fail> checkAllElementsInCollection(Collection<IfcElement> elements, ElementChecker... callbacks) {
+    public static List<Fail> checkAllElementsInCollection(int revisionId,
+                                                          HashMap<IfcElement, Integer> elementsPSetIdMap,
+                                                          HashMap<String, Integer> classNameToIdMap,
+                                                          HashMap<ElementChecker, Integer> callbacksErrorIdMap) {
         List<Fail> fails = new ArrayList<>();
         for (IfcElement element :
-                elements) {
+                elementsPSetIdMap.keySet()) {
+            int ifcTypeId = classNameToIdMap.get(extractNameFromClass(element.getClass()));
             for (ElementChecker callback :
-                    callbacks) {
+                    callbacksErrorIdMap.keySet()) {
                 if (!callback.checkElement(element)) {
-                    /*
-                    Varje fail ska ha ett type id. Vi behöver alltså för varje element kunna mappa till typeid.
-                    Element -> IfcTypeId
-                    Ett element har en klass, som har ett namn som vi kan få ut med extractnamefromclass och element.getclass
-                    Sedan kan vi mappa klassnamn till ifctype.
-                    Vi plockar upp alla IfcTypeUrDb och skapar en Map på name till Id
-                    Och för varje element, ta ut klassnamnet och använd tabellen för att hämta id.
-
-                    För att fylla tabellen i db, skapa en ny metod som utgår från classlisten och skapar upp ifctype objekt.
-                     */
-//                    fails.add(new Fail())
+                    fails.add(newFailFromElement(element, callbacksErrorIdMap.get(callback),
+                            revisionId, ifcTypeId, elementsPSetIdMap.get(element)));
                 }
             }
 
