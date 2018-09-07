@@ -4,6 +4,7 @@ import org.bimserver.emf.IdEObject;
 import org.bimserver.models.ifc2x3tc1.*;
 import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
+import se.bimsolution.db.PropertySet;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -420,6 +421,7 @@ public final class QueryUtils {
 
     /**
      * Given an IfcObject, return the list of all IfcRelDefines that are of subtype IfcRelDefinesByProperties.
+     *
      * @param object An IfcObject.
      * @return The IfcRelDefinesByProperties associated with the object.
      */
@@ -439,16 +441,17 @@ public final class QueryUtils {
      * Given a collection of IfcElements and a list of ElementCheckers,
      * returns a list of all the failed checks when running all the ElementCheckers checkElement function
      * on all the elements in the collection.
-     * @param elements A collection of IfcElements which to check.
+     *
+     * @param elements  A collection of IfcElements which to check.
      * @param callbacks The ElementCheckers to check with.
      * @return A list of all the failed checks for the elements
      */
     public static List<Fail> checkAllElementsInCollection(Collection<IfcElement> elements, ElementChecker... callbacks) {
         List<Fail> fails = new ArrayList<>();
-        for (IfcElement element:
-             elements) {
-            for (ElementChecker callback:
-                 callbacks) {
+        for (IfcElement element :
+                elements) {
+            for (ElementChecker callback :
+                    callbacks) {
                 if (!callback.checkElement(element)) {
 //                    fails.add(new Fail())
                 }
@@ -459,30 +462,58 @@ public final class QueryUtils {
     }
 
     /**
-     *
-     * @param element
-//     * @param revisionId
-     * @param errorId
-     * @return
+     * Given an IfcElement that has failed a check, and arguments that describes the check,
+     * returns a new Fail with names of IfcSite, building and storey added.
+     * @param element An IfcElement that has failed a check
+     * @param errorId The error id of the failing check
+     * @param roid The revision id of the project being checked
+     * @param ifcTypeId The ifcTypeId that is related to the element.
+     * @param psetId The id of the IfcPropertySet that relates to the element
+     * @return A newly created fail ready to be written to the db.
      */
-//    public static Fail newFailFromElement(IfcElement element, int errorId, int roid) {
-//        long oid = element.getOid();
-//        String ifcType = extractNameFromClass(element.getClass());
-//        String ifcSite = ifcSiteFromElement(element).getName();
-//        String ifcBuilding = ifcBuildingFromElement(element).getName();
-//        String ifcStorey = ifcBuildingStoreyFromElement(element).getName();
-//
-//        String psetBenamning =
-//        String parametersMissing = getAllMissingParamsFromElementAsString(element);
-//
-////        new Fail();
-//        return null;
-//    }
+    public static Fail newFailFromElement(IfcElement element, int errorId, int roid, int ifcTypeId, int psetId) {
+        long oid = element.getOid();
+        String ifcSite = ifcSiteFromElement(element).getName();
+        String ifcBuilding = ifcBuildingFromElement(element).getName();
+        String ifcStorey = ifcBuildingStoreyFromElement(element).getName();
+        return new Fail(oid, roid, errorId, ifcTypeId, ifcSite, ifcBuilding, ifcStorey, psetId);
+    }
+
+
+    /**
+     * Given an IfcPropertySet, returns a new PropertySet object that corresponds to a database row.
+     * @param pset An IfcPropertySet from which to get the values.
+     * @return A new PropertySet ready to be written to DB.
+     */
+    public static PropertySet newPropertySetFromIfcPropertySet(IfcPropertySet pset) {
+        String benamning = extractTextValueByNameOfSingleValue(pset, "Benämning");
+        String beteckning = extractTextValueByNameOfSingleValue(pset, "Beteckning");
+        String typId = extractTextValueByNameOfSingleValue(pset, "TypID");
+        String BSAB96BD = extractTextValueByNameOfSingleValue(pset, "BSAB96BD");
+        return new PropertySet(benamning, beteckning, typId, BSAB96BD);
+    }
+
+    /**
+     * Given an IfcPropertySet and a name, extracts the value of the IfcSingleValue with the name.
+     * Wraps the two methods getNominalTextValueFromSingleValue and getSingleValueByName and returns null if either
+     * method throws an exception.
+     * @param propertySet An IfcPropertySet from which to extract a single value.
+     * @param name The name of the single value asked for
+     * @return The wrapped value of the single value.
+     */
+    public static String extractTextValueByNameOfSingleValue(IfcPropertySet propertySet, String name) {
+        String ret;
+        try {
+            ret = getNominalTextValueFromSingleValue(getSingleValueByName(propertySet, name));
+        } catch (Exception e) {
+            ret = null;
+        }
+        return ret;
+    }
 
     /**
      * Takes a name of an IfcClass and extracts the name e.g.
-     * class org.bimserver.models.ifc2x3tc1.IfcDoor turns into string
-     * IfcDoor
+     * class org.bimserver.models.ifc2x3tc1.IfcDoor turns into string IfcDoor
      *
      * @param clazz a java class
      * @return a string, the name of the Ifc class.
@@ -501,7 +532,7 @@ public final class QueryUtils {
     }
 
     public static String getAllMissingParamsFromElementAsString(IfcElement element) {
-return "";
+        return "";
     }
 
 
