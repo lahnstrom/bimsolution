@@ -177,15 +177,13 @@ public final class QueryUtils {
      * @return A list of IfcPropertySets which the element is defined by.
      */
     public static List<IfcPropertySet> ifcPropertySetsFromElement(IfcObject element) {
-        EList<IfcRelDefines> definesList = element.getIsDefinedBy();
-        EList<IfcPropertySet> psets = new BasicEList<>();
-        for (IfcRelDefines rel :
+        List<IfcRelDefinesByProperties> definesList = getAllIfcRelDefinesByPropertiesFromObject(element);
+        List<IfcPropertySet> psets = new ArrayList<>();
+        for (IfcRelDefinesByProperties rel :
                 definesList) {
-            if (rel instanceof IfcRelDefinesByProperties) {
-                IfcPropertySetDefinition pset = ((IfcRelDefinesByProperties) rel).getRelatingPropertyDefinition();
-                if (pset instanceof IfcPropertySet) {
-                    psets.add((IfcPropertySet) pset);
-                }
+            IfcPropertySetDefinition pset = rel.getRelatingPropertyDefinition();
+            if (pset instanceof IfcPropertySet) {
+                psets.add((IfcPropertySet) pset);
             }
         }
         if (psets.size() == 0) {
@@ -391,6 +389,7 @@ public final class QueryUtils {
 
     /**
      * Given an IfcElement, returns true if the absolute Z value is below the Z value of its corresponding floor.
+     *
      * @param element An IfcElement to check
      * @return Is the Z value of the Element below that of its floor?
      */
@@ -411,7 +410,7 @@ public final class QueryUtils {
     public static boolean elementIsBelowFloorLevel(IfcElement element, double threshold) {
         double storeyZ = getAbsoluteZValue(ifcBuildingStoreyFromElement(element));
         double elementZ = getAbsoluteZValue(element);
-        return storeyZ-elementZ > threshold;
+        return storeyZ - elementZ > threshold;
     }
 
     /**
@@ -423,4 +422,24 @@ public final class QueryUtils {
     public static double getHeightDifferenceBetweenStoreyAndElement(IfcElement element) {
         return getAbsoluteZValue(ifcBuildingStoreyFromElement(element)) - getAbsoluteZValue(element);
     }
+
+    /**
+     * Given an IfcObject, return the list of all IfcRelDefines that are of subtype IfcRelDefinesByProperties.
+     * @param object An IfcObject.
+     * @return The IfcRelDefinesByProperties associated with the object.
+     */
+    public static List<IfcRelDefinesByProperties> getAllIfcRelDefinesByPropertiesFromObject(IfcObject object) {
+        EList<IfcRelDefines> ifcRelDefinesEList = object.getIsDefinedBy();
+        List<IfcRelDefinesByProperties> propertiesList = new ArrayList<>();
+        for (IfcRelDefines rel :
+                ifcRelDefinesEList) {
+            if (rel instanceof IfcRelDefinesByProperties) {
+                propertiesList.add((IfcRelDefinesByProperties) rel);
+            }
+        }
+        return propertiesList;
+    }
+
+
+
 }
