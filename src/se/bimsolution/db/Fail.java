@@ -2,7 +2,7 @@ package se.bimsolution.db;
 
 public class Fail {
     private int id;
-    private int objectId;
+    private long objectId;
     private int revisionId;
     private int errorId;
     private int ifcTypeId;
@@ -12,7 +12,7 @@ public class Fail {
     private int psetId;
 
 
-    public Fail(int objectId, int revisionId, int errorId, int ifcTypeId, String ifcSite, String ifcBuilding,
+    public Fail(long objectId, int revisionId, int errorId, int ifcTypeId, String ifcSite, String ifcBuilding,
                 String ifcStorey, int psetId) {
         this.objectId = objectId;
         this.revisionId = revisionId;
@@ -28,7 +28,7 @@ public class Fail {
         return id;
     }
 
-    public int getObjectId() {
+    public long getObjectId() {
         return objectId;
     }
 
