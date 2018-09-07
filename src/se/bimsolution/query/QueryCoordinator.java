@@ -2,55 +2,41 @@ package se.bimsolution.query;
 
 import org.bimserver.client.BimServerClient;
 import org.bimserver.emf.IfcModelInterface;
+import org.bimserver.models.ifc2x3tc1.IfcElement;
 import se.bimsolution.db.*;
-import se.bimsolution.query.machine.QueryMachine;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+
+import static se.bimsolution.query.QueryUtils.*;
 
 public class QueryCoordinator implements Runnable {
 
-    private final Repository repo;
-    private final List<QueryMachine> machineList;
-    private Log log;
+    private int revisionId;
+    Repository repo;
+    private IfcModelInterface model;
+    List<ElementChecker> checkers;
 
-    public QueryCoordinator(Repository repo, QueryMachine... machineList) {
+    public QueryCoordinator(int revisionId, Repository repo, IfcModelInterface model, ElementChecker... elementCheckers) {
+        this.revisionId = revisionId;
         this.repo = repo;
-        this.machineList = Arrays.asList(machineList);
+        this.model = model;
+        checkers = Arrays.asList(elementCheckers);
     }
 
-    public QueryCoordinator(Repository repo, List<QueryMachine> machineList) {
-        this.repo = repo;
-        this.machineList = machineList;
-    }
 
     @Override
     public void run() {
-        try {
-            log = repo.writeLog();
-            Revision revision = repo.writeRevision(123, "mTest");
-                repo.writeRevisionIdToLog(log,revision.getId());
-
-            for (QueryMachine qm :
-                    machineList) {
-                qm.run();
-                Stats stats = new Stats(qm.getCount(), qm.getFailCount(), revision.getId(), qm.getErrorId());
-                repo.writeAllFails(qm.getFails());
-                repo.writeStats(stats);
-                repo.writeErrorIdToLog(log,qm.getErrorId());
-                repo.writeLogMessageIdToLog(log,"Sucessful execution");
-            }
-        } catch (Exception e) {
-
-            try {
-                e.printStackTrace();
-                repo.writeLogMessageIdToLog(log, e.getMessage());
-            } catch (SQLException logE) {
-                logE.printStackTrace();
-                System.out.println(logE.getStackTrace());
-            }
+        List<Class> classList = standardClassList();
+        List<IfcElement> elements = new ArrayList<>();
+        for (Class clazz:
+             classList) {
+            elements.addAll(model.getAll(clazz));
         }
+        HashMap<IfcElement, PropertySet> elementPropertySetHashMap = newIfcElementToAHPropertySetMap(elements);
+//        checkAllElementsInHashMap(revisionId, )
+
     }
 }

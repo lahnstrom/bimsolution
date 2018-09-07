@@ -55,7 +55,7 @@ public class Main {
             PostgresRepository postgresRepository = new PostgresRepository(args[2],
                     args[3], args[4]);
 
-            new QueryCoordinator(postgresRepository, new mockQueryMachine()).run();
+//            new QueryCoordinator(postgresRepository, new mockQueryMachine()).run();
 
 
             IfcDoor door = model.getAll(IfcDoor.class).get(0);

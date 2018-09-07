@@ -437,8 +437,6 @@ public final class QueryUtils {
         return propertiesList;
     }
 
-
-
     /**
      * Given a collection of elements, returns a HashMap of IfcElements and corresponding newly created PropertySet.
      * If the element has no propertyset, the value will be null.
@@ -565,10 +563,6 @@ public final class QueryUtils {
         return typeList;
     }
 
-
-
-
-
     /**
      * Given an IfcPropertySet, returns a new PropertySet object that corresponds to a database row.
      *
@@ -626,10 +620,6 @@ public final class QueryUtils {
         return ret;
     }
 
-    public static String getAllMissingParamsFromElementAsString(IfcElement element) {
-        //TODO Implement this
-        return "";
-    }
 
 
     /**
@@ -655,7 +645,7 @@ public final class QueryUtils {
     }
 
     /**
-     * Given an IfcBuildingStorey, this method returns a double of the height of the storey.
+     * Given an IfcBuildingStorey, this method returns a double - the height of the storey.
      *
      * @param buildingStorey
      * @return double The height of the storey.
