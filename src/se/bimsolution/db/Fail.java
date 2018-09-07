@@ -1,61 +1,93 @@
 package se.bimsolution.db;
 
 public class Fail {
-    private int ID;
-    private int runID;
-    private long objectID;
-    private int qID;
+    private int id;
+    private int objectId;
+    private int revisionId;
+    private int errorId;
     private String ifcType;
+    private String ifcSite;
+    private String ifcBuilding;
+    private String ifcStorey;
+    private String pSetBenamning;
+    private String pSetBetackning;
+    private String pSetTypeId;
+    private String pSetIfylltBsab;
+    private String pSetGiltigBsab;
+    private String pSetParameterSomSaknas;
 
-
-    public Fail(long objectID, int qID, int runID, String ifcType) {
-        this.objectID = objectID;
-        this.qID = qID;
-        this.runID = runID;
+    public Fail(int id, int objectId, int revisionId, int errorId, String ifcType, String ifcSite, String ifcBuilding,
+                String ifcStorey, String pSetBenamning, String pSetBetackning, String pSetTypeId, String pSetIfylltBsab,
+                String pSetGiltigBsab, String pSetParameterSomSaknas) {
+        this.id = id;
+        this.objectId = objectId;
+        this.revisionId = revisionId;
+        this.errorId = errorId;
         this.ifcType = ifcType;
+        this.ifcSite = ifcSite;
+        this.ifcBuilding = ifcBuilding;
+        this.ifcStorey = ifcStorey;
+        this.pSetBenamning = pSetBenamning;
+        this.pSetBetackning = pSetBetackning;
+        this.pSetTypeId = pSetTypeId;
+        this.pSetIfylltBsab = pSetIfylltBsab;
+        this.pSetGiltigBsab = pSetGiltigBsab;
+        this.pSetParameterSomSaknas = pSetParameterSomSaknas;
     }
 
+    public int getId() {
+        return id;
+    }
 
+    public int getObjectId() {
+        return objectId;
+    }
 
+    public int getRevisionId() {
+        return revisionId;
+    }
 
-    public int getqID() {
-        return qID;
+    public int getErrorId() {
+        return errorId;
     }
 
     public String getIfcType() {
         return ifcType;
     }
 
-    public int getID() {
-        return ID;
+    public String getIfcSite() {
+        return ifcSite;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public String getIfcBuilding() {
+        return ifcBuilding;
     }
 
-    public int getRunID() {
-        return runID;
+    public String getIfcStorey() {
+        return ifcStorey;
     }
 
-    public void setRunID(int runID) {
-        this.runID = runID;
+    public String getpSetBenamning() {
+        return pSetBenamning;
     }
 
-    public long getObjectID() {
-        return objectID;
+    public String getpSetBetackning() {
+        return pSetBetackning;
     }
 
-    public void setObjectID(int objectID) {
-        this.objectID = objectID;
+    public String getpSetTypeId() {
+        return pSetTypeId;
     }
 
-    public int getQID() {
-        return qID;
+    public String getpSetIfylltBsab() {
+        return pSetIfylltBsab;
     }
 
-    public void setQID(int qID) {
-        this.qID = qID;
+    public String getpSetGiltigBsab() {
+        return pSetGiltigBsab;
+    }
 
+    public String getpSetParameterSomSaknas() {
+        return pSetParameterSomSaknas;
     }
 }

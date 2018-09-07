@@ -1,47 +1,36 @@
 package se.bimsolution.db;
 
 public class Log {
-    int ID;
+    int id;
     String logMessage;
-    int runID;
-    int qID;
+    int revisionId;
+    int errorId;
 
-    public Log(int ID, String logMessage, int runID, int qID) {
-        this.ID = ID;
+    public Log() {
+    }
+
+    public Log(String logMessage) {
         this.logMessage = logMessage;
-        this.runID = runID;
-        this.qID = qID;
     }
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getLogMessage() {
         return logMessage;
     }
 
-    public void setLogMessage(String logMessage) {
-        this.logMessage = logMessage;
+    public void setRevisionId(int revisionId) {
+        this.revisionId = revisionId;
     }
 
-    public int getRunID() {
-        return runID;
+    public void setErrorId(int errorId) {
+        this.errorId = errorId;
     }
 
-    public void setRunID(int runID) {
-        this.runID = runID;
-    }
-
-    public int getqID() {
-        return qID;
-    }
-
-    public void setqID(int qID) {
-        this.qID = qID;
-    }
 }
