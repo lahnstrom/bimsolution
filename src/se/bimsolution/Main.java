@@ -30,16 +30,15 @@ import java.util.List;
  * Handles the queries to the BIMServer
  */
 public class Main {
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
         try {
-            BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]), "http://104.248.40.190:8080/bimserver").build();
+            BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]),
+                    "http://104.248.40.190:8080/bimserver").build();
             IfcModelInterface model = new ModelBuilder(bsc, "A2-400").build();
-
             PostgresRepository postgresRepository = new PostgresRepository(args[2],
                     args[3], args[4]);
             new QueryCoordinator(postgresRepository, new mockQueryMachine()).run();
-
         } catch (Exception e) {
             e.printStackTrace();
         }

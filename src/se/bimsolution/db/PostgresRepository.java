@@ -14,13 +14,12 @@ public class PostgresRepository implements Repository {
     /**
      * This method creates a new revision instance and inserts it into the revision table.
      *
-     * @return              A new Revision instance corresponding to inserted row in the revision table.
+     * @return A new Revision instance corresponding to inserted row in the revision table.
      * @throws SQLException
      */
     @Override
     public Revision writeRevision(int projectId, String model) throws SQLException {
 
-        //Insert revision to database.
         Revision revision = new Revision(projectId, model);
         String sqlString = "INSERT INTO revision " +
                 "       (model, project_id) " +
@@ -29,32 +28,27 @@ public class PostgresRepository implements Repository {
         PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, model);
         statement.setInt(2, projectId);
-
         statement.executeUpdate();
 
-        //Get the ID of the inserted Run.
-        ResultSet rs = statement.getGeneratedKeys();
-        if (rs.next()) {
-            int id = rs.getInt(1);
-            Timestamp timestamp = rs.getTimestamp(2);
+        ResultSet resultSet = statement.getGeneratedKeys();
+        if (resultSet.next()) {
+            int id = resultSet.getInt(1);
+            Timestamp timestamp = resultSet.getTimestamp(2);
             revision.setId(id);
             revision.setDate(timestamp);
-
         }
-
         return revision;
     }
 
     /**
      * This method creates a new stats instance and inserts it into the stats table.
      *
-     * @param stats         Stats instance to be inserted into stats table.
+     * @param stats Stats instance to be inserted into stats table.
      * @throws SQLException
      */
     @Override
     public Stats writeStats(Stats stats) throws SQLException {
 
-        //Insert Run to DB.
         String countSQL = "INSERT INTO stats " +
                 "       (object_count, fail_count, revision_id, error_id) " +
                 "         VALUES (?,?,?,?)";
@@ -66,10 +60,9 @@ public class PostgresRepository implements Repository {
         statement.setInt(4, stats.getErrorId());
         statement.executeUpdate();
 
-        //Get the ID of the inserted Run.
-        ResultSet rs = statement.getGeneratedKeys();
-        if (rs.next()) {
-            stats.setId(rs.getInt(1));
+        ResultSet resultSet = statement.getGeneratedKeys();
+        if (resultSet.next()) {
+            stats.setId(resultSet.getInt(1));
         }
         return stats;
     }
@@ -77,11 +70,12 @@ public class PostgresRepository implements Repository {
     /**
      * This method writes all fails from a list of fails to the fail table.
      *
-     * @param fails         List of fails.
+     * @param fails List of fails.
      * @throws SQLException
      */
     @Override
     public void writeAllFails(List<Fail> fails) throws SQLException {
+
         String sqlString = "INSERT INTO Fail " +
                 "       (object_id, revision_id, error_id, ifc_type, ifc_site, ifc_building, ifc_storey, " +
                 "p_set_benamning, p_set_beteckning, p_set_typeid, p_set_ifyllt_bsab, p_set_giltiga_bsab," +
@@ -111,42 +105,40 @@ public class PostgresRepository implements Repository {
     /**
      * This method insert the provided revision Id to corresponding row in the log table.
      *
-     * @param log           Log instance to be used to update the corresponding row in the log table.
-     * @param revisionId    Revision Id of corresponding revision.
+     * @param log        Log instance to be used to update the corresponding row in the log table.
+     * @param revisionId Revision Id of corresponding revision.
      * @throws SQLException
      */
     @Override
     public void writeRevisionIdToLog(Log log, int revisionId) throws SQLException {
 
-        //Update revision in DB.
         String sqlString = "UPDATE  log " +
                 "       SET revision_id=? " +
                 "         WHERE id=?";
 
         PreparedStatement statement = connection.prepareStatement(sqlString);
         statement.setInt(1, revisionId);
-        statement.setInt(2,log.getId());
+        statement.setInt(2, log.getId());
         statement.executeUpdate();
     }
 
     /**
      * This method insert error Id to corresponding row into the log table.
      *
-     * @param log           Log instance to be used to update the corresponding row in the log table.
-     * @param errorId       Error Id of corresponding revision.
+     * @param log     Log instance to be used to update the corresponding row in the log table.
+     * @param errorId Error Id of corresponding revision.
      * @throws SQLException
      */
     @Override
     public void writeErrorIdToLog(Log log, int errorId) throws SQLException {
 
-        //Update revision in DB.
         String sqlString = "UPDATE  log " +
                 "       SET error_id=? " +
                 "         WHERE id=?";
 
         PreparedStatement statement = connection.prepareStatement(sqlString);
         statement.setInt(1, errorId);
-        statement.setInt(2,log.getId());
+        statement.setInt(2, log.getId());
         statement.executeUpdate();
     }
 
@@ -154,35 +146,33 @@ public class PostgresRepository implements Repository {
      * This method inserts a log message into the row in the log table corresponding to the provided
      * Log instance.
      *
-     * @param log           Log instance to be used to update the corresponding row in the log table.
-     * @param logMessage    Log message of corresponding revision.
+     * @param log        Log instance to be used to update the corresponding row in the log table.
+     * @param logMessage Log message of corresponding revision.
      * @throws SQLException
      */
     @Override
     public void writeLogMessageIdToLog(Log log, String logMessage) throws SQLException {
 
-        //Update revision in DB.
         String sqlString = "UPDATE  log " +
                 "       SET log_message=? " +
                 "         WHERE id=?";
 
         PreparedStatement statement = connection.prepareStatement(sqlString);
         statement.setString(1, logMessage);
-        statement.setInt(2,log.getId());
+        statement.setInt(2, log.getId());
         statement.executeUpdate();
     }
 
     /**
      * Add new log row to database and return a log instance with corresponding Id.
      *
-     * @return              Log instance of inserted row.
+     * @return Log instance of inserted row.
      * @throws SQLException
      */
     public Log writeLog() throws SQLException {
 
         Log log = new Log();
 
-        //Update revision in DB.
         String sqlString = "INSERT INTO log " +
                 "       (log_message) " +
                 "         VALUES (?)";
@@ -191,19 +181,17 @@ public class PostgresRepository implements Repository {
         statement.setString(1, "");
         statement.executeUpdate();
 
-        //Get the ID of the inserted Run
-        ResultSet rs = statement.getGeneratedKeys();
-        if (rs.next()) {
-            log.setId(rs.getInt(1));
+        ResultSet resultSet = statement.getGeneratedKeys();
+        if (resultSet.next()) {
+            log.setId(resultSet.getInt(1));
         }
-
         return log;
     }
 
     /**
      * This method returns all error types from the database.
      *
-     * @return              list of all error types.
+     * @return list of all error types.
      * @throws SQLException
      */
     public List<Error> getAllErrors() throws SQLException {
