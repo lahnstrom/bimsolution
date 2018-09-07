@@ -1,6 +1,5 @@
 package se.bimsolution.query;
 
-import org.bimserver.emf.IdEObject;
 import org.bimserver.models.ifc2x3tc1.*;
 import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
@@ -29,7 +28,7 @@ public final class QueryUtils {
     public static List<Class> standardClassList() {
         List<Class> classList = new ArrayList<>();
         classList.add(IfcDoor.class);
-        classList.add(IfcFlowSegment.class);
+//        classList.add(IfcFlowSegment.class);
 //        classList.add(IfcFurnitureType.class);
         classList.add(IfcAirTerminalType.class);
         classList.add(IfcAirToAirHeatRecoveryType.class);
@@ -58,7 +57,7 @@ public final class QueryUtils {
         classList.add(IfcPumpType.class);
         classList.add(IfcPipeFittingType.class);
         classList.add(IfcSwitchingDeviceType.class);
-        classList.add(IfcPipeSegmentType.class);
+//        classList.add(IfcPipeSegmentType.class);
         classList.add(IfcRamp.class);
         classList.add(IfcRampFlight.class);
         classList.add(IfcStairFlight.class);
@@ -170,11 +169,11 @@ public final class QueryUtils {
     /**
      * Given an IfcObject, this method returns a list of the IfcPropertySets the element is defined by.
      *
-     * @param element An IfcElement.
+     * @param object An IfcElement.
      * @return A list of IfcPropertySets which the element is defined by.
      */
-    public static List<IfcPropertySet> ifcPropertySetsFromElement(IfcObject element) {
-        List<IfcRelDefinesByProperties> definesList = getAllIfcRelDefinesByPropertiesFromObject(element);
+    public static List<IfcPropertySet> ifcPropertySetsFromElement(IfcObject object) {
+        List<IfcRelDefinesByProperties> definesList = getAllIfcRelDefinesByPropertiesFromObject(object);
         List<IfcPropertySet> psets = new ArrayList<>();
         for (IfcRelDefinesByProperties rel :
                 definesList) {
@@ -454,6 +453,16 @@ public final class QueryUtils {
             for (ElementChecker callback :
                     callbacks) {
                 if (!callback.checkElement(element)) {
+                    /*
+                    Varje fail ska ha ett type id. Vi behöver alltså för varje element kunna mappa till typeid.
+                    Element -> IfcTypeId
+                    Ett element har en klass, som har ett namn som vi kan få ut med extractnamefromclass och element.getclass
+                    Sedan kan vi mappa klassnamn till ifctype.
+                    Vi plockar upp alla IfcTypeUrDb och skapar en Map på name till Id
+                    Och för varje element, ta ut klassnamnet och använd tabellen för att hämta id.
+
+                    För att fylla tabellen i db, skapa en ny metod som utgår från classlisten och skapar upp ifctype objekt.
+                     */
 //                    fails.add(new Fail())
                 }
             }
@@ -462,14 +471,16 @@ public final class QueryUtils {
         return fails;
     }
 
+
     /**
      * Given an IfcElement that has failed a check, and arguments that describes the check,
      * returns a new Fail with names of IfcSite, building and storey added.
-     * @param element An IfcElement that has failed a check
-     * @param errorId The error id of the failing check
-     * @param roid The revision id of the project being checked
+     *
+     * @param element   An IfcElement that has failed a check
+     * @param errorId   The error id of the failing check
+     * @param roid      The revision id of the project being checked
      * @param ifcTypeId The ifcTypeId that is related to the element.
-     * @param psetId The id of the IfcPropertySet that relates to the element
+     * @param psetId    The id of the IfcPropertySet that relates to the element
      * @return A newly created fail ready to be written to the db.
      */
     public static Fail newFailFromElement(IfcElement element, int errorId, int roid, int ifcTypeId, int psetId) {
@@ -480,11 +491,65 @@ public final class QueryUtils {
         return new Fail(oid, roid, errorId, ifcTypeId, ifcSite, ifcBuilding, ifcStorey, psetId);
     }
 
+
+    /**
+     * Given an IfcClassName, a map with relations between such class names and multiple IDS,
+     * and a Delimiter for separating the correct ids from each other,
+     * returns a String with the multiple IDs.
+     * The map can be generated with idToIfcCSVParser
+     *
+     * @param className       Name of an Ifc class
+     * @param returnDelimiter The delimiter between the correct ids in the return string
+     * @return A string with the correct ids in the class separated by returnDelimiter.
+     */
+
+    public static String getStringOfValidBSAB96BD(String className, HashMap<String, HashSet<String>> map, String returnDelimiter) {
+        StringBuilder stringBuilder = new StringBuilder();
+        System.out.println(className);
+        for (String valid :
+                map.get(className)) {
+            stringBuilder.append(valid).append(returnDelimiter);
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Given a filepath to a csv file containing a mapping between IfcClasses and an Id,
+     * this method returns a list of newly created IfcType instances, ready to be written to DB.
+     *
+     * @param filePath The filepath to a csv file containing the mappings.
+     * @param csvDelimiter The csv file delimiter, usually a comma
+     * @param validBSAB96BDDelimiter The desired delimiter between the different IDs in the BSAB96BD String
+     *                               on the created instances
+     * @return A list of newly created IfcType instances, ready to be written to DB.
+     */
+    public static List<IfcType> createIfcTypesFromStandardClassList(String filePath, String csvDelimiter, String validBSAB96BDDelimiter) {
+        List<IfcType> typeList = new ArrayList<>();
+        List<Class> classList = standardClassList();
+        HashMap<String, HashSet<String>> map = null;
+        try {
+            map = idToIfcCSVParser(csvDelimiter, filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (Class clazz :
+                classList) {
+            String className = extractNameFromClass(clazz);
+            typeList.add(new IfcType(className, getStringOfValidBSAB96BD(className, map, validBSAB96BDDelimiter)));
+
+        }
+        return typeList;
+    }
+
+
+
     public static IfcType matchIfcTypeToElement(IfcElement element, HashMap<String, IfcType> typeMap) {
         return typeMap.get(extractNameFromClass(element.getClass()));
     }
+
     /**
      * Given an IfcPropertySet, returns a new PropertySet object that corresponds to a database row.
+     *
      * @param pset An IfcPropertySet from which to get the values.
      * @return A new PropertySet ready to be written to DB.
      */
@@ -500,8 +565,9 @@ public final class QueryUtils {
      * Given an IfcPropertySet and a name, extracts the value of the IfcSingleValue with the name.
      * Wraps the two methods getNominalTextValueFromSingleValue and getSingleValueByName and returns null if either
      * method throws an exception.
+     *
      * @param propertySet An IfcPropertySet from which to extract a single value.
-     * @param name The name of the single value asked for
+     * @param name        The name of the single value asked for
      * @return The wrapped value of the single value.
      */
     public static String extractTextValueByNameOfSingleValue(IfcPropertySet propertySet, String name) {
@@ -534,10 +600,12 @@ public final class QueryUtils {
         if (ret.endsWith("Element")) {
             ret = ret.substring(0, ret.length() - "Element".length());
         }
+
         return ret;
     }
 
     public static String getAllMissingParamsFromElementAsString(IfcElement element) {
+        //TODO Implement this
         return "";
     }
 
@@ -563,14 +631,15 @@ public final class QueryUtils {
         }
         return elementQuantities;
     }
+
     /**
      * Given an IfcBuildingStorey, this method returns a double of the height of the storey.
      *
-     * @param IfcBuildingStorey
+     * @param buildingStorey
      * @return double The height of the storey.
      */
     //TODO create getHeight of Storey method.
-    public static double getHeightOfStorey(IfcBuildingStorey buildingStorey){
+    public static double getHeightOfStorey(IfcBuildingStorey buildingStorey) {
         return 0;
     }
 }

@@ -36,8 +36,16 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-
-
+        System.out.println(IfcDoor.class.toString());
+        try {
+            PostgresRepository postgresRepository = new PostgresRepository(args[2],
+                    args[3], args[4]);
+            postgresRepository.writeIfcTypes(
+                    QueryUtils.createIfcTypesFromStandardClassList(
+                            "resources\\spec.csv", ",", " | "));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         try {
             BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]),
