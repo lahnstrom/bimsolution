@@ -5,10 +5,8 @@ import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.IfcElement;
 import se.bimsolution.db.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.*;
 
 import static se.bimsolution.query.QueryUtils.*;
 
@@ -36,7 +34,12 @@ public class QueryCoordinator implements Runnable {
             elements.addAll(model.getAll(clazz));
         }
         HashMap<IfcElement, PropertySet> elementPropertySetHashMap = newIfcElementToAHPropertySetMap(elements);
-//        checkAllElementsInHashMap(revisionId, )
-
+        HashMap<IfcElement, Integer> elementIdMap;
+        try {
+            elementIdMap = repo.writePropertySetsReturnsMap(elementPropertySetHashMap);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+//        checkAllElementsInHashMap()
     }
 }

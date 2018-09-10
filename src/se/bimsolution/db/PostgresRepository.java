@@ -1,8 +1,9 @@
 package se.bimsolution.db;
 
+import org.bimserver.models.ifc2x3tc1.IfcElement;
+
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PostgresRepository implements Repository {
     private Connection connection;
@@ -42,6 +43,7 @@ public class PostgresRepository implements Repository {
 
     /**
      * Given a list of ifcTypes, writes the content of that list to DB.
+     *
      * @param ifcTypes A list of IfcType instances
      * @throws SQLException
      */
@@ -120,6 +122,39 @@ public class PostgresRepository implements Repository {
             statement.addBatch();
         }
         statement.executeBatch();
+    }
+
+
+    /**
+     * Given a map of IfcElement and corresponding PropertySets, writes the property sets to the DB and returns
+     * a hash map of ifc element and the id of the generated property set.
+     * @param elementPropertySetMap A map of IfcElement - PropertySet
+     * @return A map of IfcElement - ID of PropertySet in DB
+     * @throws SQLException
+     */
+    public HashMap<IfcElement, Integer> writePropertySetsReturnsMap(HashMap<IfcElement, PropertySet> elementPropertySetMap) throws SQLException {
+        HashMap<IfcElement, Integer> resultmap = new HashMap<>();
+        String sqlString = "INSERT INTO property_set " +
+                "       (benamning, beteckning, typ_id, bsab96bd) " +
+                "         VALUES (?,?,?,?)";
+
+
+        for (Map.Entry<IfcElement, PropertySet> entry : elementPropertySetMap.entrySet()) {
+            PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+            PropertySet pset = entry.getValue();
+            statement.setString(1, pset.getBenamning());
+            statement.setString(2, pset.getBeteckning());
+            statement.setString(3, pset.getTypId());
+            statement.setString(4, pset.getBSAB96BD());
+            statement.execute();
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                resultmap.put(entry.getKey(), rs.getInt("id"));
+            }
+
+        }
+
+        return resultmap;
     }
 
     /**
