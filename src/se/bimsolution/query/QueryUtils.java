@@ -30,51 +30,51 @@ public final class QueryUtils {
         classList.add(IfcDoor.class);
 //        classList.add(IfcFlowSegment.class);
 //        classList.add(IfcFurnitureType.class);
-//        classList.add(IfcAirTerminalType.class);
-//        classList.add(IfcAirToAirHeatRecoveryType.class);
-//        classList.add(IfcBeam.class);
+        classList.add(IfcAirTerminalType.class);
+        classList.add(IfcAirToAirHeatRecoveryType.class);
+        classList.add(IfcBeam.class);
 //        classList.add(IfcBuilding.class);
-//        classList.add(IfcCompressorType.class);
+        classList.add(IfcCompressorType.class);
 //        classList.add(IfcBuildingStorey.class);
-//        classList.add(IfcColumn.class);
-//        classList.add(IfcCovering.class);
-//        classList.add(IfcCurtainWall.class);
-//        classList.add(IfcAirTerminalType.class);
-//        classList.add(IfcAirTerminalBoxType.class);
-//        classList.add(IfcDuctSegmentType.class);
-//        classList.add(IfcDuctFittingType.class);
-//        classList.add(IfcDuctSilencerType.class);
-//        classList.add(IfcEquipmentElement.class);
-//        classList.add(IfcFireSuppressionTerminalType.class);
-//        classList.add(IfcFanType.class);
-//        classList.add(IfcFilterType.class);
-//        classList.add(IfcTankType.class);
-//        classList.add(IfcFlowTerminal.class);
-//        classList.add(IfcFooting.class);
-//        classList.add(IfcHumidifierType.class);
-//        classList.add(IfcUnitaryEquipmentType.class);
-//        classList.add(IfcPile.class);
-//        classList.add(IfcPumpType.class);
-//        classList.add(IfcPipeFittingType.class);
-//        classList.add(IfcSwitchingDeviceType.class);
+        classList.add(IfcColumn.class);
+        classList.add(IfcCovering.class);
+        classList.add(IfcCurtainWall.class);
+        classList.add(IfcAirTerminalType.class);
+        classList.add(IfcAirTerminalBoxType.class);
+        classList.add(IfcDuctSegmentType.class);
+        classList.add(IfcDuctFittingType.class);
+        classList.add(IfcDuctSilencerType.class);
+        classList.add(IfcEquipmentElement.class);
+        classList.add(IfcFireSuppressionTerminalType.class);
+        classList.add(IfcFanType.class);
+        classList.add(IfcFilterType.class);
+        classList.add(IfcTankType.class);
+        classList.add(IfcFlowTerminal.class);
+        classList.add(IfcFooting.class);
+        classList.add(IfcHumidifierType.class);
+        classList.add(IfcUnitaryEquipmentType.class);
+        classList.add(IfcPile.class);
+        classList.add(IfcPumpType.class);
+        classList.add(IfcPipeFittingType.class);
+        classList.add(IfcSwitchingDeviceType.class);
 //        classList.add(IfcPipeSegmentType.class);
-//        classList.add(IfcRamp.class);
-//        classList.add(IfcRampFlight.class);
-//        classList.add(IfcStairFlight.class);
-//        classList.add(IfcStair.class);
-//        classList.add(IfcSlab.class);
-//        classList.add(IfcDamperType.class);
-//        classList.add(IfcRoof.class);
+        classList.add(IfcRamp.class);
+        classList.add(IfcRampFlight.class);
+        classList.add(IfcStairFlight.class);
+        classList.add(IfcStair.class);
+        classList.add(IfcSlab.class);
+        classList.add(IfcDamperType.class);
+        classList.add(IfcRoof.class);
 //        classList.add(IfcSite.class);
-//        classList.add(IfcJunctionBoxType.class);
+        classList.add(IfcJunctionBoxType.class);
 //        classList.add(IfcSpace.class);
-//        classList.add(IfcOutletType.class);
-//        classList.add(IfcSystem.class);
-//        classList.add(IfcValveType.class);
-//        classList.add(IfcWall.class);
-//        classList.add(IfcFlowController.class);
-//        classList.add(IfcLightFixtureType.class);
-//        classList.add(IfcWindow.class);
+        classList.add(IfcOutletType.class);
+        classList.add(IfcSystem.class);
+        classList.add(IfcValveType.class);
+        classList.add(IfcWall.class);
+        classList.add(IfcFlowController.class);
+        classList.add(IfcLightFixtureType.class);
+        classList.add(IfcWindow.class);
 //        classList.add(IfcOpeningElement.class);
         return classList;
     }
@@ -654,6 +654,107 @@ public final class QueryUtils {
     //TODO create getHeight of Storey method.
     public static double getHeightOfStorey(IfcBuildingStorey buildingStorey) {
         return 0;
+    }
+
+
+    /**
+     * Given a name and a collection of IfcElementQuantities, returns the first that has the specified name
+     * E.g. BaseQuantities
+     * @param quantities A collection of IfcElementQuantities
+     * @param name A name of the Specific quantity
+     * @return A single IfcElementQuantity
+     */
+    public static IfcElementQuantity getElementQuantityByName(Collection<IfcElementQuantity> quantities, String name) {
+        for (IfcElementQuantity quantity :
+                quantities) {
+            if (quantity.getName().equals(name)) {
+                return quantity;
+            }
+        }
+        throw new IllegalArgumentException("Quantity with name " + name + " does not exist on this object");
+    }
+
+    /**
+     * See getElementQuantityByName, this method simply returns null when no fitting quantity is found
+     * @param quantities A collection of IfcElementQuantities
+     * @param name A name of the Specific quantity
+     * @return A single IfcElementQuantity
+     */
+    public static IfcElementQuantity getElementQuantityByNameOrNull(Collection<IfcElementQuantity> quantities, String name) {
+        for (IfcElementQuantity quantity :
+                quantities) {
+            if (quantity.getName().equals(name)) {
+                return quantity;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Given an IfcElementQuantity, returns the first IfcPhysicalQuantity that is an instance of IfcQuantityArea. If
+     * no such Quantity exists, throws exception.
+     * @param quantity An IfcElementQuantity
+     * @return A single IfcQuantityArea
+     */
+    public static IfcQuantityArea getAreaFromElementQuantity(IfcElementQuantity quantity) {
+        List<IfcPhysicalQuantity> physicalQuantities = quantity.getQuantities();
+        for (IfcPhysicalQuantity physical :
+                physicalQuantities) {
+            if (physical instanceof IfcQuantityArea) {
+                return (IfcQuantityArea) physical;
+            }
+        }
+        throw new IllegalArgumentException("No IfcQuantityArea found in the element quantity provided");
+    }
+    /**
+     * Given an IfcElementQuantity, returns the first IfcPhysicalQuantity that is an instance of IfcQuantityArea. If
+     * no such Quantity exists, returns null.
+     * @param quantity An IfcElementQuantity
+     * @return A single IfcQuantityArea
+     */
+    public static IfcQuantityArea getAreaFromElementQuantityOrNull(IfcElementQuantity quantity) {
+        List<IfcPhysicalQuantity> physicalQuantities = quantity.getQuantities();
+        for (IfcPhysicalQuantity physical :
+                physicalQuantities) {
+            if (physical instanceof IfcQuantityArea) {
+                return (IfcQuantityArea) physical;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Given an IfcSpace and a name of an IfcElementQuantity on that object, returns the area found in the
+     * IfcElementQuantity as a double. If no such area exists, returns 0.
+     * @param space An IfcSpace
+     * @param name The name of the Specific quantity, e.g. BaseQuantities
+     * @return The area
+     */
+    public static double getAreaOfSpaceOrZero(IfcSpace space, String name) {
+        List<IfcElementQuantity> quantities = ifcElementQuantitiesFromObject(space);
+        IfcElementQuantity quantity = getElementQuantityByNameOrNull(quantities, name);
+        if (quantity == null) {
+            return 0;
+        }
+        IfcQuantityArea area = getAreaFromElementQuantityOrNull(quantity);
+        if (area == null) {
+            return 0;
+        }
+        return area.getAreaValue();
+
+    }
+    /**
+     * Given an IfcSpace and a name of an IfcElementQuantity on that object, returns the area found in the
+     * IfcElementQuantity as a double. If no such area exists, indirectly throws exception.
+     * @param space An IfcSpace
+     * @param name The name of the Specific quantity, e.g. BaseQuantities
+     * @return The area
+     */
+    public static double getAreaOfSpace(IfcSpace space, String name) {
+        List<IfcElementQuantity> quantities = ifcElementQuantitiesFromObject(space);
+        IfcElementQuantity quantity = getElementQuantityByName(quantities, name);
+        IfcQuantityArea area = getAreaFromElementQuantity(quantity);
+        return area.getAreaValue();
     }
 }
 
