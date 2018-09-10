@@ -119,7 +119,7 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method insert the provided revision Id to corresponding row in the log table.
+     * This method inserts the provided revision Id to corresponding row in the log table.
      *
      * @param log        Log instance to be used to update the corresponding row in the log table.
      * @param revisionId Revision Id of corresponding revision.
@@ -138,7 +138,7 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method insert error Id to corresponding row in the log table.
+     * This method inserts error Id to corresponding row in the log table.
      *
      * @param log     Log instance to be used to update the corresponding row in the log table.
      * @param errorId Error Id of corresponding revision.

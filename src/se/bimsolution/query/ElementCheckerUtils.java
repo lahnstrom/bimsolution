@@ -53,21 +53,21 @@ public class ElementCheckerUtils {
     };
 
     /**
-     * This function checks if an ifc element is located in the storey it's associated with. The function returns true
-     * if it is above the the floor of the storey and below of floor above.
+     * This function checks if an ifc element is in the storey it's associated with, i.e. if the element is above the
+     * floor of its storey and below the floor of the storey above.
      *
      * @param element   Ifc element to check.
      * @return boolean  True if the element is on the correct floor, otherwise false.
      */
     static ElementChecker isObjectOnCorrectFloor = element -> {
-        double tolerance = 0.1;
-        if (elementIsBelowFloorLevel(element)) {
-            return false;
-        }
-        if (getHeightDifferenceBetweenStoreyAndElement(element) -
-                getHeightOfStorey(ifcBuildingStoreyFromElement(element)) > tolerance) {
-            return false;
-        }
-        return true;
+        final double TOLERANCE = 0.1;
+        double elementZvalue = -getHeightDifferenceBetweenStoreyAndElement(element);
+        double storeyZvalue = getHeightOfStorey(ifcBuildingStoreyFromElement(element));
+        return !elementIsBelowFloorLevel(element) && (elementZvalue - storeyZvalue) < TOLERANCE;
+    };
+
+    static ElementChecker isMasonary = element -> {
+
+      return true;
     };
 }
