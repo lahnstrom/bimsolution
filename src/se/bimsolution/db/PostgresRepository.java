@@ -1,5 +1,6 @@
 package se.bimsolution.db;
 
+import it.unimi.dsi.fastutil.Hash;
 import org.bimserver.models.ifc2x3tc1.IfcElement;
 
 import java.sql.*;
@@ -134,29 +135,36 @@ public class PostgresRepository implements Repository {
         String sqlString = "INSERT INTO property_set " +
                 "       (benamning, beteckning, typ_id, bsab96bd) " +
                 "         VALUES (?,?,?,?)";
+        HashMap<IfcElement, PropertySet> itermap = new LinkedHashMap<>(elementPropertySetMap);
+        PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
 
 
-        for (Map.Entry<IfcElement, PropertySet> entry : elementPropertySetMap.entrySet()) {
-            PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+        for (Map.Entry<IfcElement, PropertySet> entry : itermap.entrySet()) {
             PropertySet pset = entry.getValue();
-            if (pset != null) {
+            if (pset!=null) {
                 statement.setString(1, pset.getBenamning());
                 statement.setString(2, pset.getBeteckning());
                 statement.setString(3, pset.getTypId());
                 statement.setString(4, pset.getBSAB96BD());
-                statement.execute();
-                ResultSet rs = statement.getGeneratedKeys();
-                if (rs.next()) {
-                    resultmap.put(entry.getKey(), rs.getInt("id"));
-                }
+                statement.addBatch();
             }
         }
+        statement.execute();
+        ResultSet genKeys = statement.getGeneratedKeys();
+        genKeys.next();
+        for (Map.Entry<IfcElement, PropertySet> entry : itermap.entrySet()) {
+            resultmap.put(entry.getKey(), genKeys.getInt("id"));
+            genKeys.next();
+        }
+
+
 
         return resultmap;
     }
 
     /**
      * Reads the Ifc_Type table and creates a hashmap with ifc_name - id, used when creating new Fails.
+     *
      * @return A new HashMap of Ifc_name - Id
      * @throws SQLException
      */

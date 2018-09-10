@@ -16,7 +16,7 @@ public class ElementCheckerUtils {
      */
     static ElementChecker hasPropertySet = element -> {
         try {
-            ifcPropertySetsFromElement(element);
+            getIfcPropertySetsFromElement(element);
             return true;
         } catch (Exception e) {
             return false;
@@ -30,9 +30,9 @@ public class ElementCheckerUtils {
      * @return boolean  True if the element has a BSAB Id, otherwise false.
      */
     static ElementChecker hasBSABId = element -> {
-        List<IfcPropertySet> propertySets = ifcPropertySetsFromElement(element);
+        List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
         try {
-            getPropertySetByStartsWith(propertySets, "AH");
+            getPropertySetFromListByStartsWith(propertySets, "AH");
             return true;
         } catch (Exception e) {
             return false;
@@ -47,11 +47,12 @@ public class ElementCheckerUtils {
      * @return boolean  True if the element has a BSAB Id, otherwise false.
      */
     static TwoParameterElementChecker isBSABIdCorrect = (map, element) -> {
-        List<IfcPropertySet> propertySets = ifcPropertySetsFromElement(element);
-        IfcPropertySet propertySet = getPropertySetByStartsWith(propertySets, "AH");
-        String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
-        String className = extractNameFromClass(element.getClass());
-        return map.get(className).contains(idToCheck);
+            List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
+            IfcPropertySet propertySet = getPropertySetFromListByStartsWith(propertySets, "AH");
+            String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
+            String className = extractNameFromClass(element.getClass());
+            return map.get(className).contains(idToCheck);
+
     };
 
     /**
@@ -64,8 +65,8 @@ public class ElementCheckerUtils {
     static ElementChecker isObjectOnCorrectFloor = element -> {
         final double TOLERANCE = 0.1;
         double elementZvalue = -getHeightDifferenceBetweenStoreyAndElement(element);
-        double storeyZvalue = getHeightOfStorey(ifcBuildingStoreyFromElement(element));
-        return !elementIsBelowFloorLevel(element) && (elementZvalue - storeyZvalue) < TOLERANCE;
+        double storeyZvalue = getHeightOfStorey(getIfcBuildingStoreyFromElement(element));
+        return !getElementIsBelowFloorLevel(element) && (elementZvalue - storeyZvalue) < TOLERANCE;
     };
 
     static ElementChecker isMasonary = element -> {
@@ -81,7 +82,7 @@ public class ElementCheckerUtils {
     static HashMap<ElementChecker, Integer> standardElementCheckerMapping() {
         HashMap<ElementChecker, Integer> retMap = new HashMap<>();
         retMap.put(hasPropertySet, 1);
-//        retMap.put(hasBSABId, 2);
+        retMap.put(hasBSABId, 2);
 //        retMap.put(isObjectOnCorrectFloor, 3);
         return retMap;
     }

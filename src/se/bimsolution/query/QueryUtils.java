@@ -25,7 +25,7 @@ public final class QueryUtils {
      *
      * @return a list of classes
      */
-    public static List<Class> standardClassList() {
+    public static List<Class> getStandardClassList() {
         List<Class> classList = new ArrayList<>();
         classList.add(IfcDoor.class);
 //        classList.add(IfcFlowSegment.class);
@@ -89,7 +89,7 @@ public final class QueryUtils {
      * @return A HashMap with IfcObject names mapped to their correctIDs
      * @throws IOException if file can not be found or read.
      */
-    public static HashMap<String, HashSet<String>> idToIfcCSVParser(String CSVfilepath, String delimiter) throws IOException {
+    public static HashMap<String, HashSet<String>> getHashMapByIdToIfcCSVParsing(String CSVfilepath, String delimiter) throws IOException {
         String line;
         HashMap<String, HashSet<String>> parsedData = new HashMap<>();
         BufferedReader br = new BufferedReader(new FileReader(CSVfilepath));
@@ -117,7 +117,7 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return An IfcBuldingStorey within which the Element is contained.
      */
-    public static IfcBuildingStorey ifcBuildingStoreyFromElement(IfcElement element) {
+    public static IfcBuildingStorey getIfcBuildingStoreyFromElement(IfcElement element) {
         EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
         for (IfcRelContainedInSpatialStructure rel :
                 relList) {
@@ -136,7 +136,7 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return An IfcBuldingStorey within which the Element is contained.
      */
-    public static IfcBuildingStorey ifcBuildingStoreyFromElementOrNull(IfcElement element) {
+    public static IfcBuildingStorey getIfcBuildingStoreyFromElementOrNull(IfcElement element) {
         EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
         for (IfcRelContainedInSpatialStructure rel :
                 relList) {
@@ -153,8 +153,8 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return An IfcBuilding within which the Element is contained.
      */
-    public static IfcBuilding ifcBuildingFromElement(IfcElement element) {
-        IfcBuildingStorey storey = ifcBuildingStoreyFromElement(element);
+    public static IfcBuilding getIfcBuildingFromElement(IfcElement element) {
+        IfcBuildingStorey storey = getIfcBuildingStoreyFromElement(element);
         EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
         for (IfcRelDecomposes de : decomposes) {
             if (de.getRelatingObject() instanceof IfcBuilding) {
@@ -173,8 +173,8 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return An IfcBuilding within which the Element is contained.
      */
-    public static IfcBuilding ifcBuildingFromElementOrNull(IfcElement element) {
-        IfcBuildingStorey storey = ifcBuildingStoreyFromElement(element);
+    public static IfcBuilding getIfcBuildingFromElementOrNull(IfcElement element) {
+        IfcBuildingStorey storey = getIfcBuildingStoreyFromElement(element);
         EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
         for (IfcRelDecomposes de : decomposes) {
             if (de.getRelatingObject() instanceof IfcBuilding) {
@@ -190,8 +190,8 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return An IfcSite within which the Element is contained.
      */
-    public static IfcSite ifcSiteFromElement(IfcElement element) {
-        IfcBuilding building = ifcBuildingFromElement(element);
+    public static IfcSite getIfcSiteFromElement(IfcElement element) {
+        IfcBuilding building = getIfcBuildingFromElement(element);
         EList<IfcRelDecomposes> decomposes = building.getDecomposes();
         for (IfcRelDecomposes de : decomposes) {
             if (de.getRelatingObject() instanceof IfcSite) {
@@ -209,8 +209,8 @@ public final class QueryUtils {
      * @param element An IfcElement.
      * @return An IfcSite within which the Element is contained.
      */
-    public static IfcSite ifcSiteFromElementOrNull(IfcElement element) {
-        IfcBuilding building = ifcBuildingFromElement(element);
+    public static IfcSite getIfcSiteFromElementOrNull(IfcElement element) {
+        IfcBuilding building = getIfcBuildingFromElement(element);
         EList<IfcRelDecomposes> decomposes = building.getDecomposes();
         for (IfcRelDecomposes de : decomposes) {
             if (de.getRelatingObject() instanceof IfcSite) {
@@ -226,7 +226,7 @@ public final class QueryUtils {
      * @param object An IfcElement.
      * @return A list of IfcPropertySets which the element is defined by.
      */
-    public static List<IfcPropertySet> ifcPropertySetsFromElement(IfcObject object) {
+    public static List<IfcPropertySet> getIfcPropertySetsFromElement(IfcObject object) {
         List<IfcRelDefinesByProperties> definesList = getAllIfcRelDefinesByPropertiesFromObject(object);
         List<IfcPropertySet> psets = new ArrayList<>();
         for (IfcRelDefinesByProperties rel :
@@ -249,7 +249,7 @@ public final class QueryUtils {
      * @param object An IfcElement.
      * @return A list of IfcPropertySets which the element is defined by.
      */
-    public static List<IfcPropertySet> ifcPropertySetsFromElementOrNull(IfcObject object) {
+    public static List<IfcPropertySet> getIfcPropertySetsFromElementOrNull(IfcObject object) {
         List<IfcRelDefinesByProperties> definesList = getAllIfcRelDefinesByPropertiesFromObject(object);
         List<IfcPropertySet> psets = new ArrayList<>();
         for (IfcRelDefinesByProperties rel :
@@ -272,7 +272,7 @@ public final class QueryUtils {
      * @param name         A name of an IfcPropertySet
      * @return An IfcPropertySet
      */
-    public static IfcPropertySet getPropertySetByName(List<IfcPropertySet> propertySets, String name) {
+    public static IfcPropertySet getPropertySetFromListByName(List<IfcPropertySet> propertySets, String name) {
         for (IfcPropertySet pset :
                 propertySets) {
             if (pset.getName().equals(name)) {
@@ -290,7 +290,7 @@ public final class QueryUtils {
      * @param name         A name of an IfcPropertySet
      * @return An IfcPropertySet
      */
-    public static IfcPropertySet getPropertySetByNameOrNull(List<IfcPropertySet> propertySets, String name) {
+    public static IfcPropertySet getPropertySetFromListByNameOrNull(List<IfcPropertySet> propertySets, String name) {
         for (IfcPropertySet pset :
                 propertySets) {
             if (pset.getName().equals(name)) {
@@ -309,7 +309,7 @@ public final class QueryUtils {
      * @param startsWith   The first part of an IfcPropertySet name
      * @return An IfcPropertySet
      */
-    public static IfcPropertySet getPropertySetByStartsWith(List<IfcPropertySet> propertySets, String startsWith) {
+    public static IfcPropertySet getPropertySetFromListByStartsWith(List<IfcPropertySet> propertySets, String startsWith) {
         for (IfcPropertySet pset :
                 propertySets) {
             if (pset.getName().startsWith(startsWith)) {
@@ -328,7 +328,7 @@ public final class QueryUtils {
      * @param startsWith   The first part of an IfcPropertySet name
      * @return An IfcPropertySet
      */
-    public static IfcPropertySet getPropertySetByStartsWithOrNull(List<IfcPropertySet> propertySets, String startsWith) {
+    public static IfcPropertySet getPropertySetFromListByStartsWithOrNull(List<IfcPropertySet> propertySets, String startsWith) {
         for (IfcPropertySet pset :
                 propertySets) {
             if (pset.getName().startsWith(startsWith)) {
@@ -345,7 +345,7 @@ public final class QueryUtils {
      * @param name           The name of the property.
      * @return An IfcPropertySingleValue which has the name specified.
      */
-    public static IfcPropertySingleValue getSingleValueByName(IfcPropertySet ifcPropertySet, String name) {
+    public static IfcPropertySingleValue getSingleValueFromPropertySetByName(IfcPropertySet ifcPropertySet, String name) {
         EList<IfcProperty> properties = ifcPropertySet.getHasProperties();
         for (IfcProperty prop :
                 properties) {
@@ -364,7 +364,7 @@ public final class QueryUtils {
      * @param name           The name of the property.
      * @return An IfcPropertySingleValue which has the name specified.
      */
-    public static IfcPropertySingleValue getSingleValueByNameOrNull(IfcPropertySet ifcPropertySet, String name) {
+    public static IfcPropertySingleValue getSingleValueFromPropertySetByNameOrNull(IfcPropertySet ifcPropertySet, String name) {
         EList<IfcProperty> properties = ifcPropertySet.getHasProperties();
         for (IfcProperty prop :
                 properties) {
@@ -419,7 +419,7 @@ public final class QueryUtils {
      * @param propertyName The name of the desired property
      * @return Does the property with the desired name exist?
      */
-    public static boolean propertyExistsInPropertySet(IfcPropertySet propertySet, String propertyName) {
+    public static boolean getPropertyExistsInPropertySetByName(IfcPropertySet propertySet, String propertyName) {
         EList<IfcProperty> properties = propertySet.getHasProperties();
         for (IfcProperty prop :
                 properties) {
@@ -437,7 +437,7 @@ public final class QueryUtils {
      * @param placement an IfcLocalPlacement
      * @return The IfcAxis2Placement
      */
-    public static IfcAxis2Placement3D relatingIfcAxis3DFromLocalPlacement(IfcLocalPlacement placement) {
+    public static IfcAxis2Placement3D getRelatingIfcAxis3DFromLocalPlacement(IfcLocalPlacement placement) {
         if (placement.getRelativePlacement() instanceof IfcAxis2Placement3D) {
             return (IfcAxis2Placement3D) placement.getRelativePlacement();
         }
@@ -451,7 +451,7 @@ public final class QueryUtils {
      * @param placement an IfcLocalPlacement
      * @return The IfcAxis2Placement
      */
-    public static IfcAxis2Placement3D relatingIfcAxis3DFromLocalPlacementOrNull(IfcLocalPlacement placement) {
+    public static IfcAxis2Placement3D getRelatingIfcAxis3DFromLocalPlacementOrNull(IfcLocalPlacement placement) {
         if (placement.getRelativePlacement() instanceof IfcAxis2Placement3D) {
             return (IfcAxis2Placement3D) placement.getRelativePlacement();
         }
@@ -464,7 +464,7 @@ public final class QueryUtils {
      * @param placement An IfcPlacement
      * @return The relative coordinates of the placement
      */
-    public static List<Double> getRelatingCoordinatesOfPlacement(IfcAxis2Placement3D placement) {
+    public static List<Double> getRelatingCoordinatesFromAxis2Placement(IfcAxis2Placement3D placement) {
         IfcCartesianPoint location = placement.getLocation();
         return location.getCoordinates();
     }
@@ -475,7 +475,7 @@ public final class QueryUtils {
      * @param coordinates A list of coordinates
      * @return The third element in the list;
      */
-    public static double getZValueOfCoordinates(List<Double> coordinates) {
+    public static double getZValueOfCoordinatesFromList(List<Double> coordinates) {
         return coordinates.get(2);
     }
 
@@ -485,8 +485,8 @@ public final class QueryUtils {
      * @param placement an IfcPlacement
      * @return the z-value as a double.
      */
-    public static double getZValueOfPlacement(IfcAxis2Placement3D placement) {
-        return getZValueOfCoordinates(getRelatingCoordinatesOfPlacement(placement));
+    public static double getZValueOfPlacementFromPlacement(IfcAxis2Placement3D placement) {
+        return getZValueOfCoordinatesFromList(getRelatingCoordinatesFromAxis2Placement(placement));
     }
 
 
@@ -496,7 +496,7 @@ public final class QueryUtils {
      * @param product An IfcProduct with a local placement
      * @return The placement casted to an IfcLocalPlacement
      */
-    public static IfcLocalPlacement getLocalPlacement(IfcProduct product) {
+    public static IfcLocalPlacement getLocalPlacementFromProduct(IfcProduct product) {
         if (product.getObjectPlacement() instanceof IfcLocalPlacement) {
             return (IfcLocalPlacement) product.getObjectPlacement();
         }
@@ -510,7 +510,7 @@ public final class QueryUtils {
      * @param product An IfcProduct with a local placement
      * @return The placement casted to an IfcLocalPlacement
      */
-    public static IfcLocalPlacement getLocalPlacementOrNull(IfcProduct product) {
+    public static IfcLocalPlacement getLocalPlacementFromProductOrNull(IfcProduct product) {
         if (product.getObjectPlacement() instanceof IfcLocalPlacement) {
             return (IfcLocalPlacement) product.getObjectPlacement();
         }
@@ -520,7 +520,7 @@ public final class QueryUtils {
     /**
      * Given an IfcLocalPlacement, returns its PlacementRelToLocalPlacement {
      */
-    public static IfcLocalPlacement getLocalPlacement(IfcLocalPlacement placement) {
+    public static IfcLocalPlacement getLocalPlacementFromPlacement(IfcLocalPlacement placement) {
         if (placement.getPlacementRelTo() instanceof IfcLocalPlacement) {
             return (IfcLocalPlacement) placement.getPlacementRelTo();
         }
@@ -532,7 +532,7 @@ public final class QueryUtils {
      * Given an IfcLocalPlacement, returns its PlacementRelToLocalPlacement {
      * If it doesn't exist, return null;
      */
-    public static IfcLocalPlacement getLocalPlacementOrNull(IfcLocalPlacement placement) {
+    public static IfcLocalPlacement getLocalPlacementFromPlacementOrNull(IfcLocalPlacement placement) {
         if (placement.getPlacementRelTo() instanceof IfcLocalPlacement) {
             return (IfcLocalPlacement) placement.getPlacementRelTo();
         }
@@ -546,7 +546,7 @@ public final class QueryUtils {
      * @param placement An IfcObjectPlacement
      * @return Does the IfcObjectPlacement place an IfcSite?
      */
-    public static boolean placementPlacesIfcSite(IfcObjectPlacement placement) {
+    public static boolean getPlacementPlacesIfcSite(IfcObjectPlacement placement) {
         for (IfcProduct prod :
                 placement.getPlacesObject()) {
             if (prod instanceof IfcSite) {
@@ -563,15 +563,15 @@ public final class QueryUtils {
      * @param product An IfcProduct
      * @return The absolute z-value of the product as a double
      */
-    public static double getAbsoluteZValue(IfcProduct product) {
+    public static double getAbsoluteZValueFromProduct(IfcProduct product) {
         double absoluteZValue = 0;
-        IfcLocalPlacement localPlacement = getLocalPlacement(product);
-        IfcAxis2Placement3D placement3D = relatingIfcAxis3DFromLocalPlacement(localPlacement);
-        absoluteZValue += getZValueOfPlacement(placement3D);
-        while (!placementPlacesIfcSite(localPlacement)) {
-            localPlacement = getLocalPlacement(localPlacement);
-            placement3D = relatingIfcAxis3DFromLocalPlacement(localPlacement);
-            absoluteZValue += getZValueOfPlacement(placement3D);
+        IfcLocalPlacement localPlacement = getLocalPlacementFromProduct(product);
+        IfcAxis2Placement3D placement3D = getRelatingIfcAxis3DFromLocalPlacement(localPlacement);
+        absoluteZValue += getZValueOfPlacementFromPlacement(placement3D);
+        while (!getPlacementPlacesIfcSite(localPlacement)) {
+            localPlacement = getLocalPlacementFromPlacement(localPlacement);
+            placement3D = getRelatingIfcAxis3DFromLocalPlacement(localPlacement);
+            absoluteZValue += getZValueOfPlacementFromPlacement(placement3D);
         }
         return absoluteZValue;
     }
@@ -582,9 +582,9 @@ public final class QueryUtils {
      * @param element An IfcElement to check
      * @return Is the Z value of the Element below that of its floor?
      */
-    public static boolean elementIsBelowFloorLevel(IfcElement element) {
-        double storeyZ = getAbsoluteZValue(ifcBuildingStoreyFromElement(element));
-        double elementZ = getAbsoluteZValue(element);
+    public static boolean getElementIsBelowFloorLevel(IfcElement element) {
+        double storeyZ = getAbsoluteZValueFromProduct(getIfcBuildingStoreyFromElement(element));
+        double elementZ = getAbsoluteZValueFromProduct(element);
         return storeyZ > elementZ;
     }
 
@@ -596,9 +596,9 @@ public final class QueryUtils {
      * @param element An IfcElement to check
      * @return Is the Z value of the Element below that of its floor?
      */
-    public static boolean elementIsBelowFloorLevel(IfcElement element, double threshold) {
-        double storeyZ = getAbsoluteZValue(ifcBuildingStoreyFromElement(element));
-        double elementZ = getAbsoluteZValue(element);
+    public static boolean getElementIsBelowFloorLevel(IfcElement element, double threshold) {
+        double storeyZ = getAbsoluteZValueFromProduct(getIfcBuildingStoreyFromElement(element));
+        double elementZ = getAbsoluteZValueFromProduct(element);
         return storeyZ - elementZ > threshold;
     }
 
@@ -609,7 +609,7 @@ public final class QueryUtils {
      * @return The height difference, e.g. StoreyHeight - ElementHeight
      */
     public static double getHeightDifferenceBetweenStoreyAndElement(IfcElement element) {
-        return getAbsoluteZValue(ifcBuildingStoreyFromElement(element)) - getAbsoluteZValue(element);
+        return getAbsoluteZValueFromProduct(getIfcBuildingStoreyFromElement(element)) - getAbsoluteZValueFromProduct(element);
     }
 
     /**
@@ -642,7 +642,7 @@ public final class QueryUtils {
         for (IfcElement element :
                 elements) {
             try {
-                IfcPropertySet pset = getPropertySetByStartsWith(ifcPropertySetsFromElement(element), "AH");
+                IfcPropertySet pset = getPropertySetFromListByStartsWith(getIfcPropertySetsFromElement(element), "AH");
                 elementPropertySetHashMap.put(element, newPropertySetFromAHIfcPropertySet(pset));
             } catch (Exception ignored) {
                 elementPropertySetHashMap.put(element, null);
@@ -702,9 +702,9 @@ public final class QueryUtils {
      */
     public static Fail newFailFromElement(IfcElement element, int errorId, int roid, int ifcTypeId, int psetId) {
         long oid = element.getOid();
-        String ifcSite = ifcSiteFromElement(element).getName();
-        String ifcBuilding = ifcBuildingFromElement(element).getName();
-        String ifcStorey = ifcBuildingStoreyFromElement(element).getName();
+        String ifcSite = getIfcSiteFromElement(element).getName();
+        String ifcBuilding = getIfcBuildingFromElement(element).getName();
+        String ifcStorey = getIfcBuildingStoreyFromElement(element).getName();
         return new Fail(oid, roid, errorId, ifcTypeId, ifcSite, ifcBuilding, ifcStorey, psetId);
     }
 
@@ -713,7 +713,7 @@ public final class QueryUtils {
      * Given an IfcClassName, a map with relations between such class names and multiple IDS,
      * and a Delimiter for separating the correct ids from each other,
      * returns a String with the multiple IDs.
-     * The map can be generated with idToIfcCSVParser
+     * The map can be generated with getHashMapByIdToIfcCSVParsing
      *
      * @param className       Name of an Ifc class
      * @param returnDelimiter The delimiter between the correct ids in the return string
@@ -742,10 +742,10 @@ public final class QueryUtils {
      */
     public static List<IfcType> createIfcTypesFromStandardClassList(String filePath, String csvDelimiter, String validBSAB96BDDelimiter) {
         List<IfcType> typeList = new ArrayList<>();
-        List<Class> classList = standardClassList();
+        List<Class> classList = getStandardClassList();
         HashMap<String, HashSet<String>> map = null;
         try {
-            map = idToIfcCSVParser(csvDelimiter, filePath);
+            map = getHashMapByIdToIfcCSVParsing(csvDelimiter, filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -774,7 +774,7 @@ public final class QueryUtils {
 
     /**
      * Given an IfcPropertySet and a name, extracts the value of the IfcSingleValue with the name.
-     * Wraps the two methods getNominalTextValueFromSingleValue and getSingleValueByName and returns null if either
+     * Wraps the two methods getNominalTextValueFromSingleValue and getSingleValueFromPropertySetByName and returns null if either
      * method throws an exception.
      *
      * @param propertySet An IfcPropertySet from which to extract a single value.
@@ -784,7 +784,7 @@ public final class QueryUtils {
     public static String extractTextValueByNameOfSingleValue(IfcPropertySet propertySet, String name) {
         String ret;
         try {
-            ret = getNominalTextValueFromSingleValue(getSingleValueByName(propertySet, name));
+            ret = getNominalTextValueFromSingleValue(getSingleValueFromPropertySetByName(propertySet, name));
         } catch (Exception e) {
             ret = null;
         }
@@ -858,7 +858,7 @@ public final class QueryUtils {
      * @param name       A name of the Specific quantity
      * @return A single IfcElementQuantity
      */
-    public static IfcElementQuantity getElementQuantityByName(Collection<IfcElementQuantity> quantities, String name) {
+    public static IfcElementQuantity getElementQuantityFromCollectionByName(Collection<IfcElementQuantity> quantities, String name) {
         for (IfcElementQuantity quantity :
                 quantities) {
             if (quantity.getName().equals(name)) {
@@ -869,13 +869,14 @@ public final class QueryUtils {
     }
 
     /**
-     * See getElementQuantityByName, this method simply returns null when no fitting quantity is found
+     * See getElementQuantityFromCollectionByName, this method simply returns null when no fitting quantity is found
      *
      * @param quantities A collection of IfcElementQuantities
      * @param name       A name of the Specific quantity
      * @return A single IfcElementQuantity
      */
-    public static IfcElementQuantity getElementQuantityByNameOrNull(Collection<IfcElementQuantity> quantities, String name) {
+    public static IfcElementQuantity getElementQuantityFromCollectionByNameOrNull(
+            Collection<IfcElementQuantity> quantities, String name) {
         for (IfcElementQuantity quantity :
                 quantities) {
             if (quantity.getName().equals(name)) {
@@ -931,7 +932,7 @@ public final class QueryUtils {
      */
     public static double getAreaOfSpaceOrZero(IfcSpace space, String name) {
         List<IfcElementQuantity> quantities = ifcElementQuantitiesFromObject(space);
-        IfcElementQuantity quantity = getElementQuantityByNameOrNull(quantities, name);
+        IfcElementQuantity quantity = getElementQuantityFromCollectionByNameOrNull(quantities, name);
         if (quantity == null) {
             return 0;
         }
@@ -953,7 +954,7 @@ public final class QueryUtils {
      */
     public static double getAreaOfSpace(IfcSpace space, String name) {
         List<IfcElementQuantity> quantities = ifcElementQuantitiesFromObject(space);
-        IfcElementQuantity quantity = getElementQuantityByName(quantities, name);
+        IfcElementQuantity quantity = getElementQuantityFromCollectionByName(quantities, name);
         IfcQuantityArea area = getAreaFromElementQuantity(quantity);
         return area.getAreaValue();
     }

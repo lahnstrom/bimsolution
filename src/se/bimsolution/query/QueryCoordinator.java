@@ -1,6 +1,5 @@
 package se.bimsolution.query;
 
-import org.bimserver.client.BimServerClient;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.IfcElement;
 import se.bimsolution.db.*;
@@ -23,7 +22,7 @@ public class QueryCoordinator implements Runnable {
         this.revisionId = revisionId;
         this.repo = repo;
         this.model = model;
-        this.classList = standardClassList();
+        this.classList = getStandardClassList();
         this.elementCheckerErrorIdMap = elementCheckerErrorIdMap;
     }
 
@@ -32,7 +31,7 @@ public class QueryCoordinator implements Runnable {
         this.revisionId = revisionId;
         this.repo = repo;
         this.model = model;
-        this.classList = standardClassList();
+        this.classList = getStandardClassList();
         this.elementCheckerErrorIdMap = ElementCheckerUtils.standardElementCheckerMapping();
     }
 
