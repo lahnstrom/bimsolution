@@ -412,6 +412,44 @@ public final class QueryUtils {
 
 
     /**
+     * Constructs a HashMap of IfcBuilding Storey and the height.
+     * @param storeys IfcBuildingStorey
+     * @return A new HashMap of IfcBuildingStorey - Height
+     */
+    public static HashMap<IfcBuildingStorey, Double> getHashMapOfStoreyAndHeight(Collection<IfcBuildingStorey> storeys) {
+        HashMap<IfcBuildingStorey, Double> map = new HashMap<>();
+        storeys.forEach(x-> map.put(x, getAbsoluteZValueFromProduct(x)));
+        return map;
+    }
+
+
+    /**
+     * Given a collection of storeys and a storey in that collection, returns the height difference between the floor
+     * above and the reference floor, given that the difference is larger than the threshold.
+     * @param storeys A collection of IfcBuildingStoreys
+     * @param storey A specific Storey within that collection
+     * @param threshold The minimum allowed height difference to the next floor
+     * @return The height difference to the first floor above threshold.
+     */
+    public static double getHeightDifferenceToNextStoreyAboveThreshold(Collection<IfcBuildingStorey> storeys,
+                                                                       IfcBuildingStorey storey,
+                                                                       double threshold) {
+        HashMap<IfcBuildingStorey, Double> map = getHashMapOfStoreyAndHeight(storeys);
+        double minValueAboveThreshold = Double.MAX_VALUE;
+        double refHeight = getAbsoluteZValueFromProduct(storey);
+        for (double height :
+                map.values()) {
+            if (height > refHeight+threshold && height < minValueAboveThreshold) {
+                minValueAboveThreshold = height;
+            }
+        }
+        if (minValueAboveThreshold == Double.MAX_VALUE) {
+            return 0;
+        }
+        return minValueAboveThreshold - refHeight;
+    }
+
+    /**
      * Given an IfcPropertySet and the name of a property,
      * Returns true if the property with the given name exists in the propertySet.
      *
