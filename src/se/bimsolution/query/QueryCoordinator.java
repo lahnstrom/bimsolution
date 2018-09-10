@@ -50,10 +50,10 @@ public class QueryCoordinator implements Runnable {
         }
 
         try {
-            HashMap<IfcElement, PropertySet> elementPropertySetHashMap = newIfcElementToAHPropertySetMap(elements);
+            HashMap<IfcElement, PropertySet> elementPropertySetHashMap = ElementCheckerUtils.newIfcElementToAHPropertySetMap(elements);
             HashMap<IfcElement, Integer> elementIdMap = repo.writePropertySetsReturnsMap(elementPropertySetHashMap);
             HashMap<String, Integer> ifcTypeNameIdMap = repo.getIfcTypeNameIdMap();
-            List<Fail> fails = checkAllElementsInHashMap(this.revisionId,
+            List<Fail> fails = ElementCheckerUtils.checkAllElementsInHashMap(this.revisionId,
                     elementIdMap, ifcTypeNameIdMap, this.elementCheckerErrorIdMap);
             repo.writeAllFails(fails);
         } catch (SQLException e) {
