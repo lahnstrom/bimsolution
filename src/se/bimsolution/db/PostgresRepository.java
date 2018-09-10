@@ -255,6 +255,18 @@ public class PostgresRepository implements Repository {
         return log;
     }
 
+    public void writeLog(Log log) throws SQLException {
+        String sqlString = "INSERT INTO log " +
+                "       (log_message, revision_id) " +
+                "         VALUES (?, ?)";
+
+        PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, log.getLogMessage());
+        statement.setInt(2, log.getRevisionId());
+        statement.executeUpdate();
+
+    }
+
     /**
      * This method returns all error types from the database.
      *

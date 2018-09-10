@@ -9,6 +9,11 @@ public class Log {
     public Log() {
     }
 
+    public Log(String logMessage, int revisionId) {
+        this.logMessage = logMessage;
+        this.revisionId = revisionId;
+    }
+
     public Log(String logMessage) {
         this.logMessage = logMessage;
     }
@@ -33,4 +38,11 @@ public class Log {
         this.errorId = errorId;
     }
 
+    public int getRevisionId() {
+        return revisionId;
+    }
+
+    public int getErrorId() {
+        return errorId;
+    }
 }

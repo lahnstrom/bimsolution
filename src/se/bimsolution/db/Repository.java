@@ -15,6 +15,7 @@ public interface Repository {
     Stats writeStats(Stats stats) throws SQLException;
 
     Log writeLog() throws SQLException;
+    void writeLog(Log log) throws SQLException;
 
     HashMap<IfcElement, Integer> writePropertySetsReturnsMap(HashMap<IfcElement, PropertySet> elementPropertySetMap) throws SQLException;
 
