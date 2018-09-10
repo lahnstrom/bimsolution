@@ -130,6 +130,24 @@ public final class QueryUtils {
 
 
     /**
+     * Given an IfcElement, this method returns the IfcBuildingStorey within which the element is contained.
+     * If no such storey exists, returns null;
+     *
+     * @param element An IfcElement.
+     * @return An IfcBuldingStorey within which the Element is contained.
+     */
+    public static IfcBuildingStorey ifcBuildingStoreyFromElementOrNull(IfcElement element) {
+        EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
+        for (IfcRelContainedInSpatialStructure rel :
+                relList) {
+            if (rel.getRelatingStructure() instanceof IfcBuildingStorey) {
+                return (IfcBuildingStorey) rel.getRelatingStructure();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Given an IfcElement, this method returns the IfcBuilding within which the element is contained.
      *
      * @param element An IfcElement.
@@ -149,6 +167,24 @@ public final class QueryUtils {
 
 
     /**
+     * Given an IfcElement, this method returns the IfcBuilding within which the element is contained.
+     * If no such building exists, returns null;
+     *
+     * @param element An IfcElement.
+     * @return An IfcBuilding within which the Element is contained.
+     */
+    public static IfcBuilding ifcBuildingFromElementOrNull(IfcElement element) {
+        IfcBuildingStorey storey = ifcBuildingStoreyFromElement(element);
+        EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
+        for (IfcRelDecomposes de : decomposes) {
+            if (de.getRelatingObject() instanceof IfcBuilding) {
+                return (IfcBuilding) de.getRelatingObject();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Given an IfcElement, this method returns the IfcSite within which the element is contained.
      *
      * @param element An IfcElement.
@@ -165,6 +201,24 @@ public final class QueryUtils {
         throw new IllegalArgumentException("The element has no IfcSite associated with it");
     }
 
+
+    /**
+     * Given an IfcElement, this method returns the IfcSite within which the element is contained.
+     * If no site exists for the element, returns null;
+     *
+     * @param element An IfcElement.
+     * @return An IfcSite within which the Element is contained.
+     */
+    public static IfcSite ifcSiteFromElementOrNull(IfcElement element) {
+        IfcBuilding building = ifcBuildingFromElement(element);
+        EList<IfcRelDecomposes> decomposes = building.getDecomposes();
+        for (IfcRelDecomposes de : decomposes) {
+            if (de.getRelatingObject() instanceof IfcSite) {
+                return (IfcSite) de.getRelatingObject();
+            }
+        }
+        return null;
+    }
 
     /**
      * Given an IfcObject, this method returns a list of the IfcPropertySets the element is defined by.
@@ -189,6 +243,29 @@ public final class QueryUtils {
     }
 
     /**
+     * Given an IfcObject, this method returns a list of the IfcPropertySets the element is defined by.
+     * If no such psets exist, returns null;
+     *
+     * @param object An IfcElement.
+     * @return A list of IfcPropertySets which the element is defined by.
+     */
+    public static List<IfcPropertySet> ifcPropertySetsFromElementOrNull(IfcObject object) {
+        List<IfcRelDefinesByProperties> definesList = getAllIfcRelDefinesByPropertiesFromObject(object);
+        List<IfcPropertySet> psets = new ArrayList<>();
+        for (IfcRelDefinesByProperties rel :
+                definesList) {
+            IfcPropertySetDefinition pset = rel.getRelatingPropertyDefinition();
+            if (pset instanceof IfcPropertySet) {
+                psets.add((IfcPropertySet) pset);
+            }
+        }
+        if (psets.size() == 0) {
+            return null;
+        }
+        return psets;
+    }
+
+    /**
      * Given a list of IfcPropertySets and a string, this method returns the first PropertySet matching that string.
      *
      * @param propertySets A list of IfcPropertySets
@@ -204,6 +281,25 @@ public final class QueryUtils {
         }
         throw new IllegalArgumentException("The property set with name " + name + " does not exist");
     }
+
+    /**
+     * Given a list of IfcPropertySets and a string, this method returns the first PropertySet matching that string.
+     * If no PropertySet matches, returns null;
+     *
+     * @param propertySets A list of IfcPropertySets
+     * @param name         A name of an IfcPropertySet
+     * @return An IfcPropertySet
+     */
+    public static IfcPropertySet getPropertySetByNameOrNull(List<IfcPropertySet> propertySets, String name) {
+        for (IfcPropertySet pset :
+                propertySets) {
+            if (pset.getName().equals(name)) {
+                return pset;
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Given a list of IfcPropertySets and a String,
@@ -223,6 +319,24 @@ public final class QueryUtils {
         throw new IllegalArgumentException("No property starting with " + startsWith + " exist");
     }
 
+    /**
+     * Given a list of IfcPropertySets and a String,
+     * this method returns the first PropertySet that starts with the string.
+     * If no psets match, return null;
+     *
+     * @param propertySets A list of IfcPropertySets
+     * @param startsWith   The first part of an IfcPropertySet name
+     * @return An IfcPropertySet
+     */
+    public static IfcPropertySet getPropertySetByStartsWithOrNull(List<IfcPropertySet> propertySets, String startsWith) {
+        for (IfcPropertySet pset :
+                propertySets) {
+            if (pset.getName().startsWith(startsWith)) {
+                return pset;
+            }
+        }
+        return null;
+    }
 
     /**
      * Given an IfcPropertySet and a name, returns the singleValueWith that name.
@@ -243,6 +357,26 @@ public final class QueryUtils {
     }
 
     /**
+     * Given an IfcPropertySet and a name, returns the singleValue With that name.
+     * If no such Single Value exists, return null;
+     *
+     * @param ifcPropertySet An IfcProperty that contains an IfcPropertySingleValue
+     * @param name           The name of the property.
+     * @return An IfcPropertySingleValue which has the name specified.
+     */
+    public static IfcPropertySingleValue getSingleValueByNameOrNull(IfcPropertySet ifcPropertySet, String name) {
+        EList<IfcProperty> properties = ifcPropertySet.getHasProperties();
+        for (IfcProperty prop :
+                properties) {
+            if (prop instanceof IfcPropertySingleValue && prop.getName().equals(name)) {
+                return (IfcPropertySingleValue) prop;
+            }
+        }
+        return null;
+    }
+
+
+    /**
      * Given an IfcPropertySingleValue that has an IfcText nominal value,
      * this method returns the wrapped value as a string.
      *
@@ -257,6 +391,25 @@ public final class QueryUtils {
         }
         throw new IllegalArgumentException("The IfcPropertySingleValue does not have a nominal value with type text");
     }
+
+
+    /**
+     * Given an IfcPropertySingleValue that has an IfcText nominal value,
+     * this method returns the wrapped value as a string.
+     * If no textvalue exists, return null.
+     *
+     * @param singleValue an IfcPropertySingleValue.
+     * @return the wrapped IfcTextValue as a String
+     */
+    public static String getNominalTextValueFromSingleValueOrNull(IfcPropertySingleValue singleValue) {
+        IfcValue value = singleValue.getNominalValue();
+        //Ta ut textvärdet om det finns
+        if (value instanceof IfcText) {
+            return ((IfcText) value).getWrappedValue();
+        }
+        return null;
+    }
+
 
     /**
      * Given an IfcPropertySet and the name of a property,
@@ -289,6 +442,20 @@ public final class QueryUtils {
             return (IfcAxis2Placement3D) placement.getRelativePlacement();
         }
         throw new IllegalArgumentException("The placement does not have a relating IfcAxis2Placement3D object");
+    }
+
+    /**
+     * Given an IfcLocalPlacement which holds an IfcAxis2Placement3D as relative placement, return it.
+     * If it doesn't exist, return null;
+     *
+     * @param placement an IfcLocalPlacement
+     * @return The IfcAxis2Placement
+     */
+    public static IfcAxis2Placement3D relatingIfcAxis3DFromLocalPlacementOrNull(IfcLocalPlacement placement) {
+        if (placement.getRelativePlacement() instanceof IfcAxis2Placement3D) {
+            return (IfcAxis2Placement3D) placement.getRelativePlacement();
+        }
+        return null;
     }
 
     /**
@@ -337,6 +504,20 @@ public final class QueryUtils {
     }
 
     /**
+     * Given an IfcProduct which has a relating IfcLocalPlacement, return that placement.
+     * If it doesn't exist, return null.
+     *
+     * @param product An IfcProduct with a local placement
+     * @return The placement casted to an IfcLocalPlacement
+     */
+    public static IfcLocalPlacement getLocalPlacementOrNull(IfcProduct product) {
+        if (product.getObjectPlacement() instanceof IfcLocalPlacement) {
+            return (IfcLocalPlacement) product.getObjectPlacement();
+        }
+        return null;
+    }
+
+    /**
      * Given an IfcLocalPlacement, returns its PlacementRelToLocalPlacement {
      */
     public static IfcLocalPlacement getLocalPlacement(IfcLocalPlacement placement) {
@@ -344,6 +525,18 @@ public final class QueryUtils {
             return (IfcLocalPlacement) placement.getPlacementRelTo();
         }
         throw new IllegalArgumentException("The placement does not have a relating IfcLocalPlacement");
+    }
+
+
+    /**
+     * Given an IfcLocalPlacement, returns its PlacementRelToLocalPlacement {
+     * If it doesn't exist, return null;
+     */
+    public static IfcLocalPlacement getLocalPlacementOrNull(IfcLocalPlacement placement) {
+        if (placement.getPlacementRelTo() instanceof IfcLocalPlacement) {
+            return (IfcLocalPlacement) placement.getPlacementRelTo();
+        }
+        return null;
     }
 
 
@@ -660,8 +853,9 @@ public final class QueryUtils {
     /**
      * Given a name and a collection of IfcElementQuantities, returns the first that has the specified name
      * E.g. BaseQuantities
+     *
      * @param quantities A collection of IfcElementQuantities
-     * @param name A name of the Specific quantity
+     * @param name       A name of the Specific quantity
      * @return A single IfcElementQuantity
      */
     public static IfcElementQuantity getElementQuantityByName(Collection<IfcElementQuantity> quantities, String name) {
@@ -676,8 +870,9 @@ public final class QueryUtils {
 
     /**
      * See getElementQuantityByName, this method simply returns null when no fitting quantity is found
+     *
      * @param quantities A collection of IfcElementQuantities
-     * @param name A name of the Specific quantity
+     * @param name       A name of the Specific quantity
      * @return A single IfcElementQuantity
      */
     public static IfcElementQuantity getElementQuantityByNameOrNull(Collection<IfcElementQuantity> quantities, String name) {
@@ -693,6 +888,7 @@ public final class QueryUtils {
     /**
      * Given an IfcElementQuantity, returns the first IfcPhysicalQuantity that is an instance of IfcQuantityArea. If
      * no such Quantity exists, throws exception.
+     *
      * @param quantity An IfcElementQuantity
      * @return A single IfcQuantityArea
      */
@@ -706,9 +902,11 @@ public final class QueryUtils {
         }
         throw new IllegalArgumentException("No IfcQuantityArea found in the element quantity provided");
     }
+
     /**
      * Given an IfcElementQuantity, returns the first IfcPhysicalQuantity that is an instance of IfcQuantityArea. If
      * no such Quantity exists, returns null.
+     *
      * @param quantity An IfcElementQuantity
      * @return A single IfcQuantityArea
      */
@@ -726,8 +924,9 @@ public final class QueryUtils {
     /**
      * Given an IfcSpace and a name of an IfcElementQuantity on that object, returns the area found in the
      * IfcElementQuantity as a double. If no such area exists, returns 0.
+     *
      * @param space An IfcSpace
-     * @param name The name of the Specific quantity, e.g. BaseQuantities
+     * @param name  The name of the Specific quantity, e.g. BaseQuantities
      * @return The area
      */
     public static double getAreaOfSpaceOrZero(IfcSpace space, String name) {
@@ -743,11 +942,13 @@ public final class QueryUtils {
         return area.getAreaValue();
 
     }
+
     /**
      * Given an IfcSpace and a name of an IfcElementQuantity on that object, returns the area found in the
      * IfcElementQuantity as a double. If no such area exists, indirectly throws exception.
+     *
      * @param space An IfcSpace
-     * @param name The name of the Specific quantity, e.g. BaseQuantities
+     * @param name  The name of the Specific quantity, e.g. BaseQuantities
      * @return The area
      */
     public static double getAreaOfSpace(IfcSpace space, String name) {
