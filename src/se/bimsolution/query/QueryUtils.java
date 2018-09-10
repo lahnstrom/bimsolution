@@ -460,27 +460,27 @@ public final class QueryUtils {
     /**
      * Given the following:
      * A revisionId, that is a DB revision id,
-     * A HashMap with Elements relating IfcElements to the ID of their propertySet in the DB.
-     * A HashMap with ClassNames relating to the ID of their corresponding IfcType in the DB
-     * A HashMap with ElementChecker lambdas and their corresponding Error code in the  DB
+     * A HashMap with Elements relating IfcElements to the ID of their propertySet in the DB,
+     * A HashMap with ifc_name (class name) relating to the ID of their corresponding IfcType in the DB,
+     * A HashMap with ElementChecker lambdas and their corresponding Error code in the  DB,
      *
      * This method returns a list of newly created failures ready to be written to DB.
      * The list contains all the failed checks after running all the ElementCheckers on all the Elements in the maps.
      *
      * @param revisionId  A DB revision id.
-     * @param classNameToIdMap HashMap of IfcElement - ID of PropertySet
-     * @param elementsPSetIdMap  HashMap of ClassName - ID of IfcType
+     * @param elementsPSetIdMap  HashMap of IfcElement - ID of PropertySet
+     * @param ifcTypeNameToIdMap HashMap of ClassName - ID of IfcType
      * @param callbacksErrorIdMap ElementChecker - ID of Error
      * @return A list of all the failed checks for the elements
      */
     public static List<Fail> checkAllElementsInHashMap(int revisionId,
                                                        HashMap<IfcElement, Integer> elementsPSetIdMap,
-                                                       HashMap<String, Integer> classNameToIdMap,
+                                                       HashMap<String, Integer> ifcTypeNameToIdMap,
                                                        HashMap<ElementChecker, Integer> callbacksErrorIdMap) {
         List<Fail> fails = new ArrayList<>();
         for (IfcElement element :
                 elementsPSetIdMap.keySet()) {
-            int ifcTypeId = classNameToIdMap.get(extractNameFromClass(element.getClass()));
+            int ifcTypeId = ifcTypeNameToIdMap.get(extractNameFromClass(element.getClass()));
             for (ElementChecker callback :
                     callbacksErrorIdMap.keySet()) {
                 if (!callback.checkElement(element)) {
