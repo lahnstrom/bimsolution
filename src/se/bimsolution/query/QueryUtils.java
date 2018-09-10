@@ -30,51 +30,51 @@ public final class QueryUtils {
         classList.add(IfcDoor.class);
 //        classList.add(IfcFlowSegment.class);
 //        classList.add(IfcFurnitureType.class);
-        classList.add(IfcAirTerminalType.class);
-        classList.add(IfcAirToAirHeatRecoveryType.class);
-        classList.add(IfcBeam.class);
-        classList.add(IfcBuilding.class);
-        classList.add(IfcCompressorType.class);
+//        classList.add(IfcAirTerminalType.class);
+//        classList.add(IfcAirToAirHeatRecoveryType.class);
+//        classList.add(IfcBeam.class);
+//        classList.add(IfcBuilding.class);
+//        classList.add(IfcCompressorType.class);
 //        classList.add(IfcBuildingStorey.class);
-        classList.add(IfcColumn.class);
-        classList.add(IfcCovering.class);
-        classList.add(IfcCurtainWall.class);
-        classList.add(IfcAirTerminalType.class);
-        classList.add(IfcAirTerminalBoxType.class);
-        classList.add(IfcDuctSegmentType.class);
-        classList.add(IfcDuctFittingType.class);
-        classList.add(IfcDuctSilencerType.class);
-        classList.add(IfcEquipmentElement.class);
-        classList.add(IfcFireSuppressionTerminalType.class);
-        classList.add(IfcFanType.class);
-        classList.add(IfcFilterType.class);
-        classList.add(IfcTankType.class);
-        classList.add(IfcFlowTerminal.class);
-        classList.add(IfcFooting.class);
-        classList.add(IfcHumidifierType.class);
-        classList.add(IfcUnitaryEquipmentType.class);
-        classList.add(IfcPile.class);
-        classList.add(IfcPumpType.class);
-        classList.add(IfcPipeFittingType.class);
-        classList.add(IfcSwitchingDeviceType.class);
+//        classList.add(IfcColumn.class);
+//        classList.add(IfcCovering.class);
+//        classList.add(IfcCurtainWall.class);
+//        classList.add(IfcAirTerminalType.class);
+//        classList.add(IfcAirTerminalBoxType.class);
+//        classList.add(IfcDuctSegmentType.class);
+//        classList.add(IfcDuctFittingType.class);
+//        classList.add(IfcDuctSilencerType.class);
+//        classList.add(IfcEquipmentElement.class);
+//        classList.add(IfcFireSuppressionTerminalType.class);
+//        classList.add(IfcFanType.class);
+//        classList.add(IfcFilterType.class);
+//        classList.add(IfcTankType.class);
+//        classList.add(IfcFlowTerminal.class);
+//        classList.add(IfcFooting.class);
+//        classList.add(IfcHumidifierType.class);
+//        classList.add(IfcUnitaryEquipmentType.class);
+//        classList.add(IfcPile.class);
+//        classList.add(IfcPumpType.class);
+//        classList.add(IfcPipeFittingType.class);
+//        classList.add(IfcSwitchingDeviceType.class);
 //        classList.add(IfcPipeSegmentType.class);
-        classList.add(IfcRamp.class);
-        classList.add(IfcRampFlight.class);
-        classList.add(IfcStairFlight.class);
-        classList.add(IfcStair.class);
-        classList.add(IfcSlab.class);
-        classList.add(IfcDamperType.class);
-        classList.add(IfcRoof.class);
+//        classList.add(IfcRamp.class);
+//        classList.add(IfcRampFlight.class);
+//        classList.add(IfcStairFlight.class);
+//        classList.add(IfcStair.class);
+//        classList.add(IfcSlab.class);
+//        classList.add(IfcDamperType.class);
+//        classList.add(IfcRoof.class);
 //        classList.add(IfcSite.class);
-        classList.add(IfcJunctionBoxType.class);
+//        classList.add(IfcJunctionBoxType.class);
 //        classList.add(IfcSpace.class);
-        classList.add(IfcOutletType.class);
-        classList.add(IfcSystem.class);
-        classList.add(IfcValveType.class);
-        classList.add(IfcWall.class);
-        classList.add(IfcFlowController.class);
-        classList.add(IfcLightFixtureType.class);
-        classList.add(IfcWindow.class);
+//        classList.add(IfcOutletType.class);
+//        classList.add(IfcSystem.class);
+//        classList.add(IfcValveType.class);
+//        classList.add(IfcWall.class);
+//        classList.add(IfcFlowController.class);
+//        classList.add(IfcLightFixtureType.class);
+//        classList.add(IfcWindow.class);
 //        classList.add(IfcOpeningElement.class);
         return classList;
     }
@@ -440,13 +440,14 @@ public final class QueryUtils {
     /**
      * Given a collection of elements, returns a HashMap of IfcElements and corresponding newly created PropertySet.
      * If the element has no propertyset, the value will be null.
+     *
      * @param elements A list of elements that can have AH property sets
      * @return A hashmap: IfcElement - new PropertySet(element)
      */
     public static HashMap<IfcElement, PropertySet> newIfcElementToAHPropertySetMap(Collection<IfcElement> elements) {
         HashMap<IfcElement, PropertySet> elementPropertySetHashMap = new HashMap<>();
-        for (IfcElement element:
-             elements) {
+        for (IfcElement element :
+                elements) {
             try {
                 IfcPropertySet pset = getPropertySetByStartsWith(ifcPropertySetsFromElement(element), "AH");
                 elementPropertySetHashMap.put(element, newPropertySetFromAHIfcPropertySet(pset));
@@ -463,13 +464,13 @@ public final class QueryUtils {
      * A HashMap with Elements relating IfcElements to the ID of their propertySet in the DB,
      * A HashMap with ifc_name (class name) relating to the ID of their corresponding IfcType in the DB,
      * A HashMap with ElementChecker lambdas and their corresponding Error code in the  DB,
-     *
+     * <p>
      * This method returns a list of newly created failures ready to be written to DB.
      * The list contains all the failed checks after running all the ElementCheckers on all the Elements in the maps.
      *
-     * @param revisionId  A DB revision id.
-     * @param elementsPSetIdMap  HashMap of IfcElement - ID of PropertySet
-     * @param ifcTypeNameToIdMap HashMap of ClassName - ID of IfcType
+     * @param revisionId          A DB revision id.
+     * @param elementsPSetIdMap   HashMap of IfcElement - ID of PropertySet
+     * @param ifcTypeNameToIdMap  HashMap of ClassName - ID of IfcType
      * @param callbacksErrorIdMap ElementChecker - ID of Error
      * @return A list of all the failed checks for the elements
      */
@@ -483,6 +484,7 @@ public final class QueryUtils {
             int ifcTypeId = ifcTypeNameToIdMap.get(extractNameFromClass(element.getClass()));
             for (ElementChecker callback :
                     callbacksErrorIdMap.keySet()) {
+
                 if (!callback.checkElement(element)) {
                     fails.add(newFailFromElement(element, callbacksErrorIdMap.get(callback),
                             revisionId, ifcTypeId, elementsPSetIdMap.get(element)));
@@ -539,8 +541,8 @@ public final class QueryUtils {
      * Given a filepath to a csv file containing a mapping between IfcClasses and an Id,
      * this method returns a list of newly created IfcType instances, ready to be written to DB.
      *
-     * @param filePath The filepath to a csv file containing the mappings.
-     * @param csvDelimiter The csv file delimiter, usually a comma
+     * @param filePath               The filepath to a csv file containing the mappings.
+     * @param csvDelimiter           The csv file delimiter, usually a comma
      * @param validBSAB96BDDelimiter The desired delimiter between the different IDs in the BSAB96BD String
      *                               on the created instances
      * @return A list of newly created IfcType instances, ready to be written to DB.
@@ -619,7 +621,6 @@ public final class QueryUtils {
 
         return ret;
     }
-
 
 
     /**

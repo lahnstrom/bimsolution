@@ -81,8 +81,8 @@ public class ElementCheckerUtils {
     static HashMap<ElementChecker, Integer> standardElementCheckerMapping() {
         HashMap<ElementChecker, Integer> retMap = new HashMap<>();
         retMap.put(hasPropertySet, 1);
-        retMap.put(hasBSABId, 2);
-        retMap.put(isObjectOnCorrectFloor, 3);
+//        retMap.put(hasBSABId, 2);
+//        retMap.put(isObjectOnCorrectFloor, 3);
         return retMap;
     }
 }

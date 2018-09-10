@@ -8,9 +8,12 @@ import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.models.ifc2x3tc1.*;
 import org.bimserver.shared.QueryContext;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
+import org.bimserver.shared.exceptions.ServerException;
+import org.bimserver.shared.exceptions.UserException;
 import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
 import se.bimsolution.db.PostgresRepository;
+import se.bimsolution.db.Repository;
 import se.bimsolution.query.ClientBuilder;
 import se.bimsolution.query.ModelBuilder;
 import se.bimsolution.query.QueryCoordinator;
@@ -35,12 +38,27 @@ import java.util.List;
  * Handles the queries to the BIMServer
  */
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args)  {
 
-        BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[3], args[4]), args[5]).build();
-        IfcModelInterface model = new ModelBuilder(bsc, "A2-400").build();
-        QueryCoordinator qc = new QueryCoordinator(30, new PostgresRepository(args[0], args[1], args[2]), model);
-        qc.run();
+        Repository repo = null;
+        try {
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[3], args[4]), args[5]).build();
+            IfcModelInterface model = null;
+            model = new ModelBuilder(bsc, "A2-400").build();
+            QueryCoordinator qc = new QueryCoordinator(30, repo, model);
+            qc.run();
+        } catch (ServerException e) {
+            e.printStackTrace();
+        } catch (UserException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
 

@@ -139,16 +139,17 @@ public class PostgresRepository implements Repository {
         for (Map.Entry<IfcElement, PropertySet> entry : elementPropertySetMap.entrySet()) {
             PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
             PropertySet pset = entry.getValue();
-            statement.setString(1, pset.getBenamning());
-            statement.setString(2, pset.getBeteckning());
-            statement.setString(3, pset.getTypId());
-            statement.setString(4, pset.getBSAB96BD());
-            statement.execute();
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next()) {
-                resultmap.put(entry.getKey(), rs.getInt("id"));
+            if (pset != null) {
+                statement.setString(1, pset.getBenamning());
+                statement.setString(2, pset.getBeteckning());
+                statement.setString(3, pset.getTypId());
+                statement.setString(4, pset.getBSAB96BD());
+                statement.execute();
+                ResultSet rs = statement.getGeneratedKeys();
+                if (rs.next()) {
+                    resultmap.put(entry.getKey(), rs.getInt("id"));
+                }
             }
-
         }
 
         return resultmap;
