@@ -124,6 +124,7 @@ public class PostgresRepository implements Repository {
     /**
      * Given a map of IfcElement and corresponding PropertySets, writes the property sets to the DB and returns
      * a hash map of ifc element and the id of the generated property set.
+     *
      * @param elementPropertySetMap A map of IfcElement - PropertySet
      * @return A map of IfcElement - ID of PropertySet in DB
      * @throws SQLException
@@ -151,6 +152,25 @@ public class PostgresRepository implements Repository {
         }
 
         return resultmap;
+    }
+
+    /**
+     * Reads the Ifc_Type table and creates a hashmap with ifc_name - id, used when creating new Fails.
+     * @return A new HashMap of Ifc_name - Id
+     * @throws SQLException
+     */
+    @Override
+    public HashMap<String, Integer> getIfcTypeNameIdMap() throws SQLException {
+        HashMap<String, Integer> ifcTypeNameIdMap = new HashMap<>();
+        String sqlString = "SELECT id, ifc_name FROM ifc_type";
+
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            ifcTypeNameIdMap.put(resultSet.getString("ifc_name"), resultSet.getInt("id"));
+        }
+        return ifcTypeNameIdMap;
     }
 
     /**

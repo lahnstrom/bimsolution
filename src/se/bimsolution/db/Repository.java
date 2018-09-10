@@ -18,6 +18,8 @@ public interface Repository {
 
     HashMap<IfcElement, Integer> writePropertySetsReturnsMap(HashMap<IfcElement, PropertySet> elementPropertySetMap) throws SQLException;
 
+    HashMap<String, Integer> getIfcTypeNameIdMap() throws SQLException;
+
     void writeRevisionIdToLog(Log log, int revisionId) throws SQLException;
 
     void writeErrorIdToLog(Log log, int errorId) throws SQLException;
