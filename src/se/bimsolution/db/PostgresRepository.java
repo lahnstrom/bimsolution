@@ -20,7 +20,6 @@ public class PostgresRepository implements Repository {
      */
     @Override
     public Revision writeRevision(int projectId, String model) throws SQLException {
-
         Revision revision = new Revision(projectId, model);
         String sqlString = "INSERT INTO revision " +
                 "       (model, project_id) " +
@@ -48,7 +47,6 @@ public class PostgresRepository implements Repository {
      * @throws SQLException
      */
     public void writeIfcTypes(List<IfcType> ifcTypes) throws SQLException {
-
         String sqlString = "INSERT INTO ifc_type " +
                 "       (ifc_name, valid_bsab) " +
                 "         VALUES (?,?)";
@@ -70,7 +68,6 @@ public class PostgresRepository implements Repository {
      */
     @Override
     public Stats writeStats(Stats stats) throws SQLException {
-
         String countSQL = "INSERT INTO stats " +
                 "       (object_count, fail_count, revision_id, error_id) " +
                 "         VALUES (?,?,?,?)";
@@ -97,7 +94,6 @@ public class PostgresRepository implements Repository {
      */
     @Override
     public void writeAllFails(List<Fail> fails) throws SQLException {
-
         String sqlString = "INSERT INTO Fail " +
                 "       (object_id, revision_id, error_id, ifc_type, ifc_site, ifc_building, ifc_storey, " +
                 "p_set_benamning, p_set_beteckning, p_set_typeid, p_set_ifyllt_bsab, p_set_giltiga_bsab," +
@@ -158,7 +154,7 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method insert the provided revision Id to corresponding row in the log table.
+     * This method inserts the provided revision Id to corresponding row in the log table.
      *
      * @param log        Log instance to be used to update the corresponding row in the log table.
      * @param revisionId Revision Id of corresponding revision.
@@ -166,7 +162,6 @@ public class PostgresRepository implements Repository {
      */
     @Override
     public void writeRevisionIdToLog(Log log, int revisionId) throws SQLException {
-
         String sqlString = "UPDATE  log " +
                 "       SET revision_id=? " +
                 "         WHERE id=?";
@@ -178,7 +173,7 @@ public class PostgresRepository implements Repository {
     }
 
     /**
-     * This method insert error Id to corresponding row into the log table.
+     * This method inserts error Id to corresponding row in the log table.
      *
      * @param log     Log instance to be used to update the corresponding row in the log table.
      * @param errorId Error Id of corresponding revision.
@@ -207,7 +202,6 @@ public class PostgresRepository implements Repository {
      */
     @Override
     public void writeLogMessageIdToLog(Log log, String logMessage) throws SQLException {
-
         String sqlString = "UPDATE  log " +
                 "       SET log_message=? " +
                 "         WHERE id=?";
@@ -225,9 +219,7 @@ public class PostgresRepository implements Repository {
      * @throws SQLException
      */
     public Log writeLog() throws SQLException {
-
         Log log = new Log();
-
         String sqlString = "INSERT INTO log " +
                 "       (log_message) " +
                 "         VALUES (?)";
