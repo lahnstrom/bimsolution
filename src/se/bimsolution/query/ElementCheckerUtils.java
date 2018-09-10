@@ -1,6 +1,8 @@
 package se.bimsolution.query;
 
 import org.bimserver.models.ifc2x3tc1.IfcPropertySet;
+
+import java.util.HashMap;
 import java.util.List;
 import static se.bimsolution.query.QueryUtils.*;
 
@@ -12,7 +14,7 @@ public class ElementCheckerUtils {
      * @param element   IfcElement to check.
      * @return boolean  True if the element has a property set, otherwise false.
      */
-    static ElementChecker hasPropertySetExist = element -> {
+    static ElementChecker hasPropertySet = element -> {
         try {
             ifcPropertySetsFromElement(element);
             return true;
@@ -70,4 +72,17 @@ public class ElementCheckerUtils {
 
       return true;
     };
+
+    /**
+     * This method should return a HashMap of ElementChecker - ID as it is written in the DB.
+     * Implementation might vary over time.
+     * @return A HashMap of ElementChecker, ID
+     */
+    static HashMap<ElementChecker, Integer> standardElementCheckerMapping() {
+        HashMap<ElementChecker, Integer> retMap = new HashMap<>();
+        retMap.put(hasPropertySet, 1);
+        retMap.put(hasBSABId, 2);
+        retMap.put(isObjectOnCorrectFloor, 3);
+        return retMap;
+    }
 }
