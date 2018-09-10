@@ -2,44 +2,33 @@ package se.bimsolution.db;
 
 public class Fail {
     private int id;
-    private int objectId;
+    private long objectId;
     private int revisionId;
     private int errorId;
-    private String ifcType;
+    private int ifcTypeId;
     private String ifcSite;
     private String ifcBuilding;
     private String ifcStorey;
-    private String pSetBenamning;
-    private String pSetBetackning;
-    private String pSetTypeId;
-    private String pSetIfylltBsab;
-    private String pSetGiltigBsab;
-    private String pSetParameterSomSaknas;
+    private int psetId;
 
-    public Fail(int id, int objectId, int revisionId, int errorId, String ifcType, String ifcSite, String ifcBuilding,
-                String ifcStorey, String pSetBenamning, String pSetBetackning, String pSetTypeId, String pSetIfylltBsab,
-                String pSetGiltigBsab, String pSetParameterSomSaknas) {
-        this.id = id;
+
+    public Fail(long objectId, int revisionId, int errorId, int ifcTypeId, String ifcSite, String ifcBuilding,
+                String ifcStorey, int psetId) {
         this.objectId = objectId;
         this.revisionId = revisionId;
         this.errorId = errorId;
-        this.ifcType = ifcType;
+        this.ifcTypeId = ifcTypeId;
         this.ifcSite = ifcSite;
         this.ifcBuilding = ifcBuilding;
         this.ifcStorey = ifcStorey;
-        this.pSetBenamning = pSetBenamning;
-        this.pSetBetackning = pSetBetackning;
-        this.pSetTypeId = pSetTypeId;
-        this.pSetIfylltBsab = pSetIfylltBsab;
-        this.pSetGiltigBsab = pSetGiltigBsab;
-        this.pSetParameterSomSaknas = pSetParameterSomSaknas;
+
     }
 
     public int getId() {
         return id;
     }
 
-    public int getObjectId() {
+    public long getObjectId() {
         return objectId;
     }
 
@@ -51,9 +40,6 @@ public class Fail {
         return errorId;
     }
 
-    public String getIfcType() {
-        return ifcType;
-    }
 
     public String getIfcSite() {
         return ifcSite;
@@ -67,27 +53,11 @@ public class Fail {
         return ifcStorey;
     }
 
-    public String getpSetBenamning() {
-        return pSetBenamning;
+    public int getIfcTypeId() {
+        return ifcTypeId;
     }
 
-    public String getpSetBetackning() {
-        return pSetBetackning;
-    }
-
-    public String getpSetTypeId() {
-        return pSetTypeId;
-    }
-
-    public String getpSetIfylltBsab() {
-        return pSetIfylltBsab;
-    }
-
-    public String getpSetGiltigBsab() {
-        return pSetGiltigBsab;
-    }
-
-    public String getpSetParameterSomSaknas() {
-        return pSetParameterSomSaknas;
+    public int getPsetId() {
+        return psetId;
     }
 }

@@ -15,7 +15,7 @@ import se.bimsolution.query.ModelBuilder;
 import se.bimsolution.query.QueryCoordinator;
 
 import se.bimsolution.query.QueryUtils;
-import se.bimsolution.query.machine.IdValidationMachine;
+//import se.bimsolution.query.machine.IdValidationMachine;
 
 import se.bimsolution.query.machine.QueryMachine;
 import se.bimsolution.query.machine.mockQueryMachine;
@@ -36,10 +36,22 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
+        System.out.println(IfcDoor.class.toString());
+        try {
+            PostgresRepository postgresRepository = new PostgresRepository(args[2],
+                    args[3], args[4]);
+            postgresRepository.writeIfcTypes(
+                    QueryUtils.createIfcTypesFromStandardClassList(
+                            "resources\\spec.csv", ",", " | "));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         try {
             BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]),
                     "http://104.248.40.190:8080/bimserver").build();
             IfcModelInterface model = new ModelBuilder(bsc, "A2-400").build();
+            System.out.println(QueryUtils.extractNameFromClass(model.getAll(IfcDoor.class).get(0).getClass()));
             PostgresRepository postgresRepository = new PostgresRepository(args[2],
                     args[3], args[4]);
 
@@ -49,18 +61,19 @@ public class Main {
             IfcDoor door = model.getAll(IfcDoor.class).get(0);
             System.out.println(QueryUtils.getAbsoluteZValue(door));
             System.out.println(QueryUtils.getAbsoluteZValue(QueryUtils.ifcBuildingStoreyFromElement(door)));
-            for (Class clazz:
-                 QueryUtils.standardClassList()) {
-                for (Object obj:
-                     model.getAll(clazz)) {
-                    if (obj instanceof  IfcElement) {
+            for (Class clazz :
+                    QueryUtils.standardClassList()) {
+                for (Object obj :
+                        model.getAll(clazz)) {
+                    if (obj instanceof IfcElement) {
                         try {
 
                             if (QueryUtils.elementIsBelowFloorLevel((IfcElement) obj, 0.001)) {
-                                System.out.println(((IfcElement) obj).getName() +"   OID: " + ((IfcObject) obj).getOid());
-                                System.out.println("Difference: " + QueryUtils.getHeightDifferenceBetweenElementAndStorey((IfcElement) obj));
+                                System.out.println(((IfcElement) obj).getName() + "   OID: " + ((IfcObject) obj).getOid());
+                                System.out.println("Difference: " + QueryUtils.getHeightDifferenceBetweenStoreyAndElement((IfcElement) obj));
                             }
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+                        }
                     }
                 }
             }
