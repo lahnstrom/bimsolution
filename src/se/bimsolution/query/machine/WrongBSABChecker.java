@@ -4,10 +4,12 @@ import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.IfcElement;
 import org.bimserver.models.ifc2x3tc1.IfcPropertySet;
 import se.bimsolution.db.Bsab96bdMissing;
+import se.bimsolution.db.Log;
 import se.bimsolution.db.Repository;
 
 import static se.bimsolution.query.QueryUtils.*;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,18 +32,28 @@ public class WrongBSABChecker extends ElementChecker {
                 this.classList) {
             elements.addAll(model.getAll(clazz));
         }
-        elements.forEach(element ->{
+        elements.forEach(element -> {
             bsab96bMissings.add(new Bsab96bdMissing(
                     element.getOid(),
                     getIfcBuildingFromElement(element).getName(),
                     getIfcBuildingStoreyFromElement(element).getName(),
+                    extractNameFromClass(element.getClass()),
                     getIfcSiteFromElement(element).getName(),
                     revisionId,
                     element.getName()));
         });
+        try {
+            repo.writeBsab96bdMissing(bsab96bMissings);
+        } catch (SQLException e) {
+            try {
+                repo.writeLog(new Log(e.getMessage(), revisionId));
+            } catch (Exception logException) {
+                logException.printStackTrace();
+            }
+        }
     }
 
-    public boolean hasBSABId(IfcElement element) {
+    public boolean hasBsabId(IfcElement element) {
         List<IfcPropertySet> propertySets = getIfcPropertySetsFromElementOrNull(element);
         IfcPropertySet propertySet = getPropertySetFromListByStartsWithOrNull(propertySets, "AH");
         if (propertySets == null) {
