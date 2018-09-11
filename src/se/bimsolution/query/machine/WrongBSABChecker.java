@@ -31,7 +31,13 @@ public class WrongBSABChecker extends ElementChecker {
             elements.addAll(model.getAll(clazz));
         }
         elements.forEach(element ->{
-            bsab96bMissings.add(new Bsab96bdMissing(element.getOid(), getIfcBuildingStoreyFromElement(element)))
+            bsab96bMissings.add(new Bsab96bdMissing(
+                    element.getOid(),
+                    getIfcBuildingFromElement(element).getName(),
+                    getIfcBuildingStoreyFromElement(element).getName(),
+                    getIfcSiteFromElement(element).getName(),
+                    revisionId,
+                    element.getName()));
         });
     }
 
