@@ -28,4 +28,6 @@ public interface Repository {
     void writeLogMessageIdToLog(Log log, String logMessage) throws SQLException;
 
     List<Error> getAllErrors() throws SQLException;
+
+    void close();
 }
