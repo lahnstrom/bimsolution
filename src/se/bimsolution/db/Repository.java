@@ -14,8 +14,7 @@ public interface Repository {
 
     Stats writeStats(Stats stats) throws SQLException;
 
-    Log writeLog() throws SQLException;
-    void writeLog(Log log) throws SQLException;
+    public void writeLog(Log log);
 
     void writeArea(List<Area> areas) throws SQLException;
 
@@ -37,7 +36,7 @@ public interface Repository {
 
     void writeErrorIdToLog(Log log, int errorId) throws SQLException;
 
-    void writeLogMessageIdToLog(Log log, String logMessage) throws SQLException;
+
 
     List<Error> getAllErrors() throws SQLException;
 

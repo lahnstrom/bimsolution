@@ -16,13 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 
 public class WrongBSABChecker extends ElementChecker {
-    private List<IfcElement> elements;
-    List<Class> classList;
-    Repository repo;
-    int revisionId;
 
-    public WrongBSABChecker(IfcModelInterface model, Repository repo, int revisionId) {
-        super(model, repo, revisionId);
+    public WrongBSABChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
+        super(model, repo, revisionId, classList);
     }
 
     public void run() {
@@ -45,20 +41,13 @@ public class WrongBSABChecker extends ElementChecker {
         try {
             repo.writeBsab96bdMissing(bsab96bMissings);
         } catch (SQLException e) {
-            try {
-                repo.writeLog(new Log(e.getMessage(), revisionId));
-            } catch (Exception logException) {
-                logException.printStackTrace();
-            }
+            repo.writeLog(new Log(e.getMessage(), revisionId));
         }
     }
 
     public boolean hasBsabId(IfcElement element) {
         List<IfcPropertySet> propertySets = getIfcPropertySetsFromElementOrNull(element);
         IfcPropertySet propertySet = getPropertySetFromListByStartsWithOrNull(propertySets, "AH");
-        if (propertySets == null) {
-            return false;
-        }
-        return true;
+        return propertySet != null;
     }
 }
