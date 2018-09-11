@@ -26,7 +26,6 @@ public class QueryCoordinator implements Runnable {
         this.elementCheckerErrorIdMap = elementCheckerErrorIdMap;
     }
 
-
     public QueryCoordinator(int revisionId, Repository repo, IfcModelInterface model) {
         this.revisionId = revisionId;
         this.repo = repo;
