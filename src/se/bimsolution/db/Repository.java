@@ -17,6 +17,8 @@ public interface Repository {
     Log writeLog() throws SQLException;
     void writeLog(Log log) throws SQLException;
 
+    void writeArea(List<Area> areas) throws SQLException;
+
     HashMap<IfcElement, Integer> writePropertySetsReturnsMap(HashMap<IfcElement, PropertySet> elementPropertySetMap) throws SQLException;
 
     HashMap<String, Integer> getIfcTypeNameIdMap() throws SQLException;

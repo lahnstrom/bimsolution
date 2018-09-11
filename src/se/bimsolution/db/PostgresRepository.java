@@ -106,16 +106,31 @@ public class PostgresRepository implements Repository {
             statement.setLong(1, fail.getObjectId());
             statement.setInt(2, fail.getRevisionId());
             statement.setInt(3, fail.getErrorId());
-//            statement.setString(4, fail.getIfcType());
             statement.setString(5, fail.getIfcSite());
             statement.setString(6, fail.getIfcBuilding());
             statement.setString(7, fail.getIfcStorey());
-//            statement.setString(8, fail.getpSetBenamning());
-//            statement.setString(9, fail.getpSetBetackning());
-//            statement.setString(10, fail.getpSetTypeId());
-//            statement.setString(11, fail.getpSetIfylltBsab());
-//            statement.setString(12, fail.getpSetGiltigBsab());
-//            statement.setString(13, fail.getpSetParameterSomSaknas());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+    }
+
+
+
+    @Override
+    public void writeArea(List<Area> areas) throws SQLException {
+        String sqlString = "INSERT INTO area " +
+                "       (object_id, ifc_building, ifc_storey, ifc_site, area, revision_id, name) " +
+                "         VALUES (?,?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+
+        for (Area area : areas) {
+            statement.setLong(1, area.getObjectId());
+            statement.setString(2, area.getIfcBuilding());
+            statement.setString(3, area.getIfcStorey());
+            statement.setString(4, area.getIfcSite());
+            statement.setDouble(5, area.getArea());
+            statement.setInt(6, area.getRevisionId());
+            statement.setString(7, area.getName());
             statement.addBatch();
         }
         statement.executeBatch();

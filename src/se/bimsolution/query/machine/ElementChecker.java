@@ -15,5 +15,4 @@ abstract public class ElementChecker implements Runnable {
         this.revisionId = revisionId;
     }
 
-
 }
