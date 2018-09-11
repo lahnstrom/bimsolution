@@ -19,6 +19,16 @@ public interface Repository {
 
     void writeArea(List<Area> areas) throws SQLException;
 
+    void writeBsab96bdMissing(List<Bsab96bdMissing> missings) throws SQLException;
+
+    void writeBsab96bdWrong(List<Bsab96bdWrong> wrongs) throws SQLException;
+
+    void writeMissingProperty(List<MissingProperty> missings) throws SQLException;
+
+    void writeMissingPropertySet(List<MissingPropertySet> missings) throws SQLException;
+
+    void writeWrongStorey(List<WrongStorey> wrongs) throws SQLException;
+
     HashMap<IfcElement, Integer> writePropertySetsReturnsMap(HashMap<IfcElement, PropertySet> elementPropertySetMap) throws SQLException;
 
     HashMap<String, Integer> getIfcTypeNameIdMap() throws SQLException;
