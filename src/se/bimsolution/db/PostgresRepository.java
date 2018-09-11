@@ -149,14 +149,18 @@ public class PostgresRepository implements Repository {
                 statement.addBatch();
             }
         }
-        statement.execute();
+        statement.executeLargeBatch();
         ResultSet genKeys = statement.getGeneratedKeys();
         genKeys.next();
+        //OBS, Detta kommer göra sig av med alla element som har null property set
         for (Map.Entry<IfcElement, PropertySet> entry : itermap.entrySet()) {
-            resultmap.put(entry.getKey(), genKeys.getInt("id"));
-            genKeys.next();
+            if (entry.getValue()!=null) {
+                resultmap.put(entry.getKey(), genKeys.getInt("id"));
+                genKeys.next();
+            } else {
+                resultmap.put(entry.getKey(), 0);
+            }
         }
-
 
 
         return resultmap;
@@ -293,5 +297,14 @@ public class PostgresRepository implements Repository {
             errors.add(new Error(resultSet.getInt(1), resultSet.getString(2)));
         }
         return errors;
+    }
+
+    @Override
+    public void close() {
+        try {
+            this.connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
