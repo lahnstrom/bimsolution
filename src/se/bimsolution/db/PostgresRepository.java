@@ -1,8 +1,10 @@
 package se.bimsolution.db;
 
+import it.unimi.dsi.fastutil.Hash;
+import org.bimserver.models.ifc2x3tc1.IfcElement;
+
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PostgresRepository implements Repository {
     private Connection connection;
@@ -41,6 +43,7 @@ public class PostgresRepository implements Repository {
 
     /**
      * Given a list of ifcTypes, writes the content of that list to DB.
+     *
      * @param ifcTypes A list of IfcType instances
      * @throws SQLException
      */
@@ -116,6 +119,67 @@ public class PostgresRepository implements Repository {
             statement.addBatch();
         }
         statement.executeBatch();
+    }
+
+
+    /**
+     * Given a map of IfcElement and corresponding PropertySets, writes the property sets to the DB and returns
+     * a hash map of ifc element and the id of the generated property set.
+     *
+     * @param elementPropertySetMap A map of IfcElement - PropertySet
+     * @return A map of IfcElement - ID of PropertySet in DB
+     * @throws SQLException
+     */
+    public HashMap<IfcElement, Integer> writePropertySetsReturnsMap(HashMap<IfcElement, PropertySet> elementPropertySetMap) throws SQLException {
+        HashMap<IfcElement, Integer> resultmap = new HashMap<>();
+        String sqlString = "INSERT INTO property_set " +
+                "       (benamning, beteckning, typ_id, bsab96bd) " +
+                "         VALUES (?,?,?,?)";
+        HashMap<IfcElement, PropertySet> itermap = new LinkedHashMap<>(elementPropertySetMap);
+        PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+
+
+        for (Map.Entry<IfcElement, PropertySet> entry : itermap.entrySet()) {
+            PropertySet pset = entry.getValue();
+            if (pset!=null) {
+                statement.setString(1, pset.getBenamning());
+                statement.setString(2, pset.getBeteckning());
+                statement.setString(3, pset.getTypId());
+                statement.setString(4, pset.getBSAB96BD());
+                statement.addBatch();
+            }
+        }
+        statement.execute();
+        ResultSet genKeys = statement.getGeneratedKeys();
+        genKeys.next();
+        for (Map.Entry<IfcElement, PropertySet> entry : itermap.entrySet()) {
+            resultmap.put(entry.getKey(), genKeys.getInt("id"));
+            genKeys.next();
+        }
+
+
+
+        return resultmap;
+    }
+
+    /**
+     * Reads the Ifc_Type table and creates a hashmap with ifc_name - id, used when creating new Fails.
+     *
+     * @return A new HashMap of Ifc_name - Id
+     * @throws SQLException
+     */
+    @Override
+    public HashMap<String, Integer> getIfcTypeNameIdMap() throws SQLException {
+        HashMap<String, Integer> ifcTypeNameIdMap = new HashMap<>();
+        String sqlString = "SELECT id, ifc_name FROM ifc_type";
+
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            ifcTypeNameIdMap.put(resultSet.getString("ifc_name"), resultSet.getInt("id"));
+        }
+        return ifcTypeNameIdMap;
     }
 
     /**
@@ -198,6 +262,18 @@ public class PostgresRepository implements Repository {
             log.setId(resultSet.getInt(1));
         }
         return log;
+    }
+
+    public void writeLog(Log log) throws SQLException {
+        String sqlString = "INSERT INTO log " +
+                "       (log_message, revision_id) " +
+                "         VALUES (?, ?)";
+
+        PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, log.getLogMessage());
+        statement.setInt(2, log.getRevisionId());
+        statement.executeUpdate();
+
     }
 
     /**

@@ -1,56 +1,68 @@
 package se.bimsolution.query;
 
-import org.bimserver.client.BimServerClient;
 import org.bimserver.emf.IfcModelInterface;
+import org.bimserver.models.ifc2x3tc1.IfcElement;
 import se.bimsolution.db.*;
-import se.bimsolution.query.machine.QueryMachine;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
+import static se.bimsolution.query.QueryUtils.*;
 
 public class QueryCoordinator implements Runnable {
 
-    private final Repository repo;
-    private final List<QueryMachine> machineList;
-    private Log log;
+    private int revisionId;
+    Repository repo;
+    private IfcModelInterface model;
+    List<Class> classList;
+    HashMap<ElementChecker, Integer> elementCheckerErrorIdMap;
 
-    public QueryCoordinator(Repository repo, QueryMachine... machineList) {
+
+    public QueryCoordinator(int revisionId, Repository repo, IfcModelInterface model, HashMap<ElementChecker, Integer> elementCheckerErrorIdMap) {
+        this.revisionId = revisionId;
         this.repo = repo;
-        this.machineList = Arrays.asList(machineList);
+        this.model = model;
+        this.classList = getStandardClassList();
+        this.elementCheckerErrorIdMap = elementCheckerErrorIdMap;
     }
 
-    public QueryCoordinator(Repository repo, List<QueryMachine> machineList) {
+
+    public QueryCoordinator(int revisionId, Repository repo, IfcModelInterface model) {
+        this.revisionId = revisionId;
         this.repo = repo;
-        this.machineList = machineList;
+        this.model = model;
+        this.classList = getStandardClassList();
+        this.elementCheckerErrorIdMap = ElementCheckerUtils.standardElementCheckerMapping();
     }
 
+    /**
+     * Runs this queryCoordinator on all the objects defined by classes in the classlist.
+     * The method begins by writing all the propertySets to db and returns a map of element-id of pset.
+     * It then fetches all the ifcTypes in the database and creates a map of name- id
+     * Finally, it calls on the checkAllElementsInHashMap Method and writes the fails to DB
+     */
     @Override
     public void run() {
+        List<IfcElement> elements = new ArrayList<>();
+        for (Class clazz :
+                this.classList) {
+            elements.addAll(model.getAll(clazz));
+        }
+
         try {
-            log = repo.writeLog();
-            Revision revision = repo.writeRevision(123, "mTest");
-                repo.writeRevisionIdToLog(log,revision.getId());
-
-            for (QueryMachine qm :
-                    machineList) {
-                qm.run();
-                Stats stats = new Stats(qm.getCount(), qm.getFailCount(), revision.getId(), qm.getErrorId());
-                repo.writeAllFails(qm.getFails());
-                repo.writeStats(stats);
-                repo.writeErrorIdToLog(log,qm.getErrorId());
-                repo.writeLogMessageIdToLog(log,"Sucessful execution");
-            }
-        } catch (Exception e) {
-
+            HashMap<IfcElement, PropertySet> elementPropertySetHashMap = ElementCheckerUtils.newIfcElementToAHPropertySetMap(elements);
+            HashMap<IfcElement, Integer> elementIdMap = repo.writePropertySetsReturnsMap(elementPropertySetHashMap);
+            HashMap<String, Integer> ifcTypeNameIdMap = repo.getIfcTypeNameIdMap();
+            List<Fail> fails = ElementCheckerUtils.checkAllElementsInHashMap(this.revisionId,
+                    elementIdMap, ifcTypeNameIdMap, this.elementCheckerErrorIdMap);
+            repo.writeAllFails(fails);
+        } catch (SQLException e) {
             try {
-                e.printStackTrace();
-                repo.writeLogMessageIdToLog(log, e.getMessage());
-            } catch (SQLException logE) {
-                logE.printStackTrace();
-                System.out.println(logE.getStackTrace());
+                repo.writeLog(new Log("Query failed: " + e.getMessage(), this.revisionId));
+            } catch (SQLException e1) {
+                e1.printStackTrace();
             }
         }
+
     }
 }

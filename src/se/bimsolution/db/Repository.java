@@ -1,6 +1,10 @@
 package se.bimsolution.db;
 
+import org.bimserver.models.ifc2x3tc1.IfcElement;
+
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface Repository {
@@ -11,6 +15,11 @@ public interface Repository {
     Stats writeStats(Stats stats) throws SQLException;
 
     Log writeLog() throws SQLException;
+    void writeLog(Log log) throws SQLException;
+
+    HashMap<IfcElement, Integer> writePropertySetsReturnsMap(HashMap<IfcElement, PropertySet> elementPropertySetMap) throws SQLException;
+
+    HashMap<String, Integer> getIfcTypeNameIdMap() throws SQLException;
 
     void writeRevisionIdToLog(Log log, int revisionId) throws SQLException;
 

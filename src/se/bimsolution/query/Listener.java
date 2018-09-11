@@ -45,7 +45,8 @@ public class Listener implements Runnable {
     private void awake(String projectname) {
         try {
             IfcModelInterface model = new ModelBuilder(bsc, projectname).build();
-            new QueryCoordinator(this.repo, this.machineList).run();
+            //TODO Update Listener
+//            new QueryCoordinator(this.repo, this.machineList).run();
         } catch (Exception e) {
             e.printStackTrace();
         }
