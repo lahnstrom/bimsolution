@@ -106,21 +106,140 @@ public class PostgresRepository implements Repository {
             statement.setLong(1, fail.getObjectId());
             statement.setInt(2, fail.getRevisionId());
             statement.setInt(3, fail.getErrorId());
-//            statement.setString(4, fail.getIfcType());
             statement.setString(5, fail.getIfcSite());
             statement.setString(6, fail.getIfcBuilding());
             statement.setString(7, fail.getIfcStorey());
-//            statement.setString(8, fail.getpSetBenamning());
-//            statement.setString(9, fail.getpSetBetackning());
-//            statement.setString(10, fail.getpSetTypeId());
-//            statement.setString(11, fail.getpSetIfylltBsab());
-//            statement.setString(12, fail.getpSetGiltigBsab());
-//            statement.setString(13, fail.getpSetParameterSomSaknas());
             statement.addBatch();
         }
         statement.executeBatch();
     }
 
+
+
+    @Override
+    public void writeArea(List<Area> areas) throws SQLException {
+        String sqlString = "INSERT INTO area " +
+                "       (object_id, ifc_building, ifc_storey, ifc_site, area, revision_id, name) " +
+                "         VALUES (?,?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+
+        for (Area area : areas) {
+            statement.setLong(1, area.getObjectId());
+            statement.setString(2, area.getIfcBuilding());
+            statement.setString(3, area.getIfcStorey());
+            statement.setString(4, area.getIfcSite());
+            statement.setDouble(5, area.getArea());
+            statement.setInt(6, area.getRevisionId());
+            statement.setString(7, area.getName());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+    }
+
+
+    @Override
+    public void writeBsab96bdMissing(List<Bsab96bdMissing> missings) throws SQLException {
+        String sqlString = "INSERT INTO bsab96bd_missing " +
+                "(object_id, ifc_building, ifc_storey, ifc_type, ifc_site, revision_id, name) values (?,?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+
+        for (Bsab96bdMissing missing: missings) {
+            statement.setLong(1, missing.getObjectId());
+            statement.setString(2, missing.getIfcBuilding());
+            statement.setString(3, missing.getIfcStorey());
+            statement.setString(4, missing.getIfcType());
+            statement.setString(5, missing.getIfcSite());
+            statement.setInt(6, missing.getRevisionId());
+            statement.setString(7, missing.getName());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+    }
+
+    @Override
+    public void writeBsab96bdWrong(List<Bsab96bdWrong> wrongs) throws SQLException {
+        String sqlString = "INSERT INTO bsab96bd_wrong (object_id, ifc_building, ifc_storey, ifc_type, current_bsab, correct_bsab, ifc_site, revision_id, name) "
+                + " values (?,?,?,?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+
+        for (Bsab96bdWrong wrong: wrongs) {
+            statement.setLong(1, wrong.getObjectId());
+            statement.setString(2, wrong.getIfcBuilding());
+            statement.setString(3, wrong.getIfcStorey());
+            statement.setString(4, wrong.getIfcType());
+            statement.setString(5, wrong.getCurrentBsab());
+            statement.setString(6, wrong.getCorrectBsab());
+            statement.setString(7, wrong.getIfcSite());
+            statement.setInt(8, wrong.getRevisionId());
+            statement.setString(9, wrong.getName());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+    }
+
+
+    @Override
+    public void writeMissingProperty(List<MissingProperty> missings) throws SQLException {
+        String sqlString = "INSERT INTO missing_property " +
+                "(object_id, ifc_building, ifc_storey, ifc_site," +
+                " ifc_type, name, current_properties, correct_properties,  revision_id)" +
+                " values (?,?,?,?,?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+
+        for (MissingProperty missing: missings) {
+            statement.setLong(1, missing.getObjectId());
+            statement.setString(2, missing.getIfcBuilding());
+            statement.setString(3, missing.getIfcStorey());
+            statement.setString(4, missing.getIfcSite());
+            statement.setString(5, missing.getIfcType());
+            statement.setString(6, missing.getName());
+            statement.setString(7, missing.getCurrentProperties());
+            statement.setString(8, missing.getCorrectProperties());
+            statement.setInt(9, missing.getRevisionId());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+    }
+
+    @Override
+    public void writeMissingPropertySet(List<MissingPropertySet> missings) throws SQLException {
+        String sqlString = "INSERT INTO missing_property_set " +
+                "(object_id, ifc_building, ifc_storey, ifc_site, ifc_type, revision_id, name)" +
+                " values (?,?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+
+        for (MissingPropertySet missing: missings) {
+            statement.setLong(1, missing.getObjectId());
+            statement.setString(2, missing.getIfcBuilding());
+            statement.setString(3, missing.getIfcStorey());
+            statement.setString(4, missing.getIfcSite());
+            statement.setString(5, missing.getIfcType());
+            statement.setInt(6, missing.getRevisionId());
+            statement.setString(7, missing.getName());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+    }
+
+    @Override
+    public void writeWrongStorey(List<WrongStorey> wrongs) throws SQLException {
+        String sqlString = "INSERT INTO wrong_storey " +
+                "(object_id, ifc_type, ifc_storey, ifc_building, ifc_site, revision_id, name)" +
+                " values (?,?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(sqlString);
+
+        for (WrongStorey storey: wrongs) {
+            statement.setLong(1, storey.getObjectId());
+            statement.setString(2, storey.getIfcType());
+            statement.setString(3, storey.getIfcStorey());
+            statement.setString(4, storey.getIfcBuilding());
+            statement.setString(5, storey.getIfcSite());
+            statement.setInt(6, storey.getRevisionId());
+            statement.setString(7, storey.getName());
+            statement.addBatch();
+        }
+        statement.executeBatch();
+    }
 
     /**
      * Given a map of IfcElement and corresponding PropertySets, writes the property sets to the DB and returns
