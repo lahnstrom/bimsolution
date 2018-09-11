@@ -4,10 +4,10 @@ import org.bimserver.emf.IfcModelInterface;
 import se.bimsolution.db.Repository;
 
 abstract public class ElementChecker implements Runnable {
-    private IfcModelInterface model;
-    private Repository repo;
-    private int revisionId;
-    private int count;
+    protected IfcModelInterface model;
+    protected Repository repo;
+    protected int revisionId;
+    protected int count;
 
     public ElementChecker(IfcModelInterface model, Repository repo, int revisionId) {
         this.model = model;
