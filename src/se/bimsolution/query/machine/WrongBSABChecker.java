@@ -26,17 +26,32 @@ public class WrongBSABChecker extends ElementChecker {
         List<IfcElement> elements = new ArrayList<>();
         for (Class clazz :
                 this.classList) {
-            elements.addAll(model.getAll(clazz));
+            try {
+                elements.addAll(model.getAll(clazz));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            ;
         }
         elements.forEach(element -> {
-            bsab96bMissings.add(new Bsab96bdMissing(
-                    element.getOid(),
-                    getIfcBuildingFromElement(element).getName(),
-                    getIfcBuildingStoreyFromElement(element).getName(),
-                    extractNameFromClass(element.getClass()),
-                    getIfcSiteFromElement(element).getName(),
-                    revisionId,
-                    element.getName()));
+            if (!hasBsabId(element)) {
+
+
+                try {
+                    bsab96bMissings.add(new Bsab96bdMissing(
+                            element.getOid(),
+                            getIfcBuildingFromElementOrNull(element).getName(),
+                            getIfcBuildingStoreyFromElementOrNull(element).getName(),
+                            extractNameFromClass(element.getClass()),
+                            getIfcSiteFromElement(element).getName(),
+                            revisionId,
+                            element.getName()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println(element.getName());
+                } ;
+            }
+
         });
         try {
             repo.writeBsab96bdMissing(bsab96bMissings);
@@ -47,6 +62,9 @@ public class WrongBSABChecker extends ElementChecker {
 
     public boolean hasBsabId(IfcElement element) {
         List<IfcPropertySet> propertySets = getIfcPropertySetsFromElementOrNull(element);
+        if (propertySets == null) {
+            return false;
+        }
         IfcPropertySet propertySet = getPropertySetFromListByStartsWithOrNull(propertySets, "AH");
         return propertySet != null;
     }

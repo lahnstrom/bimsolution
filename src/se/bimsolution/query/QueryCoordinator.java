@@ -56,12 +56,8 @@ public class QueryCoordinator implements Runnable {
                     elementIdMap, ifcTypeNameIdMap, this.elementCheckerErrorIdMap);
             repo.writeAllFails(fails);
         } catch (SQLException e) {
-            try {
-                repo.writeLog(new Log("Query failed: " + e.getMessage(), this.revisionId));
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        }
 
+            repo.writeLog(new Log("Query failed: " + e.getMessage(), this.revisionId));
+        }
     }
 }

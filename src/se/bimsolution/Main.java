@@ -14,14 +14,12 @@ import org.eclipse.emf.common.util.EList;
 import se.bimsolution.db.Fail;
 import se.bimsolution.db.PostgresRepository;
 import se.bimsolution.db.Repository;
-import se.bimsolution.query.ClientBuilder;
-import se.bimsolution.query.ModelBuilder;
-import se.bimsolution.query.QueryCoordinator;
+import se.bimsolution.query.*;
 
-import se.bimsolution.query.QueryUtils;
 //import se.bimsolution.query.machine.IdValidationMachine;
 
 import se.bimsolution.query.machine.QueryMachine;
+import se.bimsolution.query.machine.*;
 import se.bimsolution.query.machine.mockQueryMachine;
 //import se.bimsolution.query.machine.mockQueryMachine;
 
@@ -33,25 +31,28 @@ import java.util.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
+import static se.bimsolution.query.QueryUtils.*;
 /**
  * Handles the queries to the BIMServer
  */
 public class Main {
     public static void main(String[] args)  {
+        List<Class> classList = getStandardClassList();
 
         Repository repo = null;
         try {
-
+            repo = new PostgresRepository(args[4], args[5], args[6]);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         try {
-            BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[3], args[4]), args[5]).build();
+            BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[2], args[3]), args[4]).build();
             IfcModelInterface model = null;
             model = new ModelBuilder(bsc, "A2-400").build();
-            QueryCoordinator qc = new QueryCoordinator(30, repo, model);
-            qc.run();
+            WrongBSABChecker wrongBSABChecker = new WrongBSABChecker(model, repo, 1, classList);
+            wrongBSABChecker.run();
+            //QueryCoordinator qc = new QueryCoordinator(30, repo, model);
+            //qc.run();
         } catch (ServerException e) {
             e.printStackTrace();
         } catch (UserException e) {
@@ -59,6 +60,7 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        repo.close();
 
 
 
