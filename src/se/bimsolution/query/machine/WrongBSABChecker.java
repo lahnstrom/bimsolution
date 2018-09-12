@@ -4,16 +4,15 @@ import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.IfcElement;
 import org.bimserver.models.ifc2x3tc1.IfcPropertySet;
 import se.bimsolution.db.Bsab96bdMissing;
+import se.bimsolution.db.Bsab96bdWrong;
 import se.bimsolution.db.Log;
 import se.bimsolution.db.Repository;
 
+import static se.bimsolution.query.ElementCheckerUtils.extractTextValueByNameOfSingleValue;
 import static se.bimsolution.query.QueryUtils.*;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class WrongBSABChecker extends ElementChecker {
 
@@ -22,7 +21,7 @@ public class WrongBSABChecker extends ElementChecker {
     }
 
     public void run() {
-        List<Bsab96bdMissing> bsab96bMissings = new ArrayList<>();
+        List<Bsab96bdWrong> bsab96bwrongs = new ArrayList<>();
         List<IfcElement> elements = new ArrayList<>();
         for (Class clazz :
                 this.classList) {
@@ -31,41 +30,71 @@ public class WrongBSABChecker extends ElementChecker {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            ;
         }
-        elements.forEach(element -> {
-            if (!hasBsabId(element)) {
+        HashMap<String, HashSet<String>> map = null;
+        try {
+            map = getHashMapByIdToIfcCSVParsing("resources//spec.csv", ",");
+        } catch (Exception e) {
+        }
+        ;
+        for (IfcElement element : elements) {
 
+            try {
+                if (!hasCorrctBsabId(element, map)) {
 
-                try {
-                    bsab96bMissings.add(new Bsab96bdMissing(
+                    bsab96bwrongs.add(new Bsab96bdWrong(
                             element.getOid(),
-                            getIfcBuildingFromElementOrNull(element).getName(),
-                            getIfcBuildingStoreyFromElementOrNull(element).getName(),
+                            getNameOfElement(getIfcBuildingFromElementOrNull(element)),
+                            getNameOfElement(getIfcBuildingStoreyFromElementOrNull(element)),
                             extractNameFromClass(element.getClass()),
-                            getIfcSiteFromElement(element).getName(),
+                            getBSABFromElement(element, map),
+                            validIdsFromHashSetToString(map.get(extractNameFromClass(element.getClass()))),
+                            getNameOfElement(getIfcSiteFromElementOrNull(element)),
                             revisionId,
                             element.getName()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println(element.getName());
-                } ;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(element.getName());
             }
-
-        });
+        }
+        ;
         try {
-            repo.writeBsab96bdMissing(bsab96bMissings);
+            for (Bsab96bdWrong bsab96bdWrong : bsab96bwrongs) {
+                System.out.println(bsab96bdWrong.getName());
+            }
+            repo.writeBsab96bdWrong(bsab96bwrongs);
         } catch (SQLException e) {
             repo.writeLog(new Log(e.getMessage(), revisionId));
         }
     }
 
-    public boolean hasBsabId(IfcElement element) {
-        List<IfcPropertySet> propertySets = getIfcPropertySetsFromElementOrNull(element);
-        if (propertySets == null) {
-            return false;
+    public boolean hasCorrctBsabId(IfcElement element, HashMap<String, HashSet<String>> map) {
+        List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
+        IfcPropertySet propertySet = getPropertySetFromListByStartsWith(propertySets, "AH");
+        String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
+        String className = extractNameFromClass(element.getClass());
+        return map.get(className).contains(idToCheck);
+    }
+
+    public String getBSABFromElement(IfcElement element, HashMap<String, HashSet<String>> map) {
+        List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
+        IfcPropertySet propertySet = getPropertySetFromListByStartsWith(propertySets, "AH");
+        String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
+        return idToCheck;
+    }
+
+    public String validIdsFromHashSetToString(HashSet<String> set) {
+        String string = "";
+        int counter = 0;
+        for (String element : set) {
+            if (counter == 0) {
+                string += element;
+            } else {
+                string += ", " + element;
+            }
+            counter++;
         }
-        IfcPropertySet propertySet = getPropertySetFromListByStartsWithOrNull(propertySets, "AH");
-        return propertySet != null;
+        return string;
     }
 }
