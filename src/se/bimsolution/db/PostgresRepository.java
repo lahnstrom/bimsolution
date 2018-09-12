@@ -20,15 +20,14 @@ public class PostgresRepository implements Repository {
      * @throws SQLException
      */
     @Override
-    public Revision writeRevision(int projectId, String model) throws SQLException {
-        Revision revision = new Revision(projectId, model);
+    public Revision writeRevision(String model) throws SQLException {
+        Revision revision = new Revision(model);
         String sqlString = "INSERT INTO revision " +
-                "       (model, project_id) " +
-                "         VALUES (?,?)";
+                "       (model) " +
+                "         VALUES (?)";
 
         PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, model);
-        statement.setInt(2, projectId);
         statement.executeUpdate();
 
         ResultSet resultSet = statement.getGeneratedKeys();
@@ -302,6 +301,25 @@ public class PostgresRepository implements Repository {
             ifcTypeNameIdMap.put(resultSet.getString("ifc_name"), resultSet.getInt("id"));
         }
         return ifcTypeNameIdMap;
+    }
+@Override
+    public Set<String> getAllRevisionsNames() {
+        Set<String> revisionNames = new HashSet<>();
+        String sqlString = "SELECT model FROM revision";
+
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(sqlString);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                revisionNames.add(resultSet.getString("model"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return revisionNames;
     }
 
     /**

@@ -13,6 +13,9 @@ public class Revision {
         this.model = model;
     }
 
+    public Revision(String model) {
+    }
+
     public int getId() {
         return id;
     }
