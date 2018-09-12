@@ -174,12 +174,17 @@ public final class QueryUtils {
      * @return An IfcBuilding within which the Element is contained.
      */
     public static IfcBuilding getIfcBuildingFromElementOrNull(IfcElement element) {
-        IfcBuildingStorey storey = getIfcBuildingStoreyFromElement(element);
-        EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
-        for (IfcRelDecomposes de : decomposes) {
-            if (de.getRelatingObject() instanceof IfcBuilding) {
-                return (IfcBuilding) de.getRelatingObject();
+        try {
+            IfcBuildingStorey storey = getIfcBuildingStoreyFromElementOrNull(element);
+            EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
+            for (IfcRelDecomposes de : decomposes) {
+                if (de.getRelatingObject() instanceof IfcBuilding) {
+                    return (IfcBuilding) de.getRelatingObject();
+                }
             }
+        } catch (Exception e) {
+            System.out.println("getIfcBuilding returns null because following error: " + e.getMessage());
+            return null;
         }
         return null;
     }
@@ -210,12 +215,17 @@ public final class QueryUtils {
      * @return An IfcSite within which the Element is contained.
      */
     public static IfcSite getIfcSiteFromElementOrNull(IfcElement element) {
-        IfcBuilding building = getIfcBuildingFromElement(element);
-        EList<IfcRelDecomposes> decomposes = building.getDecomposes();
-        for (IfcRelDecomposes de : decomposes) {
-            if (de.getRelatingObject() instanceof IfcSite) {
-                return (IfcSite) de.getRelatingObject();
+        try {
+            IfcBuilding building = getIfcBuildingFromElement(element);
+            EList<IfcRelDecomposes> decomposes = building.getDecomposes();
+            for (IfcRelDecomposes de : decomposes) {
+                if (de.getRelatingObject() instanceof IfcSite) {
+                    return (IfcSite) de.getRelatingObject();
+                }
             }
+        } catch (Exception e) {
+            System.out.println("getIfcSite returns null because of following error: " + e.getMessage());
+            return null;
         }
         return null;
     }
@@ -413,12 +423,13 @@ public final class QueryUtils {
 
     /**
      * Constructs a HashMap of IfcBuilding Storey and the height.
+     *
      * @param storeys IfcBuildingStorey
      * @return A new HashMap of IfcBuildingStorey - Height
      */
     public static HashMap<IfcBuildingStorey, Double> getHashMapOfStoreyAndHeight(Collection<IfcBuildingStorey> storeys) {
         HashMap<IfcBuildingStorey, Double> map = new HashMap<>();
-        storeys.forEach(x-> map.put(x, getAbsoluteZValueFromProduct(x)));
+        storeys.forEach(x -> map.put(x, getAbsoluteZValueFromProduct(x)));
         return map;
     }
 
@@ -426,8 +437,9 @@ public final class QueryUtils {
     /**
      * Given a collection of storeys and a storey in that collection, returns the height difference between the floor
      * above and the reference floor, given that the difference is larger than the threshold.
-     * @param storeys A collection of IfcBuildingStoreys
-     * @param storey A specific Storey within that collection
+     *
+     * @param storeys   A collection of IfcBuildingStoreys
+     * @param storey    A specific Storey within that collection
      * @param threshold The minimum allowed height difference to the next floor
      * @return The height difference to the first floor above threshold.
      */
@@ -439,7 +451,7 @@ public final class QueryUtils {
         double refHeight = getAbsoluteZValueFromProduct(storey);
         for (double height :
                 map.values()) {
-            if (height > refHeight+threshold && height < minValueAboveThreshold) {
+            if (height > refHeight + threshold && height < minValueAboveThreshold) {
                 minValueAboveThreshold = height;
             }
         }
@@ -835,6 +847,13 @@ public final class QueryUtils {
         IfcElementQuantity quantity = getElementQuantityFromCollectionByName(quantities, name);
         IfcQuantityArea area = getAreaFromElementQuantity(quantity);
         return area.getAreaValue();
+    }
+
+    public static String getNameOfElement(IfcObject element) {
+        if (element == null) {
+            return null;
+        }
+        return element.getName();
     }
 }
 
