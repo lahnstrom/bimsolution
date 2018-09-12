@@ -487,6 +487,20 @@ public final class QueryUtils {
         return map;
     }
 
+    public static boolean getElementIsOnWrongStorey(IfcElement element, Collection<IfcBuildingStorey> storeys,
+                                                    double threshold) {
+
+        return getElementIsBelowFloorLevel(element, threshold) ||
+                getElementIsAboveFloorLevel(element, threshold, storeys);
+    }
+
+    public static boolean getElementIsAboveFloorLevel(IfcElement element, double threshold, Collection<IfcBuildingStorey> storeys) {
+        IfcBuildingStorey storey = getIfcBuildingStoreyFromElement(element);
+        double storeyZ = getAbsoluteZValueFromProduct(storey);
+        double elementZ = getAbsoluteZValueFromProduct(element);
+        double floorHeight = getHeightDifferenceToNextStoreyAboveThreshold(storeys, storey, threshold);
+        return elementZ - floorHeight > storeyZ + threshold;
+    }
 
     /**
      * Given a collection of storeys and a storey in that collection, returns the height difference between the floor
@@ -701,7 +715,7 @@ public final class QueryUtils {
      * @param element An IfcElement to check
      * @return Is the Z value of the Element below that of its floor?
      */
-    public static boolean getElementIsBelowFloorLevel(IfcElement element, double threshold) {
+    public static boolean  getElementIsBelowFloorLevel(IfcElement element, double threshold) {
         double storeyZ = getAbsoluteZValueFromProduct(getIfcBuildingStoreyFromElement(element));
         double elementZ = getAbsoluteZValueFromProduct(element);
         return storeyZ - elementZ > threshold;
@@ -781,17 +795,6 @@ public final class QueryUtils {
             throw new IllegalArgumentException("The element has no relating IfcElementQuantity");
         }
         return elementQuantities;
-    }
-
-    /**
-     * Given an IfcBuildingStorey, this method returns a double - the height of the storey.
-     *
-     * @param buildingStorey
-     * @return double The height of the storey.
-     */
-    //TODO create getHeight of Storey method.
-    public static double getHeightOfStorey(IfcBuildingStorey buildingStorey) {
-        return 0;
     }
 
 
