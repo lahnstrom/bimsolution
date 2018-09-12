@@ -123,17 +123,17 @@ public final class QueryUtils {
             }
         }
 
-        throw new IllegalArgumentException("The element has no IfcBuildingStorey associated with it");
+        throw new IllegalArgumentException("The element has no IfcBuildingStorey associated with it "
+                + extractNameFromClass(element.getClass()));
     }
 
     /**
-     *
      * @param space
      * @return
      */
     public static IfcBuildingStorey getIfcStoreyFromIfcSpaceOrNull(IfcSpace space) {
-        for (IfcRelDecomposes agg:
-             space.getDecomposes()) {
+        for (IfcRelDecomposes agg :
+                space.getDecomposes()) {
             if (agg.getRelatingObject() instanceof IfcBuildingStorey) {
                 return (IfcBuildingStorey) agg.getRelatingObject();
             }
@@ -142,15 +142,14 @@ public final class QueryUtils {
     }
 
     /**
-     *
      * @param space
      * @return
      */
     public static IfcBuilding getIfcBuildingFromIfcSpaceOrNull(IfcSpace space) {
         IfcBuildingStorey storey = getIfcStoreyFromIfcSpaceOrNull(space);
-        if (storey!=null) {
-            for (IfcRelDecomposes agg: space.getDecomposes()) {
-                if (agg.getRelatingObject() instanceof  IfcBuilding) {
+        if (storey != null) {
+            for (IfcRelDecomposes agg : storey.getDecomposes()) {
+                if (agg.getRelatingObject() instanceof IfcBuilding) {
                     return (IfcBuilding) agg.getRelatingObject();
                 }
             }
@@ -159,15 +158,14 @@ public final class QueryUtils {
     }
 
     /**
-     *
      * @param space
      * @return
      */
     public static IfcSite getIfcSiteFromIfcSpaceOrNull(IfcSpace space) {
         IfcBuilding building = getIfcBuildingFromIfcSpaceOrNull(space);
-        if (building!=null) {
-            for (IfcRelDecomposes agg: space.getDecomposes()) {
-                if (agg.getRelatingObject() instanceof  IfcSite) {
+        if (building != null) {
+            for (IfcRelDecomposes agg : building.getDecomposes()) {
+                if (agg.getRelatingObject() instanceof IfcSite) {
                     return (IfcSite) agg.getRelatingObject();
                 }
             }
@@ -191,14 +189,18 @@ public final class QueryUtils {
      * @return An IfcBuldingStorey within which the Element is contained.
      */
     public static IfcBuildingStorey getIfcBuildingStoreyFromElementOrNull(IfcElement element) {
-        EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
-        for (IfcRelContainedInSpatialStructure rel :
-                relList) {
-            if (rel.getRelatingStructure() instanceof IfcBuildingStorey) {
-                return (IfcBuildingStorey) rel.getRelatingStructure();
+        try {
+            EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
+            for (IfcRelContainedInSpatialStructure rel :
+                    relList) {
+                if (rel.getRelatingStructure() instanceof IfcBuildingStorey) {
+                    return (IfcBuildingStorey) rel.getRelatingStructure();
+                }
             }
+            return null;
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -220,14 +222,18 @@ public final class QueryUtils {
     }
 
     public static boolean getPropertySetExistsWithNameStartsWith(String name, IfcElement element) {
-        List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
-        for (IfcPropertySet pset:
-             propertySets)   {
-            if (pset.getName().startsWith(name)) {
-                return true;
+        try {
+            List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
+            for (IfcPropertySet pset :
+                    propertySets) {
+                if (pset.getName().startsWith(name)) {
+                    return true;
+                }
             }
+            return false;
+        } catch (IllegalArgumentException e) {
+            return false;
         }
-        return false;
     }
 
 
@@ -239,14 +245,18 @@ public final class QueryUtils {
      * @return An IfcBuilding within which the Element is contained.
      */
     public static IfcBuilding getIfcBuildingFromElementOrNull(IfcElement element) {
-        IfcBuildingStorey storey = getIfcBuildingStoreyFromElement(element);
-        EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
-        for (IfcRelDecomposes de : decomposes) {
-            if (de.getRelatingObject() instanceof IfcBuilding) {
-                return (IfcBuilding) de.getRelatingObject();
+        try {
+            IfcBuildingStorey storey = getIfcBuildingStoreyFromElement(element);
+            EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
+            for (IfcRelDecomposes de : decomposes) {
+                if (de.getRelatingObject() instanceof IfcBuilding) {
+                    return (IfcBuilding) de.getRelatingObject();
+                }
             }
+            return null;
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -275,14 +285,18 @@ public final class QueryUtils {
      * @return An IfcSite within which the Element is contained.
      */
     public static IfcSite getIfcSiteFromElementOrNull(IfcElement element) {
-        IfcBuilding building = getIfcBuildingFromElement(element);
-        EList<IfcRelDecomposes> decomposes = building.getDecomposes();
-        for (IfcRelDecomposes de : decomposes) {
-            if (de.getRelatingObject() instanceof IfcSite) {
-                return (IfcSite) de.getRelatingObject();
+        try {
+            IfcBuilding building = getIfcBuildingFromElement(element);
+            EList<IfcRelDecomposes> decomposes = building.getDecomposes();
+            for (IfcRelDecomposes de : decomposes) {
+                if (de.getRelatingObject() instanceof IfcSite) {
+                    return (IfcSite) de.getRelatingObject();
+                }
             }
+            return null;
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -302,7 +316,7 @@ public final class QueryUtils {
             }
         }
         if (psets.size() == 0) {
-            throw new IllegalArgumentException("The element has no relating IfcPropertySet");
+            throw new IllegalArgumentException("The element has no relating IfcPropertySet " + extractNameFromClass(object.getClass()));
         }
         return psets;
     }
@@ -478,12 +492,13 @@ public final class QueryUtils {
 
     /**
      * Constructs a HashMap of IfcBuilding Storey and the height.
+     *
      * @param storeys IfcBuildingStorey
      * @return A new HashMap of IfcBuildingStorey - Height
      */
     public static HashMap<IfcBuildingStorey, Double> getHashMapOfStoreyAndHeight(Collection<IfcBuildingStorey> storeys) {
         HashMap<IfcBuildingStorey, Double> map = new HashMap<>();
-        storeys.forEach(x-> map.put(x, getAbsoluteZValueFromProduct(x)));
+        storeys.forEach(x -> map.put(x, getAbsoluteZValueFromProduct(x)));
         return map;
     }
 
@@ -495,18 +510,24 @@ public final class QueryUtils {
     }
 
     public static boolean getElementIsAboveFloorLevel(IfcElement element, double threshold, Collection<IfcBuildingStorey> storeys) {
-        IfcBuildingStorey storey = getIfcBuildingStoreyFromElement(element);
-        double storeyZ = getAbsoluteZValueFromProduct(storey);
-        double elementZ = getAbsoluteZValueFromProduct(element);
-        double floorHeight = getHeightDifferenceToNextStoreyAboveThreshold(storeys, storey, threshold);
-        return elementZ - floorHeight > storeyZ + threshold;
+        try {
+
+            IfcBuildingStorey storey = getIfcBuildingStoreyFromElement(element);
+            double storeyZ = getAbsoluteZValueFromProduct(storey);
+            double elementZ = getAbsoluteZValueFromProduct(element);
+            double floorHeight = getHeightDifferenceToNextStoreyAboveThreshold(storeys, storey, threshold);
+            return elementZ - floorHeight > storeyZ + threshold;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     /**
      * Given a collection of storeys and a storey in that collection, returns the height difference between the floor
      * above and the reference floor, given that the difference is larger than the threshold.
-     * @param storeys A collection of IfcBuildingStoreys
-     * @param storey A specific Storey within that collection
+     *
+     * @param storeys   A collection of IfcBuildingStoreys
+     * @param storey    A specific Storey within that collection
      * @param threshold The minimum allowed height difference to the next floor
      * @return The height difference to the first floor above threshold.
      */
@@ -518,7 +539,7 @@ public final class QueryUtils {
         double refHeight = getAbsoluteZValueFromProduct(storey);
         for (double height :
                 map.values()) {
-            if (height > refHeight+threshold && height < minValueAboveThreshold) {
+            if (height > refHeight + threshold && height < minValueAboveThreshold) {
                 minValueAboveThreshold = height;
             }
         }
@@ -605,8 +626,6 @@ public final class QueryUtils {
     public static double getZValueOfPlacementFromPlacement(IfcAxis2Placement3D placement) {
         return getZValueOfCoordinatesFromList(getRelatingCoordinatesFromAxis2Placement(placement));
     }
-
-
 
 
     /**
@@ -715,10 +734,14 @@ public final class QueryUtils {
      * @param element An IfcElement to check
      * @return Is the Z value of the Element below that of its floor?
      */
-    public static boolean  getElementIsBelowFloorLevel(IfcElement element, double threshold) {
-        double storeyZ = getAbsoluteZValueFromProduct(getIfcBuildingStoreyFromElement(element));
-        double elementZ = getAbsoluteZValueFromProduct(element);
-        return storeyZ - elementZ > threshold;
+    public static boolean getElementIsBelowFloorLevel(IfcElement element, double threshold) {
+        try {
+            double storeyZ = getAbsoluteZValueFromProduct(getIfcBuildingStoreyFromElement(element));
+            double elementZ = getAbsoluteZValueFromProduct(element);
+            return storeyZ - elementZ > threshold;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     /**
@@ -890,6 +913,27 @@ public final class QueryUtils {
         }
         return area.getAreaValue();
 
+    }
+
+
+
+    public static String getStringOfMissingProperties(IfcElement element, Set<String> correctProperties,
+                                                      String name, String delimiter) {
+        StringBuilder sb = new StringBuilder();
+        Set<String> propertyNames = new HashSet<>();
+        List<IfcPropertySet> psets = getIfcPropertySetsFromElement(element);
+        IfcPropertySet pset = getPropertySetFromListByStartsWith(psets,name);
+        for (IfcProperty property:
+             pset.getHasProperties()) {
+            propertyNames.add(property.getName());
+        }
+        for (String string :
+                correctProperties) {
+            if (!propertyNames.contains(string)) {
+                sb.append(string).append(delimiter);
+            }
+        }
+        return sb.toString();
     }
 
     /**

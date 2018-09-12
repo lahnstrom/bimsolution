@@ -21,8 +21,7 @@ import se.bimsolution.query.QueryCoordinator;
 import se.bimsolution.query.QueryUtils;
 //import se.bimsolution.query.machine.IdValidationMachine;
 
-import se.bimsolution.query.machine.QueryMachine;
-import se.bimsolution.query.machine.mockQueryMachine;
+import se.bimsolution.query.machine.*;
 //import se.bimsolution.query.machine.mockQueryMachine;
 
 
@@ -42,13 +41,16 @@ public class Main {
 
         Repository repo = null;
 
-
         try {
             BimServerClient bsc = new ClientBuilder(new UsernamePasswordAuthenticationInfo(args[0], args[1]), "http://104.248.40.190:8080/bimserver").build();
             IfcModelInterface model = null;
             model = new ModelBuilder(bsc, "A2-400").build();
-            QueryCoordinator qc = new QueryCoordinator(30, repo, model);
-            qc.run();
+            WrongStoreyChecker wrongStoreyChecker = new WrongStoreyChecker(model, repo, 1, QueryUtils.getStandardClassList());
+            PropertySetMissingChecker propertySetMissingChecker = new PropertySetMissingChecker(model, repo, 1, QueryUtils.getStandardClassList());
+            AreaChecker areaChecker = new AreaChecker(model, repo, 1, null);
+            propertySetMissingChecker.run();
+            wrongStoreyChecker.run();
+            areaChecker.run();
         } catch (ServerException e) {
             e.printStackTrace();
         } catch (UserException e) {

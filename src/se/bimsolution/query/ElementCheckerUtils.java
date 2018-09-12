@@ -67,12 +67,12 @@ public class ElementCheckerUtils {
      * @param element   Ifc element to check.
      * @return boolean  True if the element is on the correct floor, otherwise false.
      */
-    static IElementChecker isObjectOnCorrectFloor = element -> {
-        final double TOLERANCE = 0.1;
-        double elementZvalue = -getHeightDifferenceBetweenStoreyAndElement(element);
-        double storeyZvalue = getHeightOfStorey(getIfcBuildingStoreyFromElement(element));
-        return !getElementIsBelowFloorLevel(element) && (elementZvalue - storeyZvalue) < TOLERANCE;
-    };
+//    static IElementChecker isObjectOnCorrectFloor = element -> {
+//        final double TOLERANCE = 0.1;
+//        double elementZvalue = -getHeightDifferenceBetweenStoreyAndElement(element);
+//        double storeyZvalue = getHeightOfStorey(getIfcBuildingStoreyFromElement(element));
+//        return !getElementIsBelowFloorLevel(element) && (elementZvalue - storeyZvalue) < TOLERANCE;
+//    };
 
     static IElementChecker isMasonary = element -> {
 

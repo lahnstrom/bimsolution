@@ -27,12 +27,12 @@ public class PropertySetMissingChecker extends ElementChecker{
         List<MissingPropertySet> missingPropertySets = new ArrayList<>();
         for (IfcElement element :
                 elements) {
-            if (getPropertySetExistsWithNameStartsWith("AH", element)) {
+            if (!getPropertySetExistsWithNameStartsWith("AH", element)) {
                 missingPropertySets.add(new MissingPropertySet(
                         element.getOid(),
-                        getNameOfObjectOrNull(getIfcBuildingFromElement(element)),
-                        getNameOfObjectOrNull(getIfcBuildingStoreyFromElement(element)),
-                        getNameOfObjectOrNull(getIfcSiteFromElement(element)),
+                        getNameOfObjectOrNull(getIfcBuildingFromElementOrNull(element)),
+                        getNameOfObjectOrNull(getIfcBuildingStoreyFromElementOrNull(element)),
+                        getNameOfObjectOrNull(getIfcSiteFromElementOrNull(element)),
                         extractNameFromClass(element.getClass()),
                         this.revisionId,
                         element.getName()

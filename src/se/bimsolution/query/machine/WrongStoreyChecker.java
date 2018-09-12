@@ -39,9 +39,9 @@ public class WrongStoreyChecker extends ElementChecker{
             if (getElementIsOnWrongStorey(element, storeys, THRESHOLD)) {
                 wrongs.add(new WrongStorey(
                         element.getOid(),
-                        getNameOfObjectOrNull(getIfcBuildingStoreyFromElement(element)),
-                        getNameOfObjectOrNull(getIfcBuildingFromElement(element)),
-                        getNameOfObjectOrNull(getIfcSiteFromElement(element)),
+                        getNameOfObjectOrNull(getIfcBuildingStoreyFromElementOrNull(element)),
+                        getNameOfObjectOrNull(getIfcBuildingFromElementOrNull(element)),
+                        getNameOfObjectOrNull(getIfcSiteFromElementOrNull(element)),
                         extractNameFromClass(element.getClass()),
                         revisionId,
                         element.getName()
