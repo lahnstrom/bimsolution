@@ -51,14 +51,14 @@ public class ElementCheckerUtils {
      * @param map       Map of valid Ids of each ifc element.
      * @return boolean  True if the element has a BSAB Id, otherwise false.
      */
-    static TwoParameterElementChecker isBSABIdCorrect = (map, element) -> {
+/*    static TwoParameterElementChecker isBSABIdCorrect = (map, element) -> {
             List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
             IfcPropertySet propertySet = getPropertySetFromListByStartsWith(propertySets, "AH");
             String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
             String className = extractNameFromClass(element.getClass());
             return map.get(className).contains(idToCheck);
 
-    };
+    };*/
 
     /**
      * This function checks if an ifc element is in the storey it's associated with, i.e. if the element is above the

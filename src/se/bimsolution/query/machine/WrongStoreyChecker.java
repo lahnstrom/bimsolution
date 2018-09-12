@@ -9,33 +9,38 @@ import se.bimsolution.db.Repository;
 import se.bimsolution.db.WrongStorey;
 import se.bimsolution.query.QueryUtils;
 
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static se.bimsolution.query.QueryUtils.*;
-public class WrongStoreyChecker extends ElementChecker{
+
+import static se.bimsolution.query.QueryUtils.getIfcPropertySetsFromElementOrNull;
+import static se.bimsolution.query.QueryUtils.getPropertySetFromListByStartsWithOrNull;
+
+public class WrongStoreyChecker extends ElementChecker {
 
 
     public static final double THRESHOLD = 2000;
+
 
     public WrongStoreyChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
         super(model, repo, revisionId, classList);
     }
 
 
-
     @Override
     public void run() {
         List<IfcElement> elements = new ArrayList<>();
-        for (Class clazz:
-             classList) {
+        for (Class clazz :
+                classList) {
             elements.addAll(model.getAll(clazz));
         }
         List<IfcBuildingStorey> storeys = model.getAll(IfcBuildingStorey.class);
         List<WrongStorey> wrongs = new ArrayList<>();
-        for (IfcElement element:
-             elements) {
+        for (IfcElement element :
+                elements) {
             if (getElementIsOnWrongStorey(element, storeys, THRESHOLD)) {
                 wrongs.add(new WrongStorey(
                         element.getOid(),
@@ -55,4 +60,7 @@ public class WrongStoreyChecker extends ElementChecker{
         }
 
     }
+
 }
+
+

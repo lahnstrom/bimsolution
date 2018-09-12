@@ -10,12 +10,13 @@ abstract public class ElementChecker implements Runnable {
     protected Repository repo;
     protected int revisionId;
     protected int count;
-    List<Class> classList;
+    protected List<Class> classList;
 
     public ElementChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
         this.model = model;
         this.repo = repo;
         this.revisionId = revisionId;
         this.classList = classList;
+
     }
 }

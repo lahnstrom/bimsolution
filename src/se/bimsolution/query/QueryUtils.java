@@ -247,6 +247,7 @@ public final class QueryUtils {
     public static IfcBuilding getIfcBuildingFromElementOrNull(IfcElement element) {
         try {
             IfcBuildingStorey storey = getIfcBuildingStoreyFromElement(element);
+
             EList<IfcRelDecomposes> decomposes = storey.getDecomposes();
             for (IfcRelDecomposes de : decomposes) {
                 if (de.getRelatingObject() instanceof IfcBuilding) {
@@ -949,6 +950,13 @@ public final class QueryUtils {
         IfcElementQuantity quantity = getElementQuantityFromCollectionByName(quantities, name);
         IfcQuantityArea area = getAreaFromElementQuantity(quantity);
         return area.getAreaValue();
+    }
+
+    public static String getNameOfElement(IfcObject element) {
+        if (element == null) {
+            return null;
+        }
+        return element.getName();
     }
 }
 
