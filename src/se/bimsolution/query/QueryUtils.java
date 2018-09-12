@@ -219,6 +219,17 @@ public final class QueryUtils {
 
     }
 
+    public static boolean getPropertySetExistsWithNameStartsWith(String name, IfcElement element) {
+        List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
+        for (IfcPropertySet pset:
+             propertySets)   {
+            if (pset.getName().startsWith(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Given an IfcElement, this method returns the IfcBuilding within which the element is contained.
