@@ -6,11 +6,13 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 public interface Repository {
-    Revision writeRevision(int projectId, String model) throws SQLException;
 
     void writeAllFails(List<Fail> fails) throws SQLException;
+
+    Revision writeRevision(String model) throws SQLException;
 
     Stats writeStats(Stats stats) throws SQLException;
 
@@ -33,6 +35,8 @@ public interface Repository {
     HashMap<IfcElement, Integer> writePropertySetsReturnsMap(HashMap<IfcElement, PropertySet> elementPropertySetMap) throws SQLException;
 
     HashMap<String, Integer> getIfcTypeNameIdMap() throws SQLException;
+
+    Set<String> getAllRevisionsNames();
 
     void writeRevisionIdToLog(Log log, int revisionId) throws SQLException;
 

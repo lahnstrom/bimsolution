@@ -17,5 +17,6 @@ abstract public class ElementChecker implements Runnable {
         this.repo = repo;
         this.revisionId = revisionId;
         this.classList = classList;
+
     }
 }

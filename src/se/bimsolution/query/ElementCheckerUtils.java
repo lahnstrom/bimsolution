@@ -19,7 +19,7 @@ public class ElementCheckerUtils {
      * @param element   IfcElement to check.
      * @return boolean  True if the element has a property set, otherwise false.
      */
-    static ElementChecker hasPropertySet = element -> {
+    static IElementChecker hasPropertySet = element -> {
         try {
             getIfcPropertySetsFromElement(element);
             return true;
@@ -34,7 +34,7 @@ public class ElementCheckerUtils {
      * @param element   IfcElement to check.
      * @return boolean  True if the element has a BSAB Id, otherwise false.
      */
-    static ElementChecker hasBSABId = element -> {
+    static IElementChecker hasBSABId = element -> {
         List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
         try {
             getPropertySetFromListByStartsWith(propertySets, "AH");
@@ -67,25 +67,25 @@ public class ElementCheckerUtils {
      * @param element   Ifc element to check.
      * @return boolean  True if the element is on the correct floor, otherwise false.
      */
-    static ElementChecker isObjectOnCorrectFloor = element -> {
-        final double TOLERANCE = 0.1;
-        double elementZvalue = -getHeightDifferenceBetweenStoreyAndElement(element);
-        double storeyZvalue = getHeightOfStorey(getIfcBuildingStoreyFromElement(element));
-        return !getElementIsBelowFloorLevel(element) && (elementZvalue - storeyZvalue) < TOLERANCE;
-    };
+//    static IElementChecker isObjectOnCorrectFloor = element -> {
+//        final double TOLERANCE = 0.1;
+//        double elementZvalue = -getHeightDifferenceBetweenStoreyAndElement(element);
+//        double storeyZvalue = getHeightOfStorey(getIfcBuildingStoreyFromElement(element));
+//        return !getElementIsBelowFloorLevel(element) && (elementZvalue - storeyZvalue) < TOLERANCE;
+//    };
 
-    static ElementChecker isMasonary = element -> {
+    static IElementChecker isMasonary = element -> {
 
       return true;
     };
 
     /**
-     * This method should return a HashMap of ElementChecker - ID as it is written in the DB.
+     * This method should return a HashMap of IElementChecker - ID as it is written in the DB.
      * Implementation might vary over time.
-     * @return A HashMap of ElementChecker, ID
+     * @return A HashMap of IElementChecker, ID
      */
-    static HashMap<ElementChecker, Integer> standardElementCheckerMapping() {
-        HashMap<ElementChecker, Integer> retMap = new HashMap<>();
+    static HashMap<IElementChecker, Integer> standardElementCheckerMapping() {
+        HashMap<IElementChecker, Integer> retMap = new HashMap<>();
         retMap.put(hasPropertySet, 1);
         retMap.put(hasBSABId, 2);
 //        retMap.put(isObjectOnCorrectFloor, 3);
@@ -118,7 +118,7 @@ public class ElementCheckerUtils {
      * A revisionId, that is a DB revision id,
      * A HashMap with Elements relating IfcElements to the ID of their propertySet in the DB,
      * A HashMap with ifc_name (class name) relating to the ID of their corresponding IfcType in the DB,
-     * A HashMap with ElementChecker lambdas and their corresponding Error code in the  DB,
+     * A HashMap with IElementChecker lambdas and their corresponding Error code in the  DB,
      * <p>
      * This method returns a list of newly created failures ready to be written to DB.
      * The list contains all the failed checks after running all the ElementCheckers on all the Elements in the maps.
@@ -126,18 +126,18 @@ public class ElementCheckerUtils {
      * @param revisionId          A DB revision id.
      * @param elementsPSetIdMap   HashMap of IfcElement - ID of PropertySet
      * @param ifcTypeNameToIdMap  HashMap of ClassName - ID of IfcType
-     * @param callbacksErrorIdMap ElementChecker - ID of Error
+     * @param callbacksErrorIdMap IElementChecker - ID of Error
      * @return A list of all the failed checks for the elements
      */
     public static List<Fail> checkAllElementsInHashMap(int revisionId,
                                                        HashMap<IfcElement, Integer> elementsPSetIdMap,
                                                        HashMap<String, Integer> ifcTypeNameToIdMap,
-                                                       HashMap<ElementChecker, Integer> callbacksErrorIdMap) {
+                                                       HashMap<IElementChecker, Integer> callbacksErrorIdMap) {
         List<Fail> fails = new ArrayList<>();
         for (IfcElement element :
                 elementsPSetIdMap.keySet()) {
             int ifcTypeId = ifcTypeNameToIdMap.get(extractNameFromClass(element.getClass()));
-            for (ElementChecker callback :
+            for (IElementChecker callback :
                     callbacksErrorIdMap.keySet()) {
 
                 if (!callback.checkElement(element)) {
