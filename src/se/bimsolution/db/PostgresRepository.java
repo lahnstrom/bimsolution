@@ -135,7 +135,6 @@ public class PostgresRepository implements Repository {
         statement.executeBatch();
     }
 
-
     @Override
     public void writeBsab96bdMissing(List<Bsab96bdMissing> missings) throws SQLException {
         String sqlString = "INSERT INTO bsab96bd_missing " +
@@ -357,6 +356,22 @@ public class PostgresRepository implements Repository {
             e.printStackTrace();
         }
 
+    }
+
+    public void writeObjectCount(ObjectCount objectCount){
+        try {
+            String sqlString = "INSERT INTO object_count " +
+                    "       (revision_id, element_checker_name, total_checked_objects) " +
+                    "         VALUES (?, ?, ?)";
+
+            PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+            statement.setInt(1, objectCount.getRevisionId());
+            statement.setString(2, objectCount.getElementCheckerName());
+            statement.setInt(3,objectCount.getTotalCheckedObjects());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
