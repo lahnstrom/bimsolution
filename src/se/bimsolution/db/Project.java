@@ -1,5 +1,7 @@
 package se.bimsolution.db;
 
+import org.bimserver.models.ifc2x3tc1.IfcSpace;
+
 public class Project {
     private int id;
     private String projectName;

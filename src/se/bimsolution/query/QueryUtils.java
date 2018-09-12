@@ -125,9 +125,24 @@ public final class QueryUtils {
                 return (IfcBuildingStorey) rel.getRelatingStructure();
             }
         }
+
         throw new IllegalArgumentException("The element has no IfcBuildingStorey associated with it");
     }
 
+    /**
+     *
+     * @param space
+     * @return
+     */
+    public static IfcBuildingStorey getIfcStoreyFromIfcSpaceOrNull(IfcSpace space) {
+        for (IfcRelDecomposes agg:
+             space.getDecomposes()) {
+            if (agg.getRelatingObject() instanceof IfcBuildingStorey) {
+                return (IfcBuildingStorey) agg.getRelatingObject();
+            }
+        }
+        return null;
+    }
 
     /**
      * Given an IfcElement, this method returns the IfcBuildingStorey within which the element is contained.
