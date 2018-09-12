@@ -16,6 +16,8 @@ public interface Repository {
 
     public void writeLog(Log log);
 
+    void writeObjectCount(ObjectCount objectCount);
+
     void writeArea(List<Area> areas) throws SQLException;
 
     void writeBsab96bdMissing(List<Bsab96bdMissing> missings) throws SQLException;

@@ -358,6 +358,7 @@ public class PostgresRepository implements Repository {
 
     }
 
+    @Override
     public void writeObjectCount(ObjectCount objectCount){
         try {
             String sqlString = "INSERT INTO object_count " +
