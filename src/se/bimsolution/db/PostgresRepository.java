@@ -115,7 +115,6 @@ public class PostgresRepository implements Repository {
     }
 
 
-
     @Override
     public void writeArea(List<Area> areas) throws SQLException {
         String sqlString = "INSERT INTO area " +
@@ -143,7 +142,7 @@ public class PostgresRepository implements Repository {
                 "(object_id, ifc_building, ifc_storey, ifc_type, ifc_site, revision_id, name) values (?,?,?,?,?,?,?)";
         PreparedStatement statement = connection.prepareStatement(sqlString);
 
-        for (Bsab96bdMissing missing: missings) {
+        for (Bsab96bdMissing missing : missings) {
             statement.setLong(1, missing.getObjectId());
             statement.setString(2, missing.getIfcBuilding());
             statement.setString(3, missing.getIfcStorey());
@@ -162,7 +161,7 @@ public class PostgresRepository implements Repository {
                 + " values (?,?,?,?,?,?,?,?,?)";
         PreparedStatement statement = connection.prepareStatement(sqlString);
 
-        for (Bsab96bdWrong wrong: wrongs) {
+        for (Bsab96bdWrong wrong : wrongs) {
             statement.setLong(1, wrong.getObjectId());
             statement.setString(2, wrong.getIfcBuilding());
             statement.setString(3, wrong.getIfcStorey());
@@ -186,7 +185,7 @@ public class PostgresRepository implements Repository {
                 " values (?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement statement = connection.prepareStatement(sqlString);
 
-        for (MissingProperty missing: missings) {
+        for (MissingProperty missing : missings) {
             statement.setLong(1, missing.getObjectId());
             statement.setString(2, missing.getIfcBuilding());
             statement.setString(3, missing.getIfcStorey());
@@ -208,7 +207,7 @@ public class PostgresRepository implements Repository {
                 " values (?,?,?,?,?,?,?)";
         PreparedStatement statement = connection.prepareStatement(sqlString);
 
-        for (MissingPropertySet missing: missings) {
+        for (MissingPropertySet missing : missings) {
             statement.setLong(1, missing.getObjectId());
             statement.setString(2, missing.getIfcBuilding());
             statement.setString(3, missing.getIfcStorey());
@@ -228,7 +227,7 @@ public class PostgresRepository implements Repository {
                 " values (?,?,?,?,?,?,?)";
         PreparedStatement statement = connection.prepareStatement(sqlString);
 
-        for (WrongStorey storey: wrongs) {
+        for (WrongStorey storey : wrongs) {
             statement.setLong(1, storey.getObjectId());
             statement.setString(2, storey.getIfcType());
             statement.setString(3, storey.getIfcStorey());
@@ -260,7 +259,7 @@ public class PostgresRepository implements Repository {
 
         for (Map.Entry<IfcElement, PropertySet> entry : itermap.entrySet()) {
             PropertySet pset = entry.getValue();
-            if (pset!=null) {
+            if (pset != null) {
                 statement.setString(1, pset.getBenamning());
                 statement.setString(2, pset.getBeteckning());
                 statement.setString(3, pset.getTypId());
@@ -273,7 +272,7 @@ public class PostgresRepository implements Repository {
         genKeys.next();
         //OBS, Detta kommer göra sig av med alla element som har null property set
         for (Map.Entry<IfcElement, PropertySet> entry : itermap.entrySet()) {
-            if (entry.getValue()!=null) {
+            if (entry.getValue() != null) {
                 resultmap.put(entry.getKey(), genKeys.getInt("id"));
                 genKeys.next();
             } else {
@@ -344,58 +343,19 @@ public class PostgresRepository implements Repository {
         statement.executeUpdate();
     }
 
-    /**
-     * This method inserts a log message into the row in the log table corresponding to the provided
-     * Log instance.
-     *
-     * @param log        Log instance to be used to update the corresponding row in the log table.
-     * @param logMessage Log message of corresponding revision.
-     * @throws SQLException
-     */
-    @Override
-    public void writeLogMessageIdToLog(Log log, String logMessage) throws SQLException {
-        String sqlString = "UPDATE  log " +
-                "       SET log_message=? " +
-                "         WHERE id=?";
+    public void writeLog(Log log) {
+        try {
+            String sqlString = "INSERT INTO log " +
+                    "       (log_message, revision_id) " +
+                    "         VALUES (?, ?)";
 
-        PreparedStatement statement = connection.prepareStatement(sqlString);
-        statement.setString(1, logMessage);
-        statement.setInt(2, log.getId());
-        statement.executeUpdate();
-    }
-
-    /**
-     * Add new log row to database and return a log instance with corresponding Id.
-     *
-     * @return Log instance of inserted row.
-     * @throws SQLException
-     */
-    public Log writeLog() throws SQLException {
-        Log log = new Log();
-        String sqlString = "INSERT INTO log " +
-                "       (log_message) " +
-                "         VALUES (?)";
-
-        PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
-        statement.setString(1, "");
-        statement.executeUpdate();
-
-        ResultSet resultSet = statement.getGeneratedKeys();
-        if (resultSet.next()) {
-            log.setId(resultSet.getInt(1));
+            PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, log.getLogMessage());
+            statement.setInt(2, log.getRevisionId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return log;
-    }
-
-    public void writeLog(Log log) throws SQLException {
-        String sqlString = "INSERT INTO log " +
-                "       (log_message, revision_id) " +
-                "         VALUES (?, ?)";
-
-        PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
-        statement.setString(1, log.getLogMessage());
-        statement.setInt(2, log.getRevisionId());
-        statement.executeUpdate();
 
     }
 

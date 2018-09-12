@@ -2,9 +2,6 @@ package se.bimsolution.query;
 
 import org.bimserver.models.ifc2x3tc1.*;
 import org.eclipse.emf.common.util.EList;
-import se.bimsolution.db.Fail;
-import se.bimsolution.db.IfcType;
-import se.bimsolution.db.PropertySet;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -142,6 +139,48 @@ public final class QueryUtils {
             }
         }
         return null;
+    }
+
+    /**
+     *
+     * @param space
+     * @return
+     */
+    public static IfcBuilding getIfcBuildingFromIfcSpaceOrNull(IfcSpace space) {
+        IfcBuildingStorey storey = getIfcStoreyFromIfcSpaceOrNull(space);
+        if (storey!=null) {
+            for (IfcRelDecomposes agg: space.getDecomposes()) {
+                if (agg.getRelatingObject() instanceof  IfcBuilding) {
+                    return (IfcBuilding) agg.getRelatingObject();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param space
+     * @return
+     */
+    public static IfcSite getIfcSiteFromIfcSpaceOrNull(IfcSpace space) {
+        IfcBuilding building = getIfcBuildingFromIfcSpaceOrNull(space);
+        if (building!=null) {
+            for (IfcRelDecomposes agg: space.getDecomposes()) {
+                if (agg.getRelatingObject() instanceof  IfcSite) {
+                    return (IfcSite) agg.getRelatingObject();
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String getNameOfObjectOrNull(IfcRoot root) {
+        try {
+            return root.getName();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -541,6 +580,8 @@ public final class QueryUtils {
     public static double getZValueOfPlacementFromPlacement(IfcAxis2Placement3D placement) {
         return getZValueOfCoordinatesFromList(getRelatingCoordinatesFromAxis2Placement(placement));
     }
+
+
 
 
     /**
