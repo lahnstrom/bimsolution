@@ -3,9 +3,7 @@ package se.bimsolution.query.machine;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.IfcElement;
 import org.bimserver.models.ifc2x3tc1.IfcPropertySet;
-import se.bimsolution.db.Bsab96bdMissing;
-import se.bimsolution.db.Log;
-import se.bimsolution.db.Repository;
+import se.bimsolution.db.*;
 
 import static se.bimsolution.query.QueryUtils.*;
 
@@ -14,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import se.bimsolution.db.Bsab96bdWrong;
+
 import se.bimsolution.db.Log;
 import se.bimsolution.db.Repository;
 
@@ -25,13 +23,14 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class WrongBSABChecker extends ElementChecker {
+    ObjectCount objectCount;
 
     public WrongBSABChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
         super(model, repo, revisionId, classList);
+        objectCount = new ObjectCount(revisionId, "WrongBSAB");
     }
 
     public void run() {
-
         List<Bsab96bdWrong> bsab96bwrongs = new ArrayList<>();
         List<IfcElement> elements = new ArrayList<>();
         for (Class clazz :
@@ -42,6 +41,8 @@ public class WrongBSABChecker extends ElementChecker {
                 e.printStackTrace();
             }
         }
+        objectCount.setTotalCheckedObjects(elements.size());
+        repo.writeObjectCount(objectCount);
         HashMap<String, HashSet<String>> map = null;
         try {
             map = getHashMapByIdToIfcCSVParsing("resources//spec.csv", ",");
@@ -75,7 +76,7 @@ public class WrongBSABChecker extends ElementChecker {
                 System.out.println(bsab96bdWrong.getName());
             }
             repo.writeBsab96bdWrong(bsab96bwrongs);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             repo.writeLog(new Log(e.getMessage(), revisionId));
         }
     }
