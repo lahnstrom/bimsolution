@@ -1,14 +1,10 @@
 package se.bimsolution;
 
 import org.bimserver.client.BimServerClient;
-import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
-import org.bimserver.shared.exceptions.ServerException;
-import org.bimserver.shared.exceptions.UserException;
-import se.bimsolution.db.PostgresRepository;
-import se.bimsolution.db.Repository;
-import se.bimsolution.query.*;
-import se.bimsolution.query.machine.WrongBSABChecker;
+import se.bimsolution.db.repo.Repository;
+import se.bimsolution.query.client.ClientBuilder;
+import se.bimsolution.query.client.Listener;
 
 /**
  * Handles the queries to the BIMServer
