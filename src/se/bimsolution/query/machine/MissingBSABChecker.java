@@ -45,7 +45,6 @@ public class MissingBSABChecker extends ElementChecker {
                             element.getName()));
                 } catch (Exception e) {
                     e.printStackTrace();
-                    System.out.println(element.getName());
                 } ;
             }
 

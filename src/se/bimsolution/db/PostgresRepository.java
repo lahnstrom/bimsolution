@@ -363,12 +363,11 @@ public class PostgresRepository implements Repository {
     public void writeLog(Log log) {
         try {
             String sqlString = "INSERT INTO log " +
-                    "       (log_message, revision_id) " +
-                    "         VALUES (?, ?)";
+                    "       (log_message) " +
+                    "         VALUES (?)";
 
             PreparedStatement statement = connection.prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, log.getLogMessage());
-            statement.setInt(2, log.getRevisionId());
             statement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

@@ -6,6 +6,7 @@ import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.shared.exceptions.ServerException;
 import org.bimserver.shared.exceptions.UserException;
 import org.omg.CORBA.INTERNAL;
+import se.bimsolution.db.Log;
 import se.bimsolution.db.Repository;
 import se.bimsolution.query.machine.*;
 
@@ -32,6 +33,7 @@ public class Listener {
         new PropertySetMissingChecker(model, repo, revisionId, classList).run();
         new WrongBSABChecker(model, repo, revisionId, classList).run();
         new AreaChecker(model, repo, revisionId, classList).run();
+        new MissingBSABChecker(model, repo, revisionId, classList).run();
 
     }
 
@@ -44,6 +46,9 @@ public class Listener {
                 for (SProject project:
                         projects) {
                     if (!names.contains(project.getName())) {
+                        repo.writeLog(new Log("Found new project: " + project.getName() + ", waiting for 10 minutes"));
+                        System.out.println("Found new project: " + project.getName() + ", waiting for 10 minutes");
+//                        Thread.sleep(30000);
                         names.add(awake(project));
                     }
                 }
@@ -59,11 +64,15 @@ public class Listener {
     }
 
     private String awake(SProject project) {
+        System.out.println("Listener awakening.");
         project.getLastRevisionId();
         IfcModelInterface model = null;
         try {
+            System.out.println("Building model.");
             model = new ModelBuilder(bsc, project).build();
+            System.out.println("Model built.");
             int revisionId = repo.writeRevision(project.getName()).getId();
+            System.out.println("Revision written with id "+ revisionId);
             runMachines(model, repo, revisionId);
             return project.getName();
         } catch (ServerException e) {

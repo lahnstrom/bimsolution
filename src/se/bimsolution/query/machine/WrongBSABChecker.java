@@ -66,14 +66,10 @@ public class WrongBSABChecker extends ElementChecker {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println(element.getName());
             }
         }
         ;
         try {
-            for (Bsab96bdWrong bsab96bdWrong : bsab96bwrongs) {
-                System.out.println(bsab96bdWrong.getName());
-            }
             repo.writeBsab96bdWrong(bsab96bwrongs);
         } catch (SQLException e) {
             repo.writeLog(new Log(e.getMessage(), revisionId));
