@@ -183,6 +183,11 @@
 6-SKB,IfcJunctionBox
 6-SKC,IfcCableCarrier
 6-SKF,IfcJunctionBox
+53-PN,IfcFlowSegment
+55-PN,IfcFlowSegment
+54-PN,IfcFlowSegment
+56-PN,IfcFlowSegment
+6-SBD,IfcFlowSegment
 6-SKY,Varierar
 6-SMB,IfcOutlet
 6-SNB,IfcLightFixture

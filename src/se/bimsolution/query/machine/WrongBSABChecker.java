@@ -1,5 +1,6 @@
 package se.bimsolution.query.machine;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.IfcElement;
 import org.bimserver.models.ifc2x3tc1.IfcPropertySet;
@@ -88,8 +89,12 @@ public class WrongBSABChecker extends ElementChecker {
             IfcPropertySet propertySet = getPropertySetFromListByStartsWith(propertySets, "AH");
             String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
             String className = extractNameFromClass(element.getClass());
-            return map.get(className).contains(idToCheck);
+            return map.get(className).contains(idToCheck) || map.get("Varierar").contains(idToCheck);
         } catch (IllegalArgumentException e) {
+            return false;
+        } catch (NullPointerException e) {
+            System.out.println(extractNameFromClass(element.getClass()));
+            e.printStackTrace();
             return false;
         }
     }

@@ -40,10 +40,10 @@ public class MissingBSABChecker extends ElementChecker {
                 try {
                     bsab96bMissings.add(new Bsab96bdMissing(
                             element.getOid(),
-                            getNameOfElement((IfcElement)getIfcBuildingFromElementOrNull(element)),
-                            getNameOfElement((IfcElement)getIfcBuildingStoreyFromElementOrNull(element)),
+                            getNameOfElement(getIfcBuildingFromElementOrNull(element)),
+                            getNameOfElement(getIfcBuildingStoreyFromElementOrNull(element)),
                             extractNameFromClass(element.getClass()),
-                            getNameOfElement((IfcElement)getIfcSiteFromElementOrNull(element)),
+                            getNameOfElement(getIfcSiteFromElementOrNull(element)),
                             revisionId,
                             element.getName()));
                 } catch (Exception e) {

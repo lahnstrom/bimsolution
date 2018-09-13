@@ -48,7 +48,6 @@ public class Listener {
                     if (!names.contains(project.getName())) {
                         repo.writeLog(new Log("Found new project: " + project.getName() + ", waiting for 10 minutes"));
                         System.out.println("Found new project: " + project.getName() + ", waiting for 10 minutes");
-                        Thread.sleep(60000);
                         names.add(awake(project));
                     }
                 }
