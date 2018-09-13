@@ -36,7 +36,7 @@ public class ModelBuilder {
             SProject project = client.getServiceInterface().getProjectsByName(modelName).get(0);
             return client.getModel(project, project.getLastRevisionId(), true, false, INCLUDE_GEOMETRY);
         } else {
-            return client.getModel(this.project, this.project.getLastRevisionId(), true, false, RECORD_CHANGES);
+            return client.getModel(this.project, this.project.getLastRevisionId(), true, RECORD_CHANGES, INCLUDE_GEOMETRY);
         }
     }
 }

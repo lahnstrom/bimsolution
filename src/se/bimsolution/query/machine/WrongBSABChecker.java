@@ -84,18 +84,27 @@ public class WrongBSABChecker extends ElementChecker {
 
     }
     public boolean hasCorrctBsabId(IfcElement element, HashMap<String, HashSet<String>> map) {
-        List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
-        IfcPropertySet propertySet = getPropertySetFromListByStartsWith(propertySets, "AH");
-        String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
-        String className = extractNameFromClass(element.getClass());
-        return map.get(className).contains(idToCheck);
+        try {
+            List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
+            IfcPropertySet propertySet = getPropertySetFromListByStartsWith(propertySets, "AH");
+            String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
+            String className = extractNameFromClass(element.getClass());
+            return map.get(className).contains(idToCheck);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     public String getBSABFromElement(IfcElement element, HashMap<String, HashSet<String>> map) {
-        List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
-        IfcPropertySet propertySet = getPropertySetFromListByStartsWith(propertySets, "AH");
-        String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
-        return idToCheck;
+        try {
+
+            List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);
+            IfcPropertySet propertySet = getPropertySetFromListByStartsWith(propertySets, "AH");
+            String idToCheck = extractTextValueByNameOfSingleValue(propertySet, "BSAB96BD");
+            return idToCheck;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String validIdsFromHashSetToString(HashSet<String> set) {
