@@ -33,9 +33,12 @@ public class Main {
             WrongStoreyChecker wrongStoreyChecker = new WrongStoreyChecker(model, repo, 1, QueryUtils.getStandardClassList());
             PropertySetMissingChecker propertySetMissingChecker = new PropertySetMissingChecker(model, repo, 1, QueryUtils.getStandardClassList());
             AreaChecker areaChecker = new AreaChecker(model, repo, 1, null);
+            WrongBSABChecker wrongBSABChecker = new WrongBSABChecker(model, repo, 1, classList);
             propertySetMissingChecker.run();
             wrongStoreyChecker.run();
             areaChecker.run();
+            wrongStoreyChecker.run();
+            wrongBSABChecker.run();
         } catch (ServerException e) {
             e.printStackTrace();
         } catch (UserException e) {
