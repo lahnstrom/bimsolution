@@ -6,9 +6,10 @@ public class ObjectCount {
     private String elementCheckerName;
     private int totalCheckedObjects;
 
-    public ObjectCount(int revisionId, String elementCheckerName) {
+    public ObjectCount(int revisionId, String elementCheckerName, int totalCheckedObjects) {
         this.revisionId = revisionId;
         this.elementCheckerName = elementCheckerName;
+        this.totalCheckedObjects = totalCheckedObjects;
     }
 
     public int getId() {

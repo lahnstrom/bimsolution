@@ -4,6 +4,7 @@ import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.IfcElement;
 import se.bimsolution.db.Log;
 import se.bimsolution.db.MissingPropertySet;
+import se.bimsolution.db.ObjectCount;
 import se.bimsolution.db.Repository;
 
 import java.sql.SQLException;
@@ -13,7 +14,7 @@ import java.util.List;
 
 import static se.bimsolution.query.QueryUtils.*;
 public class PropertySetMissingChecker extends ElementChecker{
-    public PropertySetMissingChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
+    public PropertySetMissingChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class<? extends IfcElement>> classList) {
         super(model, repo, revisionId, classList);
     }
 
@@ -24,6 +25,8 @@ public class PropertySetMissingChecker extends ElementChecker{
                 classList) {
             elements.addAll(model.getAll(clazz));
         }
+        repo.writeObjectCount(new ObjectCount(revisionId, extractNameFromClass(this.getClass()), elements.size()));
+
         List<MissingPropertySet> missingPropertySets = new ArrayList<>();
         for (IfcElement element :
                 elements) {

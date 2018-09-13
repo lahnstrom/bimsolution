@@ -3,9 +3,9 @@ package se.bimsolution.query;
 import org.bimserver.client.BimServerClient;
 import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.interfaces.objects.SProject;
+import org.bimserver.models.ifc2x3tc1.IfcElement;
 import org.bimserver.shared.exceptions.ServerException;
 import org.bimserver.shared.exceptions.UserException;
-import org.omg.CORBA.INTERNAL;
 import se.bimsolution.db.Log;
 import se.bimsolution.db.Repository;
 import se.bimsolution.query.machine.*;
@@ -28,7 +28,7 @@ public class Listener {
     }
 
     private void runMachines(IfcModelInterface model, Repository repo, int revisionId) {
-        List<Class> classList = QueryUtils.getStandardClassList();
+        List<Class<? extends IfcElement>> classList = QueryUtils.getElementClassList();
         new WrongStoreyChecker(model, repo, revisionId, classList).run();
         new PropertySetMissingChecker(model, repo, revisionId, classList).run();
         new WrongBSABChecker(model, repo, revisionId, classList).run();
@@ -48,10 +48,11 @@ public class Listener {
                     if (!names.contains(project.getName())) {
                         repo.writeLog(new Log("Found new project: " + project.getName() + ", waiting for 10 minutes"));
                         System.out.println("Found new project: " + project.getName() + ", waiting for 10 minutes");
-//                        Thread.sleep(30000);
+                        Thread.sleep(60000);
                         names.add(awake(project));
                     }
                 }
+                System.out.println("zzZZZzzZZZzzzz");
                 Thread.sleep(interval);
             } catch (InterruptedException e) {
                 e.printStackTrace();

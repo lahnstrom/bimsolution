@@ -1,6 +1,7 @@
 package se.bimsolution.query.machine;
 
 import org.bimserver.emf.IfcModelInterface;
+import org.bimserver.models.ifc2x3tc1.IfcElement;
 import se.bimsolution.db.Repository;
 
 import java.util.List;
@@ -10,9 +11,9 @@ abstract public class ElementChecker implements Runnable {
     protected Repository repo;
     protected int revisionId;
     protected int count;
-    protected List<Class> classList;
+    protected List<Class<? extends IfcElement>> classList;
 
-    public ElementChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
+    public ElementChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class<? extends IfcElement>> classList) {
         this.model = model;
         this.repo = repo;
         this.revisionId = revisionId;

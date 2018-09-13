@@ -202,7 +202,7 @@ public class ElementCheckerUtils {
      */
     public static List<IfcType> createIfcTypesFromStandardClassList(String filePath, String csvDelimiter, String validBSAB96BDDelimiter) {
         List<IfcType> typeList = new ArrayList<>();
-        List<Class> classList = getStandardClassList();
+        List<Class<? extends IfcElement>> classList = getElementClassList();
         HashMap<String, HashSet<String>> map = null;
         try {
             map = getHashMapByIdToIfcCSVParsing(csvDelimiter, filePath);

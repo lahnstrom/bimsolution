@@ -7,6 +7,7 @@ abstract public class ElementChecker implements Runnable{
     private IfcModelInterface model;
     private Repository repo;
 
+
     public ElementChecker(IfcModelInterface model, Repository repo) {
         this.model = model;
         this.repo = repo;

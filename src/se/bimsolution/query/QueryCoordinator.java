@@ -26,7 +26,7 @@
 ////        this.revisionId = revisionId;
 ////        this.repo = repo;
 ////        this.model = model;
-////        this.classList = getStandardClassList();
+////        this.classList = getElementClassList();
 ////        this.elementCheckerErrorIdMap = ElementCheckerUtils.standardElementCheckerMapping();
 ////    }
 ////

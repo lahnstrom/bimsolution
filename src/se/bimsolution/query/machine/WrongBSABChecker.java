@@ -23,11 +23,9 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class WrongBSABChecker extends ElementChecker {
-    ObjectCount objectCount;
 
-    public WrongBSABChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
+    public WrongBSABChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class<? extends IfcElement>> classList) {
         super(model, repo, revisionId, classList);
-        objectCount = new ObjectCount(revisionId, "WrongBSAB");
     }
 
     public void run() {
@@ -41,14 +39,14 @@ public class WrongBSABChecker extends ElementChecker {
                 e.printStackTrace();
             }
         }
-        objectCount.setTotalCheckedObjects(elements.size());
-        repo.writeObjectCount(objectCount);
+
+        repo.writeObjectCount(new ObjectCount(revisionId, extractNameFromClass(this.getClass()), elements.size()));
         HashMap<String, HashSet<String>> map = null;
         try {
             map = getHashMapByIdToIfcCSVParsing("resources//spec.csv", ",");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
-        ;
+
         for (IfcElement element : elements) {
 
             try {
@@ -83,6 +81,7 @@ public class WrongBSABChecker extends ElementChecker {
         return propertySet != null;
 
     }
+
     public boolean hasCorrctBsabId(IfcElement element, HashMap<String, HashSet<String>> map) {
         try {
             List<IfcPropertySet> propertySets = getIfcPropertySetsFromElement(element);

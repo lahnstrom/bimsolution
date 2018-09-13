@@ -5,6 +5,7 @@ import org.bimserver.emf.IfcModelInterface;
 import org.bimserver.models.ifc2x3tc1.IfcBuildingStorey;
 import org.bimserver.models.ifc2x3tc1.IfcElement;
 import se.bimsolution.db.Log;
+import se.bimsolution.db.ObjectCount;
 import se.bimsolution.db.Repository;
 import se.bimsolution.db.WrongStorey;
 
@@ -20,7 +21,7 @@ public class WrongStoreyChecker extends ElementChecker {
 
 
     public static final double THRESHOLD = 2000;
-    public WrongStoreyChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
+    public WrongStoreyChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class<? extends IfcElement>> classList) {
         super(model, repo, revisionId, classList);
     }
 
@@ -34,6 +35,8 @@ public class WrongStoreyChecker extends ElementChecker {
         }
         List<IfcBuildingStorey> storeys = model.getAll(IfcBuildingStorey.class);
         List<WrongStorey> wrongs = new ArrayList<>();
+        repo.writeObjectCount(new ObjectCount(revisionId, extractNameFromClass(this.getClass()), elements.size()));
+
         for (IfcElement element :
                 elements) {
             if (getElementIsOnWrongStorey(element, storeys, THRESHOLD)) {

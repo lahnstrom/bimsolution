@@ -1,9 +1,11 @@
 package se.bimsolution.query.machine;
 
 import org.bimserver.emf.IfcModelInterface;
+import org.bimserver.models.ifc2x3tc1.IfcElement;
 import org.bimserver.models.ifc2x3tc1.IfcSpace;
 import se.bimsolution.db.Area;
 import se.bimsolution.db.Log;
+import se.bimsolution.db.ObjectCount;
 import se.bimsolution.db.Repository;
 
 import java.sql.SQLException;
@@ -14,7 +16,7 @@ import static se.bimsolution.query.QueryUtils.*;
 
 public class AreaChecker extends ElementChecker{
 
-    public AreaChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
+    public AreaChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class<? extends IfcElement>> classList) {
         super(model, repo, revisionId, classList);
     }
 
@@ -23,6 +25,8 @@ public class AreaChecker extends ElementChecker{
         List<IfcSpace> spaces = new ArrayList<>();
         List<Area> areas = new ArrayList<>();
         spaces.addAll(model.getAll(IfcSpace.class));
+        repo.writeObjectCount(new ObjectCount(revisionId, extractNameFromClass(this.getClass()), spaces.size()));
+
         for (IfcSpace space:
              spaces) {
             areas.add(new Area(space.getOid(),

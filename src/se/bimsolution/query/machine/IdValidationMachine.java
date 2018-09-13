@@ -36,7 +36,7 @@ public class IdValidationMachine implements QueryMachine {
         this.model = model;
         this.runID = runID;
         this.fails = new ArrayList<>();
-        this.classList = QueryUtils.getStandardClassList();
+        this.classList = QueryUtils.getElementClassList();
         try {
             this.correctIDs = QueryUtils.getHashMapByIdToIfcCSVParsing("resources\\spec.csv", ",");
         } catch (IOException e) {

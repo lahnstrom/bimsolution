@@ -5,6 +5,7 @@ import org.bimserver.models.ifc2x3tc1.IfcElement;
 import org.bimserver.models.ifc2x3tc1.IfcPropertySet;
 import se.bimsolution.db.Bsab96bdMissing;
 import se.bimsolution.db.Log;
+import se.bimsolution.db.ObjectCount;
 import se.bimsolution.db.Repository;
 
 import static se.bimsolution.query.QueryUtils.*;
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class MissingBSABChecker extends ElementChecker {
 
-    public MissingBSABChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
+    public MissingBSABChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class<? extends IfcElement>> classList) {
         super(model, repo, revisionId, classList);
     }
 
@@ -32,6 +33,8 @@ public class MissingBSABChecker extends ElementChecker {
                 e.printStackTrace();
             }
         }
+        repo.writeObjectCount(new ObjectCount(revisionId, extractNameFromClass(this.getClass()), elements.size()));
+
         elements.forEach(element -> {
             if (!hasBsabId(element)) {
                 try {

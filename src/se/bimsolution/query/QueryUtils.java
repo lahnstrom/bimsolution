@@ -18,61 +18,32 @@ public final class QueryUtils {
     }
 
     /**
-     * The classes we're checking in the Query Machines
+     * A list of classes that extend IfcElement.
      *
      * @return a list of classes
      */
-    public static List<Class> getStandardClassList() {
-        List<Class> classList = new ArrayList<>();
+    public static List<Class<? extends  IfcElement>> getElementClassList() {
+        List<Class<? extends IfcElement>> classList = new ArrayList<>();
         classList.add(IfcDoor.class);
-//        classList.add(IfcFlowSegment.class);
-//        classList.add(IfcFurnitureType.class);
-//        classList.add(IfcAirTerminalType.class);
-//        classList.add(IfcAirToAirHeatRecoveryType.class);
+        classList.add(IfcFlowSegment.class);
         classList.add(IfcBeam.class);
-//        classList.add(IfcBuilding.class);
-        classList.add(IfcCompressorType.class);
-//        classList.add(IfcBuildingStorey.class);
         classList.add(IfcColumn.class);
         classList.add(IfcCovering.class);
         classList.add(IfcCurtainWall.class);
-//        classList.add(IfcAirTerminalType.class);
-        classList.add(IfcAirTerminalBoxType.class);
-        classList.add(IfcDuctSegmentType.class);
-        classList.add(IfcDuctFittingType.class);
-        classList.add(IfcDuctSilencerType.class);
         classList.add(IfcEquipmentElement.class);
-//        classList.add(IfcFireSuppressionTerminalType.class);
-        classList.add(IfcFanType.class);
-//        classList.add(IfcFilterType.class);
-        classList.add(IfcTankType.class);
         classList.add(IfcFlowTerminal.class);
         classList.add(IfcFooting.class);
-//        classList.add(IfcHumidifierType.class);
-        classList.add(IfcUnitaryEquipmentType.class);
         classList.add(IfcPile.class);
-        classList.add(IfcPumpType.class);
-//        classList.add(IfcPipeFittingType.class);
-        classList.add(IfcSwitchingDeviceType.class);
-//        classList.add(IfcPipeSegmentType.class);
         classList.add(IfcRamp.class);
         classList.add(IfcRampFlight.class);
         classList.add(IfcStairFlight.class);
         classList.add(IfcStair.class);
         classList.add(IfcSlab.class);
-//        classList.add(IfcDamperType.class);
         classList.add(IfcRoof.class);
-//        classList.add(IfcSite.class);
-//        classList.add(IfcJunctionBoxType.class);
-//        classList.add(IfcSpace.class);
-        classList.add(IfcOutletType.class);
-        classList.add(IfcSystem.class);
-//        classList.add(IfcValveType.class);
         classList.add(IfcWall.class);
         classList.add(IfcFlowController.class);
-        classList.add(IfcLightFixtureType.class);
         classList.add(IfcWindow.class);
-//        classList.add(IfcOpeningElement.class);
+        classList.add(IfcOpeningElement.class);
         return classList;
     }
 
@@ -134,6 +105,7 @@ public final class QueryUtils {
         throw new IllegalArgumentException("The element has no IfcBuildingStorey associated with it "
                 + extractNameFromClass(element.getClass()));
     }
+
 
     /**
      * @param space
@@ -219,7 +191,6 @@ public final class QueryUtils {
             }
         }
         throw new IllegalArgumentException("The element has no IfcBuilding associated with it");
-
     }
 
     public static boolean getPropertySetExistsWithNameStartsWith(String name, IfcElement element) {
@@ -727,6 +698,7 @@ public final class QueryUtils {
         double elementZ = getAbsoluteZValueFromProduct(element);
         return storeyZ > elementZ;
     }
+
 
     /**
      * Given an IfcElement and a threshold,
