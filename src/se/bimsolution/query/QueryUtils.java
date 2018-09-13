@@ -27,8 +27,8 @@ public final class QueryUtils {
         classList.add(IfcDoor.class);
 //        classList.add(IfcFlowSegment.class);
 //        classList.add(IfcFurnitureType.class);
-        classList.add(IfcAirTerminalType.class);
-        classList.add(IfcAirToAirHeatRecoveryType.class);
+//        classList.add(IfcAirTerminalType.class);
+//        classList.add(IfcAirToAirHeatRecoveryType.class);
         classList.add(IfcBeam.class);
 //        classList.add(IfcBuilding.class);
         classList.add(IfcCompressorType.class);
@@ -36,23 +36,23 @@ public final class QueryUtils {
         classList.add(IfcColumn.class);
         classList.add(IfcCovering.class);
         classList.add(IfcCurtainWall.class);
-        classList.add(IfcAirTerminalType.class);
+//        classList.add(IfcAirTerminalType.class);
         classList.add(IfcAirTerminalBoxType.class);
         classList.add(IfcDuctSegmentType.class);
         classList.add(IfcDuctFittingType.class);
         classList.add(IfcDuctSilencerType.class);
         classList.add(IfcEquipmentElement.class);
-        classList.add(IfcFireSuppressionTerminalType.class);
+//        classList.add(IfcFireSuppressionTerminalType.class);
         classList.add(IfcFanType.class);
-        classList.add(IfcFilterType.class);
+//        classList.add(IfcFilterType.class);
         classList.add(IfcTankType.class);
         classList.add(IfcFlowTerminal.class);
         classList.add(IfcFooting.class);
-        classList.add(IfcHumidifierType.class);
+//        classList.add(IfcHumidifierType.class);
         classList.add(IfcUnitaryEquipmentType.class);
         classList.add(IfcPile.class);
         classList.add(IfcPumpType.class);
-        classList.add(IfcPipeFittingType.class);
+//        classList.add(IfcPipeFittingType.class);
         classList.add(IfcSwitchingDeviceType.class);
 //        classList.add(IfcPipeSegmentType.class);
         classList.add(IfcRamp.class);
@@ -60,14 +60,14 @@ public final class QueryUtils {
         classList.add(IfcStairFlight.class);
         classList.add(IfcStair.class);
         classList.add(IfcSlab.class);
-        classList.add(IfcDamperType.class);
+//        classList.add(IfcDamperType.class);
         classList.add(IfcRoof.class);
 //        classList.add(IfcSite.class);
-        classList.add(IfcJunctionBoxType.class);
+//        classList.add(IfcJunctionBoxType.class);
 //        classList.add(IfcSpace.class);
         classList.add(IfcOutletType.class);
         classList.add(IfcSystem.class);
-        classList.add(IfcValveType.class);
+//        classList.add(IfcValveType.class);
         classList.add(IfcWall.class);
         classList.add(IfcFlowController.class);
         classList.add(IfcLightFixtureType.class);
@@ -120,6 +120,14 @@ public final class QueryUtils {
                 relList) {
             if (rel.getRelatingStructure() instanceof IfcBuildingStorey) {
                 return (IfcBuildingStorey) rel.getRelatingStructure();
+            }
+            if (rel.getRelatingStructure() instanceof IfcSpace) {
+                IfcSpace space = (IfcSpace) rel.getRelatingStructure();
+                for (IfcRelDecomposes dec : space.getDecomposes()) {
+                    if (dec.getRelatingObject() instanceof IfcBuildingStorey) {
+                        return (IfcBuildingStorey) dec.getRelatingObject();
+                    }
+                }
             }
         }
 
@@ -190,14 +198,7 @@ public final class QueryUtils {
      */
     public static IfcBuildingStorey getIfcBuildingStoreyFromElementOrNull(IfcElement element) {
         try {
-            EList<IfcRelContainedInSpatialStructure> relList = element.getContainedInStructure();
-            for (IfcRelContainedInSpatialStructure rel :
-                    relList) {
-                if (rel.getRelatingStructure() instanceof IfcBuildingStorey) {
-                    return (IfcBuildingStorey) rel.getRelatingStructure();
-                }
-            }
-            return null;
+            return getIfcBuildingStoreyFromElement(element);
         } catch (Exception e) {
             return null;
         }
@@ -917,15 +918,14 @@ public final class QueryUtils {
     }
 
 
-
     public static String getStringOfMissingProperties(IfcElement element, Set<String> correctProperties,
                                                       String name, String delimiter) {
         StringBuilder sb = new StringBuilder();
         Set<String> propertyNames = new HashSet<>();
         List<IfcPropertySet> psets = getIfcPropertySetsFromElement(element);
-        IfcPropertySet pset = getPropertySetFromListByStartsWith(psets,name);
-        for (IfcProperty property:
-             pset.getHasProperties()) {
+        IfcPropertySet pset = getPropertySetFromListByStartsWith(psets, name);
+        for (IfcProperty property :
+                pset.getHasProperties()) {
             propertyNames.add(property.getName());
         }
         for (String string :
