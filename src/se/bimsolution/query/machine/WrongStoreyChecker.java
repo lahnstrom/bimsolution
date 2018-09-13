@@ -7,13 +7,10 @@ import org.bimserver.models.ifc2x3tc1.IfcElement;
 import se.bimsolution.db.Log;
 import se.bimsolution.db.Repository;
 import se.bimsolution.db.WrongStorey;
-import se.bimsolution.query.QueryUtils;
-
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import static se.bimsolution.query.QueryUtils.*;
 
 import static se.bimsolution.query.QueryUtils.getIfcPropertySetsFromElementOrNull;
@@ -23,8 +20,6 @@ public class WrongStoreyChecker extends ElementChecker {
 
 
     public static final double THRESHOLD = 2000;
-
-
     public WrongStoreyChecker(IfcModelInterface model, Repository repo, int revisionId, List<Class> classList) {
         super(model, repo, revisionId, classList);
     }
@@ -58,9 +53,5 @@ public class WrongStoreyChecker extends ElementChecker {
         } catch (SQLException e) {
             repo.writeLog(new Log("Something went wrong when writing WrongStoreys: " + e.getMessage()));
         }
-
     }
-
 }
-
-
