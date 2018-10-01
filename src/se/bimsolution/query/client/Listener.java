@@ -12,6 +12,8 @@ import se.bimsolution.query.utils.QueryUtils;
 import se.bimsolution.query.checker.*;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class Listener {
@@ -50,6 +52,10 @@ public class Listener {
                         repo.writeLog(new Log("Found new project: " + project.getName() + ", waiting for 10 minutes"));
                         System.out.println("Found new project: " + project.getName() + ", waiting for 10 minutes");
                         names.add(awake(project));
+                        //renames project and updates bimserver and deletes the project from bimserver
+                        project.setName(project.getName()+" "+ LocalDateTime.now());
+                        bsc.getServiceInterface().updateProject(project);
+                        bsc.getServiceInterface().deleteProject(project.getOid());
                     }
                 }
                 System.out.println("zzZZZzzZZZzzzz");
